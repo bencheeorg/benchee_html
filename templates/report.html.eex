@@ -6,31 +6,20 @@
   </head>
   <body>
     <%= for {name, _} <- suite.run_times do %>
-      <canvas class="raw-run-times" data-job-name="<%= name %>"></canvas>
+      <div class="raw-run-times" data-job-name="<%= name %>"></canvas>
     <% end %>
 
     <script>
-      drawRunTimesChart = function(canvas, runTimeData) {
-        var myChart = new Chart(canvas, {
-          type: 'bar',
-          data: {
-            labels: runTimeData.map(function(_) {return "";}),
-            datasets: [{
-                label:       'run time',
-                data:        runTimeData,
-                borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
+      var drawRunTimesChart = function(node, runTimeData) {
+
+        var data = [
+          {
+            y: runTimeData,
+            type: 'bar'
           }
-        });
+        ];
+
+        Plotly.newPlot(node, data)
       };
 
       var suite = <%= suite_json %>;
