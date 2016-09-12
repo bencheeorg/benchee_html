@@ -28,18 +28,25 @@
       var drawIPSComparisonChart = function(node, statistics) {
         var names = [];
         var ips = [];
+        var errors = [];
         for (var name in statistics) {
           if (statistics.hasOwnProperty(name)) {
             names.push(name);
             ips.push(statistics[name]['ips']);
+            errors.push(statistics[name]['std_dev_ips']);
           }
         }
 
         var data = [
           {
+            type: 'bar',
             x: names,
             y: ips,
-            type: 'bar'
+            error_y: {
+              type: 'data',
+              array: errors,
+              visible: true
+            }
           }
         ];
 
