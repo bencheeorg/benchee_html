@@ -5,8 +5,11 @@
     <script src="assets/javascripts/plotly-latest.min.js"></script>
   </head>
   <body>
+
+    <div id="ips-comparison"></div>
+
     <%= for {name, _} <- suite.run_times do %>
-      <div class="raw-run-times" data-job-name="<%= name %>"></canvas>
+      <div class="raw-run-times" data-job-name="<%= name %>"></div>
     <% end %>
 
     <script>
@@ -19,12 +22,37 @@
           }
         ];
 
-        Plotly.newPlot(node, data)
+        Plotly.newPlot(node, data);
+      };
+
+      var drawIPSComparisonChart = function(node, statistics) {
+        var names = [];
+        var ips = [];
+        for (var name in statistics) {
+          if (statistics.hasOwnProperty(name)) {
+            names.push(name);
+            ips.push(statistics[name]['ips']);
+          }
+        }
+
+        var data = [
+          {
+            x: names,
+            y: ips,
+            type: 'bar'
+          }
+        ];
+
+        Plotly.newPlot(node, data);
       };
 
       var suite = <%= suite_json %>;
       var runTimes = suite.run_times;
       var statistics = suite.statistics;
+
+      ipsNode = document.getElementById("ips-comparison");
+      drawIPSComparisonChart(ipsNode, statistics);
+
       runTimeNodes = document.getElementsByClassName("raw-run-times");
       runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
       runTimesNodesArray.forEach(function(node) {
