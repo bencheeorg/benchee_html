@@ -9,10 +9,54 @@
     <div id="ips-comparison"></div>
 
     <%= for {name, _} <- suite.run_times do %>
+      <div class="sorted-run-times" data-job-name="<%= name %>"></div>
       <div class="raw-run-times" data-job-name="<%= name %>"></div>
     <% end %>
 
     <script>
+      var groupBy = function(array, fun) {
+        var result = {};
+        array.forEach(function(object) {
+          var group = fun(object);
+          result[group] = result[group] || [];
+          result[group].push(object);
+        });
+
+        return result;
+      };
+
+      var eachProperty = function(object, fun) {
+        for (var property in object) {
+          if (object.hasOwnProperty(property)) {
+            fun(property, object)
+          }
+        }
+      }
+
+      var drawSortedRunTimesChart = function(node, runTimeData) {
+        var groups = groupBy(runTimeData, function(time) { return time; });
+        var runTimeCounts = {};
+        eachProperty(groups, function(runTime) {
+          runTimeCounts[runTime] = groups[runTime].length
+        });
+
+        console.log(runTimeCounts);
+        var xValues = Object.keys(runTimeCounts);
+        var yValues = xValues.map(function(runTime) { return runTimeCounts[runTime]; });
+
+        var data = [
+          {
+            type: 'bar',
+            x: xValues,
+            y: yValues
+          }
+        ];
+
+        console.log(xValues);
+
+        Plotly.newPlot(node, data);
+      };
+
       var drawRunTimesChart = function(node, runTimeData) {
 
         var data = [
@@ -65,6 +109,13 @@
       runTimesNodesArray.forEach(function(node) {
         var runTimeData = runTimes[node.getAttribute("data-job-name")];
         drawRunTimesChart(node, runTimeData);
+      });
+
+      runTimeNodes = document.getElementsByClassName("sorted-run-times");
+      runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
+      runTimesNodesArray.forEach(function(node) {
+        var runTimeData = runTimes[node.getAttribute("data-job-name")];
+        drawSortedRunTimesChart(node, runTimeData);
       });
 
     </script>
