@@ -33,9 +33,15 @@
           </tbody>
         </table>
       </section>
+
       <section>
-        <h3>Iterations per Second Comparison</h3>
+        <h3>Iterations per Second</h3>
         <div id="ips-comparison"></div>
+      </section>
+
+      <section>
+        <h3>Runtime Box Plot</h3>
+        <div id="box-plot"></div>
       </section>
     </article>
 
@@ -54,6 +60,16 @@
     <% end %>
 
     <script>
+      var eachProperty = function(object, fun) {
+        console.log(object);
+        for (var property in object) {
+          if (object.hasOwnProperty(property)) {
+            fun(property, object)
+          }
+        }
+      }
+
+
       var drawSortedRunTimesChart = function(node, runTimeData) {
         var data = [
           {
@@ -105,12 +121,28 @@
         Plotly.newPlot(node, data);
       };
 
+      var drawBoxPlot = function(node, runTimes) {
+        data = []
+        eachProperty(runTimes, function(name, runTime) {
+          data.push({
+            name: name,
+            y: runTime[name],
+            type: 'box'
+          })
+        });
+
+        Plotly.newPlot(node, data);
+      }
+
       var suite = <%= suite_json %>;
       var runTimes = suite.run_times;
       var statistics = suite.statistics;
 
       ipsNode = document.getElementById("ips-comparison");
       drawIPSComparisonChart(ipsNode, statistics);
+
+      boxNode = document.getElementById("box-plot");
+      drawBoxPlot(boxNode, runTimes);
 
       runTimeNodes = document.getElementsByClassName("raw-run-times");
       runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
