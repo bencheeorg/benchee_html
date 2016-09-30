@@ -6,11 +6,25 @@
   </head>
   <body>
 
-    <div id="ips-comparison"></div>
+    <article>
+      <section>
+        <h2>Comparison</h2>
+        <div id="ips-comparison"></div>
+      </section>
+    </article>
 
     <%= for {name, _} <- suite.run_times do %>
-      <div class="sorted-run-times" data-job-name="<%= name %>"></div>
-      <div class="raw-run-times" data-job-name="<%= name %>"></div>
+      <article>
+        <h2> <%= name %></h2>
+        <section>
+          <h3> Run time Histogram </h3>
+          <div class="sorted-run-times" data-job-name="<%= name %>"></div>
+        </section>
+        <section>
+          <h3> Raw run times </h3>
+          <div class="raw-run-times" data-job-name="<%= name %>"></div>
+        </section>
+      </article>
     <% end %>
 
     <script>
