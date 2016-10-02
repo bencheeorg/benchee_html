@@ -42,4 +42,12 @@ defmodule Benchee.Formatters.PlotlyJS do
     suite_json = Benchee.Formatters.JSON.format(suite)
     report(suite, suite_json)
   end
+
+  defp format_duration(duration) do
+    Benchee.Unit.Common.format({duration, :dontcare}, "", "")
+  end
+
+  defp format_count(count) do
+    Benchee.Unit.Common.format({count, :one}, Benchee.Unit.Count)
+  end
 end
