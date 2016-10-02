@@ -78,7 +78,7 @@
       };
 
       var drawGraph = function(node, data, layout) {
-        Plotly.newPlot(node, data, layout);
+        Plotly.newPlot(node, data, layout, { displaylogo: false });
       };
 
       var rawRunTimeData = function(runTimeData) {
