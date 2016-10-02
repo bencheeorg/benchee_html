@@ -35,12 +35,10 @@
       </section>
 
       <section>
-        <h3>Iterations per Second</h3>
         <div id="ips-comparison"></div>
       </section>
 
       <section>
-        <h3>Runtime Box Plot</h3>
         <div id="box-plot"></div>
       </section>
     </article>
@@ -49,11 +47,9 @@
       <article>
         <h2> <%= name %></h2>
         <section>
-          <h3> Run time Histogram </h3>
           <div class="sorted-run-times" data-job-name="<%= name %>"></div>
         </section>
         <section>
-          <h3> Raw run times </h3>
           <div class="raw-run-times" data-job-name="<%= name %>"></div>
         </section>
       </article>
@@ -81,10 +77,8 @@
         return data;
       };
 
-      var drawGraph = function(node, data) {
-        console.log(node);
-        console.log(data);
-        Plotly.newPlot(node, data);
+      var drawGraph = function(node, data, layout) {
+        Plotly.newPlot(node, data, layout);
       }
 
       var rawRunTimeData = function(runTimeData) {
@@ -145,23 +139,29 @@
       var statistics = suite.statistics;
 
       ipsNode = document.getElementById("ips-comparison");
-      drawGraph(ipsNode, ipsComparisonData(statistics));
+      var layout = {title: "Iterations per Second"}
+      drawGraph(ipsNode, ipsComparisonData(statistics), layout);
 
       boxNode = document.getElementById("box-plot");
-      drawGraph(boxNode, boxPlotData(runTimes));
+      var layout = {title: "Run Time Boxplot"}
+      drawGraph(boxNode, boxPlotData(runTimes), layout);
 
       runTimeNodes = document.getElementsByClassName("raw-run-times");
       runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
       runTimesNodesArray.forEach(function(node) {
-        var runTimeData = runTimes[node.getAttribute("data-job-name")];
-        drawGraph(node, rawRunTimeData(runTimeData));
+        var jobName = node.getAttribute("data-job-name");
+        var runTimeData = runTimes[jobName];
+        var layout = {title: jobName + " Raw Run Times"}
+        drawGraph(node, rawRunTimeData(runTimeData), layout);
       });
 
       runTimeNodes = document.getElementsByClassName("sorted-run-times");
       runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
       runTimesNodesArray.forEach(function(node) {
-        var runTimeData = runTimes[node.getAttribute("data-job-name")];
-        drawGraph(node, runtimeHistogramData(runTimeData));
+        var jobName = node.getAttribute("data-job-name");
+        var runTimeData = runTimes[jobName];
+        var layout = {title: jobName + " Run Times Histogram"}
+        drawGraph(node, runtimeHistogramData(runTimeData), layout);
       });
 
     </script>
