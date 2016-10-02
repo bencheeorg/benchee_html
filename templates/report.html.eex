@@ -63,7 +63,7 @@
             fun(property, object)
           }
         }
-      }
+      };
 
 
       var runtimeHistogramData = function(runTimeData) {
@@ -79,7 +79,7 @@
 
       var drawGraph = function(node, data, layout) {
         Plotly.newPlot(node, data, layout);
-      }
+      };
 
       var rawRunTimeData = function(runTimeData) {
 
@@ -103,7 +103,7 @@
             ips.push(statistics[name]['ips']);
             errors.push(statistics[name]['std_dev_ips']);
           }
-        }
+        };
 
         var data = [
           {
@@ -132,38 +132,50 @@
         });
 
         return data;
-      }
+      };
+
+      var drawIpsComparisonChart = function(statistics) {
+        var ipsNode = document.getElementById("ips-comparison");
+        var layout = {title: "Iterations per Second"}
+        drawGraph(ipsNode, ipsComparisonData(statistics), layout);
+      };
+
+      var drawComparisonBoxPlot = function(runTimes) {
+        var boxNode = document.getElementById("box-plot");
+        var layout = {title: "Run Time Boxplot"}
+        drawGraph(boxNode, boxPlotData(runTimes), layout);
+      };
+
+      var drawRawRunTimeCharts = function(runTimes) {
+        var runTimeNodes = document.getElementsByClassName("raw-run-times");
+        var runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
+        runTimesNodesArray.forEach(function(node) {
+          var jobName = node.getAttribute("data-job-name");
+          var runTimeData = runTimes[jobName];
+          var layout = {title: jobName + " Raw Run Times"}
+          drawGraph(node, rawRunTimeData(runTimeData), layout);
+        });
+      };
+
+      var drawRunTimeHistograms = function(runTimes) {
+        var runTimeHistogramNodes = document.getElementsByClassName("sorted-run-times");
+        var runTimeHistogramNodesArray = Array.from(runTimeHistogramNodes); // Oh JavaScript
+        runTimeHistogramNodesArray.forEach(function(node) {
+          var jobName = node.getAttribute("data-job-name");
+          var runTimeData = runTimes[jobName];
+          var layout = {title: jobName + " Run Times Histogram"}
+          drawGraph(node, runtimeHistogramData(runTimeData), layout);
+        });
+      };
 
       var suite = <%= suite_json %>;
       var runTimes = suite.run_times;
       var statistics = suite.statistics;
 
-      ipsNode = document.getElementById("ips-comparison");
-      var layout = {title: "Iterations per Second"}
-      drawGraph(ipsNode, ipsComparisonData(statistics), layout);
-
-      boxNode = document.getElementById("box-plot");
-      var layout = {title: "Run Time Boxplot"}
-      drawGraph(boxNode, boxPlotData(runTimes), layout);
-
-      runTimeNodes = document.getElementsByClassName("raw-run-times");
-      runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
-      runTimesNodesArray.forEach(function(node) {
-        var jobName = node.getAttribute("data-job-name");
-        var runTimeData = runTimes[jobName];
-        var layout = {title: jobName + " Raw Run Times"}
-        drawGraph(node, rawRunTimeData(runTimeData), layout);
-      });
-
-      runTimeNodes = document.getElementsByClassName("sorted-run-times");
-      runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
-      runTimesNodesArray.forEach(function(node) {
-        var jobName = node.getAttribute("data-job-name");
-        var runTimeData = runTimes[jobName];
-        var layout = {title: jobName + " Run Times Histogram"}
-        drawGraph(node, runtimeHistogramData(runTimeData), layout);
-      });
-
+      drawIpsComparisonChart(statistics);
+      drawComparisonBoxPlot(runTimes);
+      drawRawRunTimeCharts(runTimes);
+      drawRunTimeHistograms(runTimes);
     </script>
   </body>
 </html>
