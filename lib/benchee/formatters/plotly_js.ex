@@ -44,10 +44,10 @@ defmodule Benchee.Formatters.PlotlyJS do
   end
 
   defp format_duration(duration) do
-    Benchee.Unit.Common.format({duration, :dontcare}, "", "")
+    Benchee.Conversion.Format.format(duration, "", "")
   end
 
   defp format_count(count) do
-    Benchee.Unit.Common.format({count, :one}, Benchee.Unit.Count)
+    Benchee.Conversion.Format.format({count, :one}, Benchee.Conversion.Count)
   end
 end

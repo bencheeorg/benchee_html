@@ -28,7 +28,7 @@ defmodule BencheePlotlyJS.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:benchee,      "~> 0.5", path: "../benchee", override: true},
+      {:benchee,      "~> 0.5"},
       {:benchee_json, "~> 0.1", path: "../benchee_json"}
     ]
   end
