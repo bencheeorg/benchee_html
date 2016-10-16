@@ -2,7 +2,7 @@ defmodule Benchee.Formatters.PlotlyJS do
   require EEx
 
   EEx.function_from_file :def, :report,
-                         "templates/report.html.eex",
+                         "priv/templates/report.html.eex",
                          [:suite, :suite_json]
 
   @moduledoc """

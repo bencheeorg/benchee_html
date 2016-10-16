@@ -7,7 +7,12 @@ defmodule BencheePlotlyJS.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps,
+     package: package,
+     description: """
+     HTML formatter with pretty graphs for the (micro) benchmarking library benchee.
+     """
+   ]
   end
 
   # Configuration for the OTP application
@@ -32,4 +37,16 @@ defmodule BencheePlotlyJS.Mixfile do
       {:benchee_json, "~> 0.1", git: "git@github.com:PragTob/benchee_json.git"}
     ]
   end
+
+  defp package do
+  [
+    files: ["priv", "lib", "mix.exs", "README.md"],
+    maintainers: ["Tobias Pfeiffer"],
+    licenses: ["MIT"],
+    links: %{
+      "github"     => "https://github.com/PragTob/benchee_plotly_js",
+      "Blog posts" => "https://pragtob.wordpress.com/tag/benchee/"
+    }
+  ]
+end
 end
