@@ -29,7 +29,7 @@ defmodule BencheePlotlyJS.Mixfile do
   defp deps do
     [
       {:benchee,      "~> 0.5"},
-      {:benchee_json, "~> 0.1", path: "../benchee_json"}
+      {:benchee_json, "~> 0.1", git: "git@github.com:PragTob/benchee_json.git"}
     ]
   end
 end
