@@ -64,7 +64,7 @@
       </article>
     <% end %>
 
-    <script src="assets/javascripts/plotly-latest.min.js"></script>
+    <script src="assets/javascripts/plotly-1.20.5.min.js"></script>
     <script src="assets/javascripts/benchee.js"></script>
 
     <script>
