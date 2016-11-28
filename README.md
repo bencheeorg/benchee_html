@@ -1,4 +1,4 @@
-# BencheeHTML
+# BencheeHTML [![Build Status](https://travis-ci.org/PragTob/benchee_html.svg?branch=master)](https://travis-ci.org/PragTob/benchee_html)
 
 **Work in progress, not yet published or usable. Let's see if I can make this work :)**
 
