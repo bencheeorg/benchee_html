@@ -1,19 +1,23 @@
 defmodule BencheeHTML.Mixfile do
   use Mix.Project
 
+  @version "0.1.0"
   def project do
-    [app: :benchee_html,
-     version: "0.1.0",
-     elixir: "~> 1.2",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps,
-     package: package,
-     name: "benchee_html",
-     description: """
-     HTML formatter with pretty graphs for the (micro) benchmarking library benchee.
-     """
-   ]
+    [
+      app: :benchee_html,
+      version: @version,
+      elixir: "~> 1.2",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      docs: [source_ref: @version],
+      deps: deps,
+      package: package,
+      name: "benchee_html",
+      source_url: "https://github.com/PragTob/benchee_html",
+      description: """
+      HTML formatter with pretty graphs for the (micro) benchmarking library benchee.
+      """
+    ]
   end
 
   # Configuration for the OTP application
@@ -44,14 +48,14 @@ defmodule BencheeHTML.Mixfile do
   end
 
   defp package do
-  [
-    files: ["priv", "lib", "mix.exs", "README.md"],
-    maintainers: ["Tobias Pfeiffer"],
-    licenses: ["MIT"],
-    links: %{
-      "github"     => "https://github.com/PragTob/benchee_html",
-      "Blog posts" => "https://pragtob.wordpress.com/tag/benchee/"
-    }
-  ]
-end
+    [
+      files: ["priv", "lib", "mix.exs", "README.md"],
+      maintainers: ["Tobias Pfeiffer"],
+      licenses: ["MIT"],
+      links: %{
+        "github"     => "https://github.com/PragTob/benchee_html",
+        "Blog posts" => "https://pragtob.wordpress.com/tag/benchee/"
+      }
+    ]
+  end
 end
