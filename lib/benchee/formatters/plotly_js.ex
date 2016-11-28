@@ -71,6 +71,8 @@ defmodule Benchee.Formatters.PlotlyJS do
   end
 
   defp format_percent(deviation_percent) do
-    Benchee.Conversion.DeviationPercent.format deviation_percent
+    deviation_percent
+    |> Benchee.Conversion.DeviationPercent.format
+    |> String.replace("±", "&plusmn;")
   end
 end

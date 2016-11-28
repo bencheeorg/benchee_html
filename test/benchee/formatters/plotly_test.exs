@@ -40,6 +40,13 @@ defmodule Benchee.Formatters.PlotlyJSTest do
     assert html =~ "{\"statistics\":{\"My Job\""
   end
 
+  test ".format does not use ± as it breaks" do
+    %{"Some Input" => html} = PlotlyJS.format @sample_suite
+
+    refute html =~ "±"
+    assert html =~ "&plusmn;"
+  end
+
   defp assert_includes(html, expected_contents) do
     Enum.each expected_contents, fn(expected_content) ->
       assert html =~ expected_content
