@@ -16,7 +16,7 @@ defmodule Benchee.Formatters.HTML do
   configuration under `html: [file: "my.html"]`
   """
   def output(map)
-  def output(suite = %{config: %{html: %{file: filename}} }) do
+  def output(suite = %{config: %{html: %{file: filename}}}) do
     base_directory = create_base_directory(filename)
     copy_asset_files(base_directory)
 
@@ -25,8 +25,6 @@ defmodule Benchee.Formatters.HTML do
     |> Benchee.Utility.File.each_input(filename, fn(file, content) ->
          IO.write(file, content)
        end)
-
-
 
     suite
   end
@@ -54,12 +52,14 @@ defmodule Benchee.Formatters.HTML do
 
   """
   def format(%{statistics: statistics, run_times: run_times}) do
-    Enum.map(statistics, fn({input, input_stats}) ->
-      input_run_times = run_times[input]
-      input_json = Benchee.Formatters.JSON.format_measurements(input_stats, input_run_times)
-      input_suite = %{statistics: input_stats, run_times: input_run_times}
-      {input, report(input_suite, input_json)}
-    end) |> Map.new
+    statistics
+    |> Enum.map(fn({input, input_stats}) ->
+         input_run_times = run_times[input]
+         input_json = Benchee.Formatters.JSON.format_measurements(input_stats, input_run_times)
+         input_suite = %{statistics: input_stats, run_times: input_run_times}
+         {input, report(input_suite, input_json)}
+       end)
+    |> Map.new
   end
 
   defp format_duration(duration) do
