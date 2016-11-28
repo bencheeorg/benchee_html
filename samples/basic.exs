@@ -9,7 +9,7 @@ Benchee.run(
       &Benchee.Formatters.PlotlyJS.output/1,
       &Benchee.Formatters.Console.output/1
     ],
-    plotly_js: %{file: "my.html"},
+    plotly_js: %{file: "samples_output/my.html"},
     time: 2,
     warmup: 0
   },
