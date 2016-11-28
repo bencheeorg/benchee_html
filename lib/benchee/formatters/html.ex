@@ -1,4 +1,4 @@
-defmodule Benchee.Formatters.PlotlyJS do
+defmodule Benchee.Formatters.HTML do
   require EEx
 
   EEx.function_from_file :def, :report,
@@ -7,16 +7,16 @@ defmodule Benchee.Formatters.PlotlyJS do
 
   @moduledoc """
   Functionality for converting Benchee benchmarking results to an HTML page
-  with plotly_js generated graphs and friends.
+  with plotly.js generated graphs and friends.
   """
 
   @doc """
-  Uses `Benchee.Formatters.PlotlyJS.format/1` to transform the statistics output to
+  Uses `Benchee.Formatters.HTML.format/1` to transform the statistics output to
   HTML with JS, but also already writes it to a file defined in the initial
-  configuration under `%{plotly_js: %{file: "my.html"}}`
+  configuration under `html: [file: "my.html"]`
   """
   def output(map)
-  def output(suite = %{config: %{plotly_js: %{file: filename}} }) do
+  def output(suite = %{config: %{html: %{file: filename}} }) do
     base_directory = create_base_directory(filename)
     copy_asset_files(base_directory)
 
@@ -43,7 +43,7 @@ defmodule Benchee.Formatters.PlotlyJS do
   @asset_directory "assets"
   defp copy_asset_files(base_directory) do
     asset_target_directory = Path.join(base_directory, @asset_directory)
-    asset_source_directory = Application.app_dir(:benchee_plotly_js,
+    asset_source_directory = Application.app_dir(:benchee_html,
                                                  "priv/assets/")
     File.cp_r! asset_source_directory, asset_target_directory
   end

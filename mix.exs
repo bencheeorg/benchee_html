@@ -1,14 +1,15 @@
-defmodule BencheePlotlyJS.Mixfile do
+defmodule BencheeHTML.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :benchee_plotly_js,
+    [app: :benchee_html,
      version: "0.1.0",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps,
      package: package,
+     name: "benchee_html",
      description: """
      HTML formatter with pretty graphs for the (micro) benchmarking library benchee.
      """
@@ -44,7 +45,7 @@ defmodule BencheePlotlyJS.Mixfile do
     maintainers: ["Tobias Pfeiffer"],
     licenses: ["MIT"],
     links: %{
-      "github"     => "https://github.com/PragTob/benchee_plotly_js",
+      "github"     => "https://github.com/PragTob/benchee_html",
       "Blog posts" => "https://pragtob.wordpress.com/tag/benchee/"
     }
   ]

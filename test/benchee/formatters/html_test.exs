@@ -1,12 +1,12 @@
-defmodule Benchee.Formatters.PlotlyJSTest do
+defmodule Benchee.Formatters.HTMLTest do
   use ExUnit.Case
-  alias Benchee.Formatters.PlotlyJS
+  alias Benchee.Formatters.HTML
 
   @test_directory "test_output"
   @filename "#{@test_directory}/my.html"
   @expected_filename "#{@test_directory}/my_some_input.html"
   @sample_suite %{
-                  config: %{plotly_js: %{file: @filename}},
+                  config: %{html: %{file: @filename}},
                   statistics: %{
                     "Some Input" => %{
                       "My Job" => %{
@@ -22,12 +22,12 @@ defmodule Benchee.Formatters.PlotlyJSTest do
                   run_times: %{"Some Input" => %{"My Job" => [190, 200, 210]}}
                 }
   test ".format returns an HTML-ish string" do
-    %{"Some Input" => html} = PlotlyJS.format @sample_suite
+    %{"Some Input" => html} = HTML.format @sample_suite
     assert html =~ ~r/<html>.+<script>.+<\/html>/si
   end
 
   test ".format has the important suite data in the html result" do
-    %{"Some Input" => html} = PlotlyJS.format @sample_suite
+    %{"Some Input" => html} = HTML.format @sample_suite
 
     assert_includes html, ["[190,200,210]", "\"average\":200.0",
                            "\"median\":190.0","\"ips\":5.0e3", "My Job"]
@@ -35,13 +35,13 @@ defmodule Benchee.Formatters.PlotlyJSTest do
   end
 
   test ".format produces the right JSON data without the input level" do
-    %{"Some Input" => html} = PlotlyJS.format @sample_suite
+    %{"Some Input" => html} = HTML.format @sample_suite
 
     assert html =~ "{\"statistics\":{\"My Job\""
   end
 
   test ".format does not use ± as it breaks" do
-    %{"Some Input" => html} = PlotlyJS.format @sample_suite
+    %{"Some Input" => html} = HTML.format @sample_suite
 
     refute html =~ "±"
     assert html =~ "&plusmn;"
@@ -55,7 +55,7 @@ defmodule Benchee.Formatters.PlotlyJSTest do
 
   test ".output returns the suite again unchanged" do
     try do
-      return = Benchee.Formatters.PlotlyJS.output(@sample_suite)
+      return = Benchee.Formatters.HTML.output(@sample_suite)
       assert return == @sample_suite
       assert File.exists? @expected_filename
       assert_assets_copied

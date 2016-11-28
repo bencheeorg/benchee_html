@@ -6,10 +6,10 @@ map_fun = fn(i) -> [i, i * i] end
 Benchee.run(
   %{
     formatters: [
-      &Benchee.Formatters.PlotlyJS.output/1,
+      &Benchee.Formatters.HTML.output/1,
       &Benchee.Formatters.Console.output/1
     ],
-    plotly_js: %{file: "samples_output/my.html"},
+    html: %{file: "samples_output/my.html"},
     time: 2,
     warmup: 0
   },
