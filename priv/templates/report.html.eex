@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Benchee Report</title>
+    <meta charset="utf-8">
     <meta http-equiv="content-type" content="text/html; charset=utf8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/benchee.css">
   </head>
   <body>
+
+    <div class="header">
+      <h1>benchee report</h1>
+    </div>
 
     <article>
       <h2>Comparison</h2>
@@ -12,7 +20,7 @@
         <table>
           <thead>
             <tr>
-              <th>Name</th>
+              <th class="text-left">Name</th>
               <th>Iterations per Second</th>
               <th>Average</th>
               <th>Deviation</th>
@@ -23,7 +31,7 @@
           <tbody>
             <%= for {name, statistics} <- suite.statistics do %>
               <tr>
-                <td><%= name %></td>
+                <td class="text-left"><a href="#<%= name %>"><%= name %></a></td>
                 <td><%= format_count statistics.ips %></td>
                 <td><%= format_duration statistics.average %></td>
                 <td><%= format_percent statistics.std_dev_ratio %></td>
@@ -46,7 +54,7 @@
 
     <%= for {name, _} <- suite.run_times do %>
       <article>
-        <h2> <%= name %></h2>
+        <h2><a name="<%= name %>"></a><%= name %></h2>
         <section>
           <div class="sorted-run-times" data-job-name="<%= name %>"></div>
         </section>
