@@ -56,7 +56,7 @@ defmodule Benchee.Formatters.PlotlyJS do
   def format(%{statistics: statistics, run_times: run_times}) do
     Enum.map(statistics, fn({input, input_stats}) ->
       input_run_times = run_times[input]
-      input_json = Benchee.Formatters.JSON.format_measurements(statistics, run_times)
+      input_json = Benchee.Formatters.JSON.format_measurements(input_stats, input_run_times)
       input_suite = %{statistics: input_stats, run_times: input_run_times}
       {input, report(input_suite, input_json)}
     end) |> Map.new

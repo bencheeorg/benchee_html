@@ -28,9 +28,15 @@ defmodule Benchee.Formatters.PlotlyJSTest do
   test ".format has the important suite data in the html result" do
     %{"Some Input" => html} = PlotlyJS.format @sample_suite
 
-    assert_includes html, ["[190,200,210]", "5.0e3",
-                           "200.0", "190.0", "My Job"]
+    assert_includes html, ["[190,200,210]", "\"average\":200.0",
+                           "\"median\":190.0","\"ips\":5.0e3", "My Job"]
 
+  end
+
+  test ".format produces the right JSON data without the input level" do
+    %{"Some Input" => html} = PlotlyJS.format @sample_suite
+
+    assert html =~ "{\"statistics\":{\"My Job\""
   end
 
   defp assert_includes(html, expected_contents) do
