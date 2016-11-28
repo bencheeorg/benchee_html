@@ -33,7 +33,7 @@ defmodule BencheePlotlyJS.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:benchee,      "~> 0.5"},
+      {:benchee,      "~> 0.6", git: "git@github.com:PragTob/benchee.git"},
       {:benchee_json, "~> 0.1", git: "git@github.com:PragTob/benchee_json.git"}
     ]
   end

@@ -1,3 +1,4 @@
-%{"benchee": {:hex, :benchee, "0.5.0", "de9555c5183b1cbb5cbddac723a03accdf6869cd9330f45064dd4411ee060ba1", [:mix], []},
-  "benchee_json": {:git, "git@github.com:PragTob/benchee_json.git", "032c886f3e7882c2f371466b26fc6b810fadeb48", []},
-  "poison": {:hex, :poison, "2.2.0", "4763b69a8a77bd77d26f477d196428b741261a761257ff1cf92753a0d4d24a63", [:mix], []}}
+%{"benchee": {:git, "git@github.com:PragTob/benchee.git", "41c50dc36662749d1f19cbbfed0d476bace91ae9", []},
+  "benchee_json": {:git, "git@github.com:PragTob/benchee_json.git", "20efea347b6fef36befd3afa4177a60ec8e60905", []},
+  "deep_merge": {:hex, :deep_merge, "0.1.0", "253ddbd6a3c0f9806642ac3ee1517a3dddb7989250ca4edc9abe983a6e6e9244", [:mix], []},
+  "poison": {:hex, :poison, "3.0.0", "625ebd64d33ae2e65201c2c14d6c85c27cc8b68f2d0dd37828fde9c6920dd131", [:mix], []}}
