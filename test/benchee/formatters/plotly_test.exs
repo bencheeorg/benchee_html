@@ -51,10 +51,17 @@ defmodule Benchee.Formatters.PlotlyJSTest do
       return = Benchee.Formatters.PlotlyJS.output(@sample_suite)
       assert return == @sample_suite
       assert File.exists? @expected_filename
+      assert_assets_copied
+
       content = File.read! @expected_filename
       assert_includes content, ["My Job", "average"]
     after
       if File.exists?(@test_directory), do: File.rm_rf! @test_directory
     end
+  end
+
+  defp assert_assets_copied do
+    assert File.exists? "#{@test_directory}/assets/javascripts/benchee.js"
+    assert File.exists? "#{@test_directory}/assets/javascripts/plotly-latest.min.js"
   end
 end
