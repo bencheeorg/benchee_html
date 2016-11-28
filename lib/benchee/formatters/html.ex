@@ -54,9 +54,10 @@ defmodule Benchee.Formatters.HTML do
   def format(%{statistics: statistics, run_times: run_times}) do
     statistics
     |> Enum.map(fn({input, input_stats}) ->
+         sorted_stats = Benchee.Statistics.sort input_stats
          input_run_times = run_times[input]
          input_json = Benchee.Formatters.JSON.format_measurements(input_stats, input_run_times)
-         input_suite = %{statistics: input_stats, run_times: input_run_times}
+         input_suite = %{statistics: sorted_stats, run_times: input_run_times}
          {input, report(input_suite, input_json)}
        end)
     |> Map.new
