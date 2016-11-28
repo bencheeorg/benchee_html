@@ -28,11 +28,6 @@ defmodule Benchee.Formatters.PlotlyJS do
     raise "You need to specify a file to write the csv to in the configuration as %{csv: %{file: \"my.html\"}}"
   end
 
-  @column_descriptors ["Name", "Iterations per Second", "Average",
-                       "Standard Deviation",
-                       "Standard Deviation Iterations Per Second",
-                       "Standard Deviation Ratio", "Median"]
-
   @doc """
   Transforms the statistical results from benchmarking to html to be written
   somewhere, such as a file through `IO.write/2`.
