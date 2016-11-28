@@ -16,12 +16,17 @@ defmodule Benchee.Formatters.PlotlyJS do
   configuration under `%{plotly_js: %{file: "my.html"}}`
   """
   def output(map)
-  def output(suite = %{config: %{plotly_js: %{file: file}} }) do
-    file = File.open! file, [:write]
-    html = suite
-           |> format
+  def output(suite = %{config: %{plotly_js: %{file: filename}} }) do
+    # copy_asset_files_to_destination
 
-    IO.write(file, html)
+    suite
+    |> format
+    |> Benchee.Utility.File.each_input(filename, fn(file, content) ->
+         IO.write(file, content)
+       end)
+
+
+
     suite
   end
   def output(_suite) do
@@ -33,9 +38,13 @@ defmodule Benchee.Formatters.PlotlyJS do
   somewhere, such as a file through `IO.write/2`.
 
   """
-  def format(suite) do
-    suite_json = Benchee.Formatters.JSON.format(suite)
-    report(suite, suite_json)
+  def format(%{statistics: statistics, run_times: run_times}) do
+    Enum.map(statistics, fn({input, input_stats}) ->
+      input_run_times = run_times[input]
+      input_json = Benchee.Formatters.JSON.format_measurements(statistics, run_times)
+      input_suite = %{statistics: input_stats, run_times: input_run_times}
+      {input, report(input_suite, input_json)}
+    end) |> Map.new
   end
 
   defp format_duration(duration) do
