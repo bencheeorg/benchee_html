@@ -69,4 +69,8 @@ defmodule Benchee.Formatters.PlotlyJS do
   defp format_count(count) do
     Benchee.Conversion.Format.format({count, :one}, Benchee.Conversion.Count)
   end
+
+  defp format_percent(deviation_percent) do
+    Benchee.Conversion.DeviationPercent.format deviation_percent
+  end
 end
