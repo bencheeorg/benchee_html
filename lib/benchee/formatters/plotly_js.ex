@@ -17,7 +17,8 @@ defmodule Benchee.Formatters.PlotlyJS do
   """
   def output(map)
   def output(suite = %{config: %{plotly_js: %{file: filename}} }) do
-    # copy_asset_files_to_destination
+    base_directory = create_base_directory(filename)
+    copy_asset_files(base_directory)
 
     suite
     |> format
@@ -31,6 +32,20 @@ defmodule Benchee.Formatters.PlotlyJS do
   end
   def output(_suite) do
     raise "You need to specify a file to write the csv to in the configuration as %{csv: %{file: \"my.html\"}}"
+  end
+
+  defp create_base_directory(filename) do
+    base_directory = Path.dirname filename
+    File.mkdir_p! base_directory
+    base_directory
+  end
+
+  @asset_directory "assets"
+  defp copy_asset_files(base_directory) do
+    asset_target_directory = Path.join(base_directory, @asset_directory)
+    asset_source_directory = Application.app_dir(:benchee_plotly_js,
+                                                 "priv/assets/")
+    File.cp_r! asset_source_directory, asset_target_directory
   end
 
   @doc """
