@@ -2,8 +2,9 @@ defmodule Benchee.Formatters.PlotlyJSTest do
   use ExUnit.Case
   alias Benchee.Formatters.PlotlyJS
 
-  @filename "my.html"
-  @expected_filename "my_some_input.html"
+  @test_directory "test_output"
+  @filename "#{@test_directory}/my.html"
+  @expected_filename "#{@test_directory}/my_some_input.html"
   @sample_suite %{
                   config: %{plotly_js: %{file: @filename}},
                   statistics: %{
@@ -53,7 +54,7 @@ defmodule Benchee.Formatters.PlotlyJSTest do
       content = File.read! @expected_filename
       assert_includes content, ["My Job", "average"]
     after
-      if File.exists?(@expected_filename), do: File.rm! @expected_filename
+      if File.exists?(@test_directory), do: File.rm_rf! @test_directory
     end
   end
 end
