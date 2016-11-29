@@ -3,7 +3,7 @@ var RUN_TIME_AXIS_TITLE = "Run Time in microseconds";
 var runtimeHistogramData = function(runTimeData) {
   var data = [
     {
-      type: 'histogram',
+      type: "histogram",
       x: runTimeData
     }
   ];
@@ -20,7 +20,7 @@ var rawRunTimeData = function(runTimeData) {
   var data = [
     {
       y: runTimeData,
-      type: 'bar'
+      type: "bar"
     }
   ];
 
@@ -33,17 +33,17 @@ var ipsComparisonData = function(statistics, sortOrder) {
   var errors = [];
   sortOrder.forEach(function(name) {
     names.push(name);
-    ips.push(statistics[name]['ips']);
-    errors.push(statistics[name]['std_dev_ips']);
+    ips.push(statistics[name]["ips"]);
+    errors.push(statistics[name]["std_dev_ips"]);
   });
 
   var data = [
     {
-      type: 'bar',
+      type: "bar",
       x: names,
       y: ips,
       error_y: {
-        type: 'data',
+        type: "data",
         array: errors,
         visible: true
       }
@@ -58,8 +58,8 @@ var boxPlotData = function(runTimes, sortOrder) {
     return {
       name: name,
       y: runTimes[name],
-      type: 'box'
-    }
+      type: "box"
+    };
   });
 
   return data;
@@ -106,7 +106,7 @@ window.drawRunTimeHistograms = function(runTimes) {
     var runTimeData = runTimes[jobName];
     var layout = {
       title: jobName + " Run Times Histogram",
-      xaxis: { title: "Raw run time bucket" },
+      xaxis: { title: "Raw run time buckets in microseconds" },
       yaxis: { title: "Occurences in sample" }
     };
     drawGraph(node, runtimeHistogramData(runTimeData), layout);
