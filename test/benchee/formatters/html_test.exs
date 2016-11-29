@@ -23,7 +23,8 @@ defmodule Benchee.Formatters.HTMLTest do
                       }
                     }
                   },
-                  run_times: %{"Some Input" => %{"My Job" => [190, 200, 210]}}
+                  run_times: %{"Some Input" => %{"My Job" => [190, 200, 210]}},
+                  system: %{elixir: "1.4.0", erlang: "19.1"}
                 }
   test ".format returns an HTML-ish string" do
     %{"Some Input" => html} = HTML.format @sample_suite
@@ -52,6 +53,13 @@ defmodule Benchee.Formatters.HTMLTest do
     assert html =~ "&plusmn;"
   end
 
+  test ".format includes the elixir and erlang version" do
+    %{"Some Input" => html} = HTML.format @sample_suite
+
+    assert html =~ "Elixir 1.4.0"
+    assert html =~ "Erlang 19.1"
+  end
+
   defp assert_includes(html, expected_contents) do
     Enum.each expected_contents, fn(expected_content) ->
       assert html =~ expected_content
@@ -64,7 +72,7 @@ defmodule Benchee.Formatters.HTMLTest do
         return = Benchee.Formatters.HTML.output(@sample_suite)
         assert return == @sample_suite
       end
-      
+
       assert File.exists? @expected_filename
       assert_assets_copied()
 

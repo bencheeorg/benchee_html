@@ -15,6 +15,7 @@ article, .header {
 }
 
 .header h1 {
+  display: inline-block;
   color: #4D1D4D;
   font-weight: 600;
   font-size: 16px;
@@ -22,6 +23,16 @@ article, .header {
   margin: 10px 0px 0px 0px;
   padding: 20px 0px;
 }
+
+.version-note {
+  color: #4D1D4D;
+  font-size: 12px;
+  float: right;
+  margin: 10px 0px 0px 0px;
+  padding: 20px 0px;
+  line-height: 16px;
+}
+
 
 article {
   padding: 15px;

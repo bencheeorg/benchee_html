@@ -49,13 +49,17 @@ defmodule Benchee.Formatters.HTML do
   somewhere, such as a file through `IO.write/2`.
 
   """
-  def format(%{statistics: statistics, run_times: run_times}) do
+  def format(%{statistics: statistics, run_times: run_times, system: system}) do
     statistics
     |> Enum.map(fn({input, input_stats}) ->
          sorted_stats = Benchee.Statistics.sort input_stats
          input_run_times = run_times[input]
          input_json = Benchee.Formatters.JSON.format_measurements(input_stats, input_run_times)
-         input_suite = %{statistics: sorted_stats, run_times: input_run_times}
+         input_suite = %{
+           statistics: sorted_stats,
+           run_times:  input_run_times,
+           system:     system
+         }
          {input, report(input_suite, input_json)}
        end)
     |> Map.new

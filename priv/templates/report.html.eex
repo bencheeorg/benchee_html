@@ -11,6 +11,7 @@
 
     <div class="header">
       <h1>benchee report</h1>
+      <span class="version-note">Elixir <%= suite.system.elixir%>, Erlang <%= suite.system.erlang %></span>
     </div>
 
     <article>
