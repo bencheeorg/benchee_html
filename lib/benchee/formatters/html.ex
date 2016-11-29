@@ -27,7 +27,7 @@ defmodule Benchee.Formatters.HTML do
     suite
   end
   def output(_suite) do
-    raise "You need to specify a file to write the csv to in the configuration as %{csv: %{file: \"my.html\"}}"
+    raise "You need to specify a file to write the HTML to in the configuration as html: [file: \"my.html\"]"
   end
 
   defp create_base_directory(filename) do
