@@ -36,7 +36,7 @@ defmodule Benchee.Formatters.HTMLTest do
 
     assert_includes html,
       ["[190,200,210]", "\"average\":200.0", "\"median\":190.0","\"ips\":5.0e3",
-       "My Job", ">3<", ">190<", ">210<"]
+       "My Job", ">3<", ">190.00 μs<", ">210.00 μs<", ">200.00 μs<"]
 
   end
 
@@ -46,11 +46,11 @@ defmodule Benchee.Formatters.HTMLTest do
     assert html =~ "{\"statistics\":{\"My Job\""
   end
 
-  test ".format does not use ± as it breaks" do
+  test ".format shows the units alright" do
     %{"Some Input" => html} = HTML.format @sample_suite
 
-    refute html =~ "±"
-    assert html =~ "&plusmn;"
+    assert html =~ "±"
+    assert html =~ "μs"
   end
 
   test ".format includes the elixir and erlang version" do

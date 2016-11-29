@@ -1,5 +1,8 @@
 defmodule Benchee.Formatters.HTML do
   require EEx
+  alias Benchee.Conversion.{Format, Duration, Count, DeviationPercent}
+  alias Benchee.Utility.FileCreation
+  alias Benchee.Formatters.JSON
 
   EEx.function_from_file :def, :report,
                          "priv/templates/report.html.eex",
@@ -22,7 +25,7 @@ defmodule Benchee.Formatters.HTML do
 
     suite
     |> format
-    |> Benchee.Utility.FileCreation.each(filename)
+    |> FileCreation.each(filename)
 
     suite
   end
@@ -54,7 +57,7 @@ defmodule Benchee.Formatters.HTML do
     |> Enum.map(fn({input, input_stats}) ->
          sorted_stats = Benchee.Statistics.sort input_stats
          input_run_times = run_times[input]
-         input_json = Benchee.Formatters.JSON.format_measurements(input_stats, input_run_times)
+         input_json = JSON.format_measurements(input_stats, input_run_times)
          input_suite = %{
            statistics: sorted_stats,
            run_times:  input_run_times,
@@ -67,17 +70,15 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp format_duration(duration) do
-    Benchee.Conversion.Format.format(duration, "", "")
+    Format.format({:erlang.float(duration), :microsecond}, Duration)
   end
 
   defp format_count(count) do
-    Benchee.Conversion.Format.format({count, :one}, Benchee.Conversion.Count)
+    Format.format({count, :one}, Count)
   end
 
   defp format_percent(deviation_percent) do
-    deviation_percent
-    |> Benchee.Conversion.DeviationPercent.format
-    |> String.replace("±", "&plusmn;")
+    DeviationPercent.format deviation_percent
   end
 
   @job_count_class "job-count-"
