@@ -57,7 +57,7 @@
       </section>
     </article>
 
-    <%= for {name, _} <- suite.run_times do %>
+    <%= for {name, _} <- suite.statistics do %>
       <article>
         <h2><a name="<%= name %>"></a><%= name %></h2>
         <section class="benchee-plot-container">
