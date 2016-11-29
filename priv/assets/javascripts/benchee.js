@@ -1,13 +1,5 @@
 var RUN_TIME_AXIS_TITLE = "Run Time in microseconds";
 
-var eachProperty = function(object, fun) {
-  for (var property in object) {
-    if (object.hasOwnProperty(property)) {
-      fun(property, object)
-    }
-  }
-};
-
 var runtimeHistogramData = function(runTimeData) {
   var data = [
     {
@@ -35,17 +27,15 @@ var rawRunTimeData = function(runTimeData) {
   return data;
 };
 
-var ipsComparisonData = function(statistics) {
+var ipsComparisonData = function(statistics, sortOrder) {
   var names = [];
   var ips = [];
   var errors = [];
-  for (var name in statistics) {
-    if (statistics.hasOwnProperty(name)) {
-      names.push(name);
-      ips.push(statistics[name]['ips']);
-      errors.push(statistics[name]['std_dev_ips']);
-    }
-  };
+  sortOrder.forEach(function(name) {
+    names.push(name);
+    ips.push(statistics[name]['ips']);
+    errors.push(statistics[name]['std_dev_ips']);
+  });
 
   var data = [
     {
@@ -63,35 +53,34 @@ var ipsComparisonData = function(statistics) {
   return data;
 };
 
-var boxPlotData = function(runTimes) {
-  data = []
-  eachProperty(runTimes, function(name, runTime) {
-    data.push({
+var boxPlotData = function(runTimes, sortOrder) {
+  var data = sortOrder.map(function(name) {
+    return {
       name: name,
-      y: runTime[name],
+      y: runTimes[name],
       type: 'box'
-    })
+    }
   });
 
   return data;
 };
 
-window.drawIpsComparisonChart = function(statistics) {
+window.drawIpsComparisonChart = function(statistics, sortOrder) {
   var ipsNode = document.getElementById("ips-comparison");
   var layout = {
     title: "Iterations per Second",
     yaxis: { title: "Iterations per Second" }
   };
-  drawGraph(ipsNode, ipsComparisonData(statistics), layout);
+  drawGraph(ipsNode, ipsComparisonData(statistics, sortOrder), layout);
 };
 
-window.drawComparisonBoxPlot = function(runTimes) {
+window.drawComparisonBoxPlot = function(runTimes, sortOrder) {
   var boxNode = document.getElementById("box-plot");
   var layout = {
     title: "Run Time Boxplot",
     yaxis: { title: RUN_TIME_AXIS_TITLE }
   };
-  drawGraph(boxNode, boxPlotData(runTimes), layout);
+  drawGraph(boxNode, boxPlotData(runTimes, sortOrder), layout);
 };
 
 window.drawRawRunTimeCharts = function(runTimes) {

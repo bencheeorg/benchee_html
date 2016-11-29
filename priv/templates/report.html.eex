@@ -73,12 +73,13 @@
     <script src="assets/javascripts/benchee.js"></script>
 
     <script>
-      var suite = <%= suite_json %>;
-      var runTimes = suite.run_times;
+      var suite      = <%= suite_json %>;
+      var runTimes   = suite.run_times;
       var statistics = suite.statistics;
+      var sortOrder = suite.sort_order;
 
-      drawIpsComparisonChart(statistics);
-      drawComparisonBoxPlot(runTimes);
+      drawIpsComparisonChart(statistics, sortOrder);
+      drawComparisonBoxPlot(runTimes, sortOrder);
       drawRawRunTimeCharts(runTimes);
       drawRunTimeHistograms(runTimes);
     </script>
