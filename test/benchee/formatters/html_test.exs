@@ -32,8 +32,9 @@ defmodule Benchee.Formatters.HTMLTest do
   test ".format has the important suite data in the html result" do
     %{"Some Input" => html} = HTML.format @sample_suite
 
-    assert_includes html, ["[190,200,210]", "\"average\":200.0",
-                           "\"median\":190.0","\"ips\":5.0e3", "My Job"]
+    assert_includes html,
+      ["[190,200,210]", "\"average\":200.0", "\"median\":190.0","\"ips\":5.0e3",
+       "My Job", ">3<", ">190<", ">210<"]
 
   end
 

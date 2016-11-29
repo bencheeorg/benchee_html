@@ -25,6 +25,8 @@
               <th>Average</th>
               <th>Deviation</th>
               <th>median</th>
+              <th>minimum</th>
+              <th>maximum</th>
               <th>Sample size</th>
             </tr>
           </thead>
@@ -36,6 +38,8 @@
                 <td><%= format_duration statistics.average %></td>
                 <td><%= format_percent statistics.std_dev_ratio %></td>
                 <td><%= format_duration statistics.median %></td>
+                <td><%= statistics.minimum %></td>
+                <td><%= statistics.maximum %></td>
                 <td><%= statistics.sample_size %></td>
               </tr>
             <% end %>
