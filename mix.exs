@@ -10,8 +10,8 @@ defmodule BencheeHTML.Mixfile do
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       docs: [source_ref: @version],
-      deps: deps,
-      package: package,
+      deps: deps(),
+      package: package(),
       name: "benchee_html",
       source_url: "https://github.com/PragTob/benchee_html",
       description: """

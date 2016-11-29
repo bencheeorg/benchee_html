@@ -58,7 +58,7 @@ defmodule Benchee.Formatters.HTMLTest do
       return = Benchee.Formatters.HTML.output(@sample_suite)
       assert return == @sample_suite
       assert File.exists? @expected_filename
-      assert_assets_copied
+      assert_assets_copied()
 
       content = File.read! @expected_filename
       assert_includes content, ["My Job", "average"]
