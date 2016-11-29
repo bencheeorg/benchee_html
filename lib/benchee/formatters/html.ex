@@ -22,9 +22,7 @@ defmodule Benchee.Formatters.HTML do
 
     suite
     |> format
-    |> Benchee.Utility.File.each_input(filename, fn(file, content) ->
-         IO.write(file, content)
-       end)
+    |> Benchee.Utility.FileCreation.each(filename)
 
     suite
   end

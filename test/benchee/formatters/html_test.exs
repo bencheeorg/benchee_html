@@ -1,6 +1,7 @@
 defmodule Benchee.Formatters.HTMLTest do
   use ExUnit.Case
   alias Benchee.Formatters.HTML
+  import ExUnit.CaptureIO
 
   @test_directory "test_output"
   @filename "#{@test_directory}/my.html"
@@ -57,15 +58,31 @@ defmodule Benchee.Formatters.HTMLTest do
     end
   end
 
-  test ".output returns the suite again unchanged" do
+  test ".output returns the suite again unchanged and produces files" do
     try do
-      return = Benchee.Formatters.HTML.output(@sample_suite)
-      assert return == @sample_suite
+      capture_io fn ->
+        return = Benchee.Formatters.HTML.output(@sample_suite)
+        assert return == @sample_suite
+      end
+      
       assert File.exists? @expected_filename
       assert_assets_copied()
 
       content = File.read! @expected_filename
       assert_includes content, ["My Job", "average"]
+    after
+      if File.exists?(@test_directory), do: File.rm_rf! @test_directory
+    end
+  end
+
+  test ".output let's you know where it put the html" do
+    try do
+      output = capture_io fn ->
+        Benchee.Formatters.HTML.output(@sample_suite)
+      end
+
+      assert output =~ @expected_filename
+      assert File.exists? @expected_filename
     after
       if File.exists?(@test_directory), do: File.rm_rf! @test_directory
     end
