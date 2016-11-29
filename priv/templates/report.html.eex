@@ -6,6 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/benchee.css">
+    <link rel="stylesheet" type="text/css" href="assets/fontello/css/fontello.css">
   </head>
   <body>
 
@@ -15,7 +16,17 @@
     </div>
 
     <article>
-      <h2>Comparison</h2>
+      <h2>
+        Comparison
+        <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#comparison">
+          <i
+          class="benchee-help-icon icon-question-circle-o"
+          title="Comparisons of the different benchmarking jobs.
+  For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better.
+  The Box Plot shows a distribution of run times with the median and outliers."
+          ></i>
+        </a>
+      </h2>
       <section>
         <h3>Data Table</h3>
         <table>
@@ -59,7 +70,19 @@
 
     <%= for {name, _} <- suite.statistics do %>
       <article>
-        <h2><a name="<%= name %>"></a><%= name %></h2>
+        <h2>
+          <a name="<%= name %>"></a>
+          <%= name %>
+          <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
+            <i
+              class="benchee-help-icon icon-question-circle-o"
+              title="Graphs showing the individual run time distribution for <%= name %>.
+  Run Times Histpgram shows the distribution of occurences of specific run times in buckets.
+  Raw Run Times shows all individual recorded run times in the order they were recorded in."
+            ></i>
+          </a>
+        </h2>
+
         <section class="benchee-plot-container">
           <div class="sorted-run-times plot" data-job-name="<%= name %>"></div>
         </section>

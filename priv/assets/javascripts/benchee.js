@@ -68,7 +68,7 @@ var boxPlotData = function(runTimes, sortOrder) {
 window.drawIpsComparisonChart = function(statistics, sortOrder) {
   var ipsNode = document.getElementById("ips-comparison");
   var layout = {
-    title: "Iterations per Second",
+    title: "Iterations per Second (Average)",
     yaxis: { title: "Iterations per Second" }
   };
   drawGraph(ipsNode, ipsComparisonData(statistics, sortOrder), layout);

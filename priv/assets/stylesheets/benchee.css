@@ -33,6 +33,10 @@ article, .header {
   line-height: 16px;
 }
 
+.benchee-help-icon {
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
 
 article {
   padding: 15px;
@@ -48,6 +52,13 @@ h2 {
   border-bottom: 1px solid #ccc;
   margin: 0px 0px 15px 0px;
   padding: 5px 0px;
+}
+
+.benchee-help-icon {
+  margin-left: 0.3em;
+  font-size: 12px;
+  position: relative;
+  top: -0.8em;
 }
 
 h3 {
