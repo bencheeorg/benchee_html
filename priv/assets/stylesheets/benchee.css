@@ -102,3 +102,36 @@ a:hover {
   color: #05676E;
   text-decoration: none;
 }
+
+.benchee-plot-container {
+  display: flex;
+  justify-content: center;
+}
+
+.plot {
+  width: 100%
+}
+
+.job-count-1 {
+  max-width: 300px;
+}
+
+.job-count-2 {
+  max-width: 450px;
+}
+
+.job-count-3 {
+  max-width: 600px;
+}
+
+.job-count-4 {
+  max-width: 750px;
+}
+
+.job-count-5 {
+  max-width: 900px;
+}
+
+.job-count-6 {
+  max-width: 1100px;
+}

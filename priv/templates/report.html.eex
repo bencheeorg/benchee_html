@@ -48,23 +48,23 @@
         </table>
       </section>
 
-      <section>
-        <div id="ips-comparison"></div>
+      <section class="benchee-plot-container">
+        <div id="ips-comparison" class="<%= max_width_class(suite.job_count) %> plot"></div>
       </section>
 
-      <section>
-        <div id="box-plot"></div>
+      <section class="benchee-plot-container">
+        <div id="box-plot" class="<%= max_width_class(suite.job_count) %> plot"></div>
       </section>
     </article>
 
     <%= for {name, _} <- suite.run_times do %>
       <article>
         <h2><a name="<%= name %>"></a><%= name %></h2>
-        <section>
-          <div class="sorted-run-times" data-job-name="<%= name %>"></div>
+        <section class="benchee-plot-container">
+          <div class="sorted-run-times plot" data-job-name="<%= name %>"></div>
         </section>
-        <section>
-          <div class="raw-run-times" data-job-name="<%= name %>"></div>
+        <section class="benchee-plot-container">
+          <div class="raw-run-times plot" data-job-name="<%= name %>"></div>
         </section>
       </article>
     <% end %>

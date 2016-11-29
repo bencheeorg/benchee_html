@@ -58,7 +58,8 @@ defmodule Benchee.Formatters.HTML do
          input_suite = %{
            statistics: sorted_stats,
            run_times:  input_run_times,
-           system:     system
+           system:     system,
+           job_count:  length(sorted_stats)
          }
          {input, report(input_suite, input_json)}
        end)
@@ -78,4 +79,12 @@ defmodule Benchee.Formatters.HTML do
     |> Benchee.Conversion.DeviationPercent.format
     |> String.replace("±", "&plusmn;")
   end
+
+  @job_count_class "job-count-"
+  # there seems to be no way to set a maximum bar width other than through chart
+  # allowed width... or I can't find it.
+  defp max_width_class(job_count) when job_count < 7 do
+    "#{@job_count_class}#{job_count}"
+  end
+  defp max_width_class(_job_count), do: ""
 end

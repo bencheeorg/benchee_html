@@ -12,7 +12,7 @@ Benchee.run %{
   "70k"  => fn -> Enum.sort(list_70k) end,
   "90k"  => fn -> Enum.sort(list_90k) end,
   "100k" => fn -> Enum.sort(list_100k) end,
-}, time: 2,
+}, time:   2,
    warmup: 0,
    formatters: [
      &Benchee.Formatters.Console.output/1,
