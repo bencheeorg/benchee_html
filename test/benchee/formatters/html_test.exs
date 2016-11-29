@@ -60,6 +60,41 @@ defmodule Benchee.Formatters.HTMLTest do
     assert html =~ "Erlang 19.1"
   end
 
+  test ".format mentions the input" do
+    %{"Some Input" => html} = HTML.format @sample_suite
+
+    assert html =~ "Some Input"
+  end
+
+  test ".format does not render the label if no input was given" do
+    marker = Benchee.Benchmark.no_input
+    suite = %{
+      config: %{html: %{file: @filename}},
+      statistics: %{
+        marker => %{
+          "My Job" => %{
+            average:       200.0,
+            ips:           5000.0,
+            std_dev:       20,
+            std_dev_ratio: 0.1,
+            std_dev_ips:   500,
+            median:        190.0,
+            sample_size:   3,
+            minimum:       190,
+            maximum:       210
+          }
+        }
+      },
+      run_times: %{ marker => %{"My Job" => [190, 200, 210]}},
+      system: %{elixir: "1.4.0", erlang: "19.1"}
+    }
+    %{^marker => html} = HTML.format suite
+
+    refute html =~ "#{marker}"
+    refute html =~ "input-label"
+
+  end
+
   defp assert_includes(html, expected_contents) do
     Enum.each expected_contents, fn(expected_content) ->
       assert html =~ expected_content

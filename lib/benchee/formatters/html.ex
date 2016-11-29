@@ -6,7 +6,7 @@ defmodule Benchee.Formatters.HTML do
 
   EEx.function_from_file :def, :report,
                          "priv/templates/report.html.eex",
-                         [:suite, :suite_json]
+                         [:input_name, :suite, :suite_json]
 
   @moduledoc """
   Functionality for converting Benchee benchmarking results to an HTML page
@@ -64,7 +64,7 @@ defmodule Benchee.Formatters.HTML do
            system:     system,
            job_count:  length(sorted_stats)
          }
-         {input, report(input_suite, input_json)}
+         {input, report(input, input_suite, input_json)}
        end)
     |> Map.new
   end
@@ -79,6 +79,10 @@ defmodule Benchee.Formatters.HTML do
 
   defp format_percent(deviation_percent) do
     DeviationPercent.format deviation_percent
+  end
+
+  defp render_input_label?(input_name) do
+    input_name != Benchee.Benchmark.no_input
   end
 
   @job_count_class "job-count-"

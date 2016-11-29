@@ -33,6 +33,16 @@ article, .header {
   line-height: 16px;
 }
 
+.input-label {
+  border: 1px solid #6f2a6f;
+  border-radius: 3px;
+  display: inline-block;
+  margin: 0px 3px;
+  color: #602460;
+  padding: 0px 5px;
+  font-size: 12px;
+}
+
 .benchee-help-icon {
   margin-bottom: 10px;
   margin-left: 5px;
