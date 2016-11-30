@@ -1,5 +1,3 @@
-# It is possible to use multiple formatters so that you have both the Console
-# output and a csv file.
 map_fun = fn(i) -> [i, i * i] end
 
 Benchee.run(%{
