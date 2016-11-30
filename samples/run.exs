@@ -1,5 +1,5 @@
 # It is possible to use multiple formatters so that you have both the Console
-# output and a csv file.
+# output and an HTML file.
 list = Enum.to_list(1..10_000)
 map_fun = fn(i) -> [i, i * i] end
 
