@@ -4,7 +4,7 @@ defmodule Benchee.Formatters.HTML do
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
 
-  EEx.function_from_file :def, :report,
+  EEx.function_from_file :defp, :report,
                          "priv/templates/report.html.eex",
                          [:input_name, :suite, :suite_json]
 
