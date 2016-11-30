@@ -11,6 +11,23 @@ defmodule Benchee.Formatters.HTML do
   @moduledoc """
   Functionality for converting Benchee benchmarking results to an HTML page
   with plotly.js generated graphs and friends.
+
+  ## Examples
+
+      list = Enum.to_list(1..10_000)
+      map_fun = fn(i) -> [i, i * i] end
+
+      Benchee.run(%{
+        "flat_map"    => fn -> Enum.flat_map(list, map_fun) end,
+        "map.flatten" => fn -> list |> Enum.map(map_fun) |> List.flatten end
+      },
+        formatters: [
+          &Benchee.Formatters.HTML.output/1,
+          &Benchee.Formatters.Console.output/1
+        ],
+        html: [file: "samples_output/flat_map.html"],
+      )
+
   """
 
   @doc """
