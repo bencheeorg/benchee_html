@@ -95,3 +95,24 @@ For the ones that just want to scroll through, here they are once more.
 ### Raw run times
 
 ![raw_run_times](http://www.pragtob.info/benchee/images/raw_run_times.png)
+
+## Contributing
+
+Contributions to benchee_html are very welcome! Bug reports, documentation, spelling corrections, whole features, feature ideas, bugfixes, new plugins, fancy graphics... all of those (and probably more) are much appreciated contributions!
+
+Please respect the [Code of Conduct](//github.com/PragTob/benchee_html/blob/master/CODE_OF_CONDUCT.md).
+
+You can get started with a look at the [open issues](https://github.com/PragTob/benchee_html/issues).
+
+A couple of (hopefully) helpful points:
+
+* Feel free to ask for help and guidance on an issue/PR ("How can I implement this?", "How could I test this?", ...)
+* Feel free to open early/not yet complete pull requests to get some early feedback
+* When in doubt if something is a good idea open an issue first to discuss it
+* In case I don't respond feel free to bump the issue/PR or ping me on other places
+
+## Development
+
+* `mix deps.get` to install dependencies
+* `mix test` to run tests
+* `mix credo` or `mix credo --strict` to find code style problems (not too strict with the 80 width limit for sample output in the docs)
