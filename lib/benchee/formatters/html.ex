@@ -81,8 +81,16 @@ defmodule Benchee.Formatters.HTML do
     DeviationPercent.format deviation_percent
   end
 
-  defp render_input_label?(input_name) do
+  defp inputs_supplied?(input_name) do
     input_name != Benchee.Benchmark.no_input
+  end
+
+  defp input_headline(input_name) do
+    if inputs_supplied?(input_name) do
+      " (#{input_name})"
+    else
+      ""
+    end
   end
 
   @job_count_class "job-count-"

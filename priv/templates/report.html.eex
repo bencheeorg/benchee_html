@@ -12,7 +12,7 @@
 
     <div class="header">
       <h1>benchee report</h1>
-      <%= if render_input_label?(input_name) do %>
+      <%= if inputs_supplied?(input_name) do %>
         <span class="input-label">
           <%= input_name %>
         </span>
@@ -106,12 +106,14 @@
       var suite      = <%= suite_json %>;
       var runTimes   = suite.run_times;
       var statistics = suite.statistics;
-      var sortOrder = suite.sort_order;
+      var sortOrder  = suite.sort_order;
 
-      drawIpsComparisonChart(statistics, sortOrder);
-      drawComparisonBoxPlot(runTimes, sortOrder);
-      drawRawRunTimeCharts(runTimes);
-      drawRunTimeHistograms(runTimes);
+      var inputHeadline = "<%= input_headline(input_name) %>"
+
+      drawIpsComparisonChart(statistics, sortOrder, inputHeadline);
+      drawComparisonBoxPlot(runTimes, sortOrder, inputHeadline);
+      drawRawRunTimeCharts(runTimes, inputHeadline);
+      drawRunTimeHistograms(runTimes, inputHeadline);
     </script>
   </body>
 </html>
