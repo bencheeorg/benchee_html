@@ -16,6 +16,7 @@ defmodule BencheeHTML.Mixfile do
       source_url: "https://github.com/PragTob/benchee_html",
       description: """
       HTML formatter with pretty graphs for the (micro) benchmarking library benchee.
+      Also allows export as PNG image!
       """
     ]
   end
