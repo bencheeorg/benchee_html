@@ -11,5 +11,5 @@ Benchee.run(%{
     &Benchee.Formatters.HTML.output/1,
     &Benchee.Formatters.Console.output/1
   ],
-  html: [file: "samples_output/my.html"],
+  html: [file: "samples_output/flat_map.html"],
 )
