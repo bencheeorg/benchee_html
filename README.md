@@ -6,6 +6,8 @@ To get a taste of what this is like you can check out an [online example report]
 
 ![ips](http://www.pragtob.info/benchee/images/ips.png)
 
+It not only generates HTML but also assets and into the same folder. You can just take it and drop it on your server, github pages or public dropbox directory if you want it to be accessible to someone else :)
+
 ## Installation
 
 Add `benchee_html` to your list of dependencies in `mix.exs`:
