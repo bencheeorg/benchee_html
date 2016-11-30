@@ -1,6 +1,6 @@
 # BencheeHTML [![Hex Version](https://img.shields.io/hexpm/v/benchee_html.svg)](https://hex.pm/packages/benchee_html) [![Build Status](https://travis-ci.org/PragTob/benchee_html.svg?branch=master)](https://travis-ci.org/PragTob/benchee_html)
 
-Formatter for [benchee](github.com/PragTob/benchee) to produce some standalone HTML with nice graphs, a data table etc. from your benchee benchmarking results :) Also allows you to export PNG images, the graphs are also somewhat explorable thanks to [plotly.js](https://plot.ly/javascript/)!
+Formatter for [benchee](//github.com/PragTob/benchee) to produce some standalone HTML with nice graphs, a data table etc. from your benchee benchmarking results :) Also allows you to export PNG images, the graphs are also somewhat explorable thanks to [plotly.js](https://plot.ly/javascript/)!
 
 To get a taste of what this is like you can check out an [online example report](http://www.pragtob.info/benchee/tco_detailed_big_(1_million).html) or look at this png exported chart of iterations per second including standard deviation:
 
