@@ -62,7 +62,16 @@ Benchee.run(%{
 
 ```
 
+When you hover the graphs in the HTML report, quite some plotly.js controls and links appear with which you can navigate in the graph and more.
+
 Be aware, that currently when too many samples are recorded (> 100_000 usually) rendering might break as plotly can't handle all that data. See [this issue](https://github.com/PragTob/benchee_html/issues/3) on how to quick fix it and what could be done in the future.
+
+## PNG image export/download
+
+When you hover the graph the controls appear and the left most of those is a camera and says "Download plot as png" - and it does what you'd expect. Refer to the image below if you need more guidance :)
+
+![download](http://www.pragtob.info/benchee/images/download.png)
+
 
 ## A look at graphs
 
