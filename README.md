@@ -2,9 +2,9 @@
 
 Formatter for [benchee](//github.com/PragTob/benchee) to produce some standalone HTML with nice graphs, a data table etc. from your benchee benchmarking results :) Also allows you to export PNG images, the graphs are also somewhat explorable thanks to [plotly.js](https://plot.ly/javascript/)!
 
-To get a taste of what this is like you can check out an [online example report](http://www.pragtob.info/benchee/tco_detailed_big_(1_million).html) or look at this png exported chart of iterations per second including standard deviation:
+To get a taste of what this is like you can check out an [online example report](http://www.pragtob.info/benchee/tco_detailed_big_(1_million).html) or look at this little screenshot:
 
-![ips](http://www.pragtob.info/benchee/images/ips.png)
+![ips](http://www.pragtob.info/benchee/images/report.png)
 
 It not only generates HTML but also assets and into the same folder. You can just take it and drop it on your server, github pages or public dropbox directory if you want it to be accessible to someone else :)
 
