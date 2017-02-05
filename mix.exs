@@ -12,6 +12,11 @@ defmodule BencheeHTML.Mixfile do
       docs: [source_ref: @version],
       deps: deps(),
       package: package(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        "coveralls": :test, "coveralls.detail": :test,
+        "coveralls.post": :test, "coveralls.html": :test,
+        "coveralls.travis": :test],
       name: "benchee_html",
       source_url: "https://github.com/PragTob/benchee_html",
       description: """
@@ -41,6 +46,7 @@ defmodule BencheeHTML.Mixfile do
     [
       {:benchee,        "~> 0.6"},
       {:benchee_json,   "~> 0.1"},
+      {:excoveralls,    "~> 0.6.1", only: :test},
       {:mix_test_watch, "~> 0.2",   only: :dev},
       {:credo,          "~> 0.4",   only: :dev},
       {:ex_doc,         "~> 0.11",  only: :dev},
