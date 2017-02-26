@@ -13,7 +13,15 @@ defmodule Benchee.Formatters.HTML do
   EEx.function_from_file :defp, :index,
                          "priv/templates/index.html.eex",
                          [:names_to_paths]
-
+  EEx.function_from_file :defp, :head,
+                         "priv/templates/partials/head.html.eex",
+                         []
+  EEx.function_from_file :defp, :header,
+                         "priv/templates/partials/header.html.eex",
+                         [:input_name, :suite]
+  EEx.function_from_file :defp, :js_includes,
+                         "priv/templates/partials/js_includes.html.eex",
+                         []
 
 
   @moduledoc """
