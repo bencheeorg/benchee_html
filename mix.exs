@@ -45,7 +45,7 @@ defmodule BencheeHTML.Mixfile do
   defp deps do
     [
       {:benchee,        "~> 0.6"},
-      {:benchee_json,   "~> 0.1"},
+      {:benchee_json,   "~> 0.1",   git: "git@github.com:PragTob/benchee_json.git"},
       {:excoveralls,    "~> 0.6.1", only: :test},
       {:mix_test_watch, "~> 0.2",   only: :dev},
       {:credo,          "~> 0.4",   only: :dev},
