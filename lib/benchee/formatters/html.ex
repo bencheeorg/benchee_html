@@ -72,18 +72,25 @@ defmodule Benchee.Formatters.HTML do
   def format(%{statistics: statistics, run_times: run_times, system: system}) do
     statistics
     |> Enum.map(fn({input, input_stats}) ->
-         sorted_stats = Benchee.Statistics.sort input_stats
-         input_run_times = run_times[input]
-         input_json = JSON.format_measurements(input_stats, input_run_times)
-         input_suite = %{
-           statistics: sorted_stats,
-           run_times:  input_run_times,
-           system:     system,
-           job_count:  length(sorted_stats)
-         }
-         {input, report(input, input_suite, input_json)}
+          reports_for_input(input, input_stats, run_times, system)
        end)
+    # overview/index view
     |> Map.new
+  end
+
+  defp reports_for_input(input, input_stats, run_times, system) do
+    sorted_stats = Benchee.Statistics.sort input_stats
+    input_run_times = run_times[input]
+    # render comparison
+    # individual job overviews
+    input_json = JSON.format_measurements(input_stats, input_run_times)
+    input_suite = %{
+      statistics: sorted_stats,
+      run_times:  input_run_times,
+      system:     system,
+      job_count:  length(sorted_stats)
+    }
+    {input, report(input, input_suite, input_json)}
   end
 
   defp format_duration(duration) do
