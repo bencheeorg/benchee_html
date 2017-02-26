@@ -2,10 +2,11 @@ defmodule Benchee.Formatters.HTMLTest do
   use ExUnit.Case
   alias Benchee.Formatters.HTML
   import ExUnit.CaptureIO
+  doctest Benchee.Formatters.HTML
 
   @test_directory "test_output"
   @filename "#{@test_directory}/my.html"
-  @expected_filename "#{@test_directory}/my_some_input.html"
+  @expected_filename "#{@test_directory}/my_some_input_comparison.html"
   @sample_suite %{
                   config: %{html: %{file: @filename}},
                   statistics: %{
@@ -27,12 +28,12 @@ defmodule Benchee.Formatters.HTMLTest do
                   system: %{elixir: "1.4.0", erlang: "19.1"}
                 }
   test ".format returns an HTML-ish string" do
-    %{"Some Input" => html} = HTML.format @sample_suite
+    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
     assert html =~ ~r/<html>.+<script>.+<\/html>/si
   end
 
   test ".format has the important suite data in the html result" do
-    %{"Some Input" => html} = HTML.format @sample_suite
+    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
 
     assert_includes html,
       ["[190,200,210]", "\"average\":200.0", "\"median\":190.0","\"ips\":5.0e3",
@@ -41,27 +42,27 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test ".format produces the right JSON data without the input level" do
-    %{"Some Input" => html} = HTML.format @sample_suite
+    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
 
     assert html =~ "{\"statistics\":{\"My Job\""
   end
 
   test ".format shows the units alright" do
-    %{"Some Input" => html} = HTML.format @sample_suite
+    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
 
     assert html =~ "±"
     assert html =~ "μs"
   end
 
   test ".format includes the elixir and erlang version" do
-    %{"Some Input" => html} = HTML.format @sample_suite
+    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
 
     assert html =~ "Elixir 1.4.0"
     assert html =~ "Erlang 19.1"
   end
 
   test ".format mentions the input" do
-    %{"Some Input" => html} = HTML.format @sample_suite
+    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
 
     assert html =~ "Some Input"
   end
@@ -88,7 +89,8 @@ defmodule Benchee.Formatters.HTMLTest do
       run_times: %{ marker => %{"My Job" => [190, 200, 210]}},
       system: %{elixir: "1.4.0", erlang: "19.1"}
     }
-    %{^marker => html} = HTML.format suite
+    comparison_key = [marker, "comparison"]
+    %{^comparison_key => html} = HTML.format suite
 
     refute html =~ "#{marker}"
     refute html =~ "input-label"

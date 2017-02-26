@@ -4,9 +4,17 @@ defmodule Benchee.Formatters.HTML do
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
 
-  EEx.function_from_file :defp, :report,
-                         "priv/templates/report.html.eex",
+  EEx.function_from_file :defp, :comparison,
+                         "priv/templates/comparison.html.eex",
                          [:input_name, :suite, :suite_json]
+  EEx.function_from_file :defp, :job_detail,
+                         "priv/templates/job_detail.html.eex",
+                         [:input_name, :measurements, :job_json]
+  EEx.function_from_file :defp, :index,
+                         "priv/templates/index.html.eex",
+                         [:names_to_paths]
+
+
 
   @moduledoc """
   Functionality for converting Benchee benchmarking results to an HTML page
@@ -74,15 +82,23 @@ defmodule Benchee.Formatters.HTML do
     |> Enum.map(fn({input, input_stats}) ->
           reports_for_input(input, input_stats, run_times, system)
        end)
-    # overview/index view
+    |> add_index(statistics)
+    |> List.flatten
     |> Map.new
   end
 
   defp reports_for_input(input, input_stats, run_times, system) do
-    sorted_stats = Benchee.Statistics.sort input_stats
-    input_run_times = run_times[input]
+    input_run_times = Map.fetch! run_times, input
     # render comparison
     # individual job overviews
+
+    comparison  = comparison_report input, input_stats, input_run_times, system
+    job_reports = job_reports(input, input_stats, input_run_times, system)
+    [comparison | job_reports]
+  end
+
+  defp comparison_report(input, input_stats, input_run_times, system) do
+    sorted_stats = Benchee.Statistics.sort input_stats
     input_json = JSON.format_measurements(input_stats, input_run_times)
     input_suite = %{
       statistics: sorted_stats,
@@ -90,7 +106,52 @@ defmodule Benchee.Formatters.HTML do
       system:     system,
       job_count:  length(sorted_stats)
     }
-    {input, report(input, input_suite, input_json)}
+    {[input, "comparison"], comparison(input, input_suite, input_json)}
+  end
+
+  defp job_reports(input, input_stats, input_run_times, system) do
+    merged_stats = merge_job_measurements(input_stats, input_run_times)
+    Enum.map(merged_stats, fn({job_name, measurements})->
+      input_json = Poison.encode(measurements)
+      {[input, job_name], job_detail(input, measurements, input_json)}
+    end)
+  end
+
+  def add_index(grouped_main_contents, statistics) do
+    # Create a structure that goes inputs => %{comparison => comparison_path, job_name => detailed_job_path}
+    [{[], index(%{})} | grouped_main_contents]
+  end
+
+  @doc """
+  Given statistics and run times for an input get all the data of a job
+  together.
+
+  ## Exmaples
+
+      iex> statistics = %{
+      ...>   "Job"   => %{average: 500.0},
+      ...>   "Other" => %{average: 200.0}
+      ...> }
+      iex> run_times = %{"Job" => [400, 600], "Other" => [150, 250]}
+      iex> Benchee.Formatters.HTML.merge_job_measurements(statistics, run_times)
+      %{
+        "Job" => %{
+          statistics: %{average: 500.0},
+          run_times:  [400, 600]
+        },
+        "Other" => %{
+          statistics: %{average: 200.0},
+          run_times: [150, 250]
+        }
+      }
+  """
+  def merge_job_measurements(statistics, run_times) do
+    Map.merge(statistics, run_times, fn(_key, stats, times) ->
+      %{
+        statistics: stats,
+        run_times: times
+      }
+    end)
   end
 
   defp format_duration(duration) do
