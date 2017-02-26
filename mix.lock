@@ -1,5 +1,5 @@
-%{"benchee": {:git, "git@github.com:PragTob/benchee.git", "12bdc56635b3aa855da5eb709abed04ee1e5d9c8", []},
-  "benchee_json": {:git, "git@github.com:PragTob/benchee_json.git", "596c549c3c8fa84fdd85fc8dc6c85b8f202591a8", []},
+%{"benchee": {:git, "https://github.com/PragTob/benchee.git", "12bdc56635b3aa855da5eb709abed04ee1e5d9c8", []},
+  "benchee_json": {:git, "https://github.com/PragTob/benchee_json.git", "596c549c3c8fa84fdd85fc8dc6c85b8f202591a8", []},
   "bunt": {:hex, :bunt, "0.1.6", "5d95a6882f73f3b9969fdfd1953798046664e6f77ec4e486e6fafc7caad97c6f", [:mix], []},
   "certifi": {:hex, :certifi, "1.0.0", "1c787a85b1855ba354f0b8920392c19aa1d06b0ee1362f9141279620a5be2039", [:rebar3], []},
   "credo": {:hex, :credo, "0.5.3", "0c405b36e7651245a8ed63c09e2d52c2e2b89b6d02b1570c4d611e0fcbecf4a2", [:mix], [{:bunt, "~> 0.1.6", [hex: :bunt, optional: false]}]},
