@@ -12,7 +12,7 @@ defmodule Benchee.Formatters.HTML do
                          [:input_name, :job_name,  :measurements, :system, :job_json]
   EEx.function_from_file :defp, :index,
                          "priv/templates/index.html.eex",
-                         [:names_to_paths]
+                         [:names_to_paths, :system]
   EEx.function_from_file :defp, :head,
                          "priv/templates/partials/head.html.eex",
                          []
@@ -90,7 +90,7 @@ defmodule Benchee.Formatters.HTML do
     |> Enum.map(fn({input, input_stats}) ->
           reports_for_input(input, input_stats, run_times, system)
        end)
-    |> add_index(statistics)
+    |> add_index(system)
     |> List.flatten
     |> Map.new
   end
@@ -125,9 +125,9 @@ defmodule Benchee.Formatters.HTML do
     end)
   end
 
-  def add_index(grouped_main_contents, statistics) do
+  def add_index(grouped_main_contents, system) do
     # Create a structure that goes inputs => %{comparison => comparison_path, job_name => detailed_job_path}
-    [{[], index(%{})} | grouped_main_contents]
+    [{["index"], index(grouped_main_contents, system)} | grouped_main_contents]
   end
 
   @doc """

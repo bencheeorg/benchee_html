@@ -27,9 +27,12 @@ defmodule Benchee.Formatters.HTMLTest do
                   run_times: %{"Some Input" => %{"My Job" => [190, 200, 210]}},
                   system: %{elixir: "1.4.0", erlang: "19.1"}
                 }
-  test ".format returns an HTML-ish string" do
-    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
-    assert html =~ ~r/<html>.+<script>.+<\/html>/si
+  test ".format returns an HTML-ish string for every input" do
+    format = HTML.format @sample_suite
+
+    Enum.each format, fn({_, html}) ->
+      assert html =~ ~r/<html>.+<article>.+<\/html>/si
+    end
   end
 
   test ".format has the important suite data in the html result" do
@@ -54,17 +57,21 @@ defmodule Benchee.Formatters.HTMLTest do
     assert html =~ "μs"
   end
 
-  test ".format includes the elixir and erlang version" do
-    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
+  test ".format includes the elixir and erlang version everywhere" do
+    format = HTML.format @sample_suite
 
-    assert html =~ "Elixir 1.4.0"
-    assert html =~ "Erlang 19.1"
+    Enum.each format, fn({_, html}) ->
+      assert html =~ "Elixir 1.4.0"
+      assert html =~ "Erlang 19.1"
+    end
   end
 
   test ".format mentions the input" do
-    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
+    format = HTML.format @sample_suite
 
-    assert html =~ "Some Input"
+    Enum.each format, fn({_, html}) ->
+      assert html =~ "Some Input"
+    end
   end
 
   test ".format does not render the label if no input was given" do
