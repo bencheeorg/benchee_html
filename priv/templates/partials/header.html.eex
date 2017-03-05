@@ -6,6 +6,6 @@
     </span>
   <% end %>
   <span class="version-note">
-    Elixir <%= suite.system.elixir%>, Erlang <%= suite.system.erlang %>
+    Elixir <%= system.elixir%>, Erlang <%= system.erlang %>
   </span>
 </div>

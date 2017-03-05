@@ -3,7 +3,7 @@
   <%= head() %>
   <body>
 
-    <%= header(input_name, suite) %>
+    <%= header(input_name, suite.system) %>
 
     <article>
       <h2>
@@ -58,30 +58,6 @@
       </section>
     </article>
 
-    <%= for {name, _} <- suite.statistics do %>
-      <article>
-        <h2>
-          <a name="<%= name %>"></a>
-          <%= name %>
-          <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
-            <i
-              class="benchee-help-icon icon-question-circle-o"
-              title="Graphs showing the individual run time distribution for <%= name %>.
-  Run Times Histpgram shows the distribution of occurences of specific run times in buckets.
-  Raw Run Times shows all individual recorded run times in the order they were recorded in."
-            ></i>
-          </a>
-        </h2>
-
-        <section class="benchee-plot-container">
-          <div class="sorted-run-times plot" data-job-name="<%= name %>"></div>
-        </section>
-        <section class="benchee-plot-container">
-          <div class="raw-run-times plot" data-job-name="<%= name %>"></div>
-        </section>
-      </article>
-    <% end %>
-
     <%= js_includes() %>
 
     <script>
@@ -94,8 +70,6 @@
 
       drawIpsComparisonChart(statistics, sortOrder, inputHeadline);
       drawComparisonBoxPlot(runTimes, sortOrder, inputHeadline);
-      drawRawRunTimeCharts(runTimes, inputHeadline);
-      drawRunTimeHistograms(runTimes, inputHeadline);
     </script>
   </body>
 </html>

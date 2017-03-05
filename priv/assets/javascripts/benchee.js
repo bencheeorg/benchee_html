@@ -84,31 +84,23 @@ window.drawComparisonBoxPlot = function(runTimes, sortOrder, inputHeadline) {
 };
 
 window.drawRawRunTimeCharts = function(runTimes, inputHeadline) {
-  var runTimeNodes = document.getElementsByClassName("raw-run-times");
-  var runTimesNodesArray = Array.from(runTimeNodes); // Oh JavaScript
-  runTimesNodesArray.forEach(function(node) {
-    var jobName = node.getAttribute("data-job-name");
-    var runTimeData = runTimes[jobName];
-    var layout = {
-      title: jobName + " Raw Run Times" + inputHeadline,
-      yaxis: { title: RUN_TIME_AXIS_TITLE },
-      xaxis: { title: "Sample number"}
-    };
-    drawGraph(node, rawRunTimeData(runTimeData), layout);
-  });
+  var runTimeNode = document.getElementById("raw-run-times");
+  var jobName = runTimeNode.getAttribute("data-job-name");
+  var layout = {
+    title: jobName + " Raw Run Times" + inputHeadline,
+    yaxis: { title: RUN_TIME_AXIS_TITLE },
+    xaxis: { title: "Sample number"}
+  };
+  drawGraph(runTimeNode, rawRunTimeData(runTimes), layout);
 };
 
 window.drawRunTimeHistograms = function(runTimes, inputHeadline) {
-  var runTimeHistogramNodes = document.getElementsByClassName("sorted-run-times");
-  var runTimeHistogramNodesArray = Array.from(runTimeHistogramNodes); // Oh JavaScript
-  runTimeHistogramNodesArray.forEach(function(node) {
-    var jobName = node.getAttribute("data-job-name");
-    var runTimeData = runTimes[jobName];
-    var layout = {
-      title: jobName + " Run Times Histogram" + inputHeadline,
-      xaxis: { title: "Raw run time buckets in microseconds" },
-      yaxis: { title: "Occurences in sample" }
-    };
-    drawGraph(node, runtimeHistogramData(runTimeData), layout);
-  });
+  var runTimeHistogramNode = document.getElementById("sorted-run-times");
+  var jobName = runTimeHistogramNode.getAttribute("data-job-name");
+  var layout = {
+    title: jobName + " Run Times Histogram" + inputHeadline,
+    xaxis: { title: "Raw run time buckets in microseconds" },
+    yaxis: { title: "Occurences in sample" }
+  };
+  drawGraph(runTimeHistogramNode, runtimeHistogramData(runTimes), layout);
 };

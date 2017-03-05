@@ -9,7 +9,7 @@ defmodule Benchee.Formatters.HTML do
                          [:input_name, :suite, :suite_json]
   EEx.function_from_file :defp, :job_detail,
                          "priv/templates/job_detail.html.eex",
-                         [:input_name, :measurements, :job_json]
+                         [:input_name, :job_name,  :measurements, :system, :job_json]
   EEx.function_from_file :defp, :index,
                          "priv/templates/index.html.eex",
                          [:names_to_paths]
@@ -18,7 +18,7 @@ defmodule Benchee.Formatters.HTML do
                          []
   EEx.function_from_file :defp, :header,
                          "priv/templates/partials/header.html.eex",
-                         [:input_name, :suite]
+                         [:input_name, :system]
   EEx.function_from_file :defp, :js_includes,
                          "priv/templates/partials/js_includes.html.eex",
                          []
@@ -120,8 +120,8 @@ defmodule Benchee.Formatters.HTML do
   defp job_reports(input, input_stats, input_run_times, system) do
     merged_stats = merge_job_measurements(input_stats, input_run_times)
     Enum.map(merged_stats, fn({job_name, measurements})->
-      input_json = Poison.encode(measurements)
-      {[input, job_name], job_detail(input, measurements, input_json)}
+      job_json = Poison.encode!(measurements)
+      {[input, job_name], job_detail(input, job_name, measurements, system, job_json)}
     end)
   end
 
