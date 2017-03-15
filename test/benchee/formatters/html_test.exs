@@ -97,11 +97,12 @@ defmodule Benchee.Formatters.HTMLTest do
       system: %{elixir: "1.4.0", erlang: "19.1"}
     }
     comparison_key = [marker, "comparison"]
-    %{^comparison_key => html} = HTML.format suite
+    format = HTML.format suite
 
-    refute html =~ "#{marker}"
-    refute html =~ "input-label"
-
+    Enum.each format, fn({_, html}) ->
+      refute html =~ "#{marker}"
+      refute html =~ "input-label"
+    end
   end
 
   defp assert_includes(html, expected_contents) do

@@ -85,12 +85,13 @@ defmodule Benchee.Formatters.HTML do
   somewhere, such as a file through `IO.write/2`.
 
   """
-  def format(%{statistics: statistics, run_times: run_times, system: system}) do
+  def format(%{statistics: statistics, run_times: run_times, system: system,
+               config: %{html: %{file: filename}}}) do
     statistics
     |> Enum.map(fn({input, input_stats}) ->
           reports_for_input(input, input_stats, run_times, system)
        end)
-    |> add_index(system)
+    |> add_index(filename, system)
     |> List.flatten
     |> Map.new
   end
@@ -125,9 +126,20 @@ defmodule Benchee.Formatters.HTML do
     end)
   end
 
-  def add_index(grouped_main_contents, system) do
-    # Create a structure that goes inputs => %{comparison => comparison_path, job_name => detailed_job_path}
-    [{["index"], index(grouped_main_contents, system)} | grouped_main_contents]
+  def add_index(grouped_main_contents, filename, system) do
+    index_structure = input_to_paths(grouped_main_contents, filename)
+    [{[], index(index_structure, system)} | grouped_main_contents]
+  end
+
+  defp input_to_paths(grouped_main_contents, filename) do
+    grouped_main_contents
+    |> Enum.map(fn({input_name, reports}) ->
+         paths = Enum.map reports, fn({tags, _content}) ->
+           FileCreation.interleave(filename, tags)
+         end
+         {input_name, paths}
+       end)
+    |> Map.new
   end
 
   @doc """

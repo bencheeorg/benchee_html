@@ -12,8 +12,8 @@
           <i
           class="benchee-help-icon icon-question-circle-o"
           title="Comparisons of the different benchmarking jobs.
-  For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better.
-  The Box Plot shows a distribution of run times with the median and outliers."
+For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better.
+The Box Plot shows a distribution of run times with the median and outliers."
           ></i>
         </a>
       </h2>
