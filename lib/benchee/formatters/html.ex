@@ -133,10 +133,11 @@ defmodule Benchee.Formatters.HTML do
 
   defp input_to_paths(grouped_main_contents, filename) do
     grouped_main_contents
-    |> Enum.map(fn({input_name, reports}) ->
+    |> Enum.map(fn(reports) ->
          paths = Enum.map reports, fn({tags, _content}) ->
            FileCreation.interleave(filename, tags)
          end
+         [{[input_name | _], _} | _] = reports
          {input_name, paths}
        end)
     |> Map.new

@@ -4,12 +4,21 @@
   <body>
 
     <article>
-      <%= for input <- names_to_paths do %>
-        <%= for {tags, _} <- input do %>
-          <section>
-            <%= header(Enum.join(tags, " "), system) %>
-          </section>
-        <% end %>
+      <span class="version-note">
+        Elixir <%= system.elixir%>, Erlang <%= system.erlang %>
+      </span>
+      <%= for {input_name, paths} <- names_to_paths do %>
+        <section>
+          <%= if inputs_supplied?(input_name) do %>
+            <span class="input-label">
+              <%= input_name %>
+            </span>
+          <% end %>
+          <%= for path <- paths do %>
+            <a href="<%= path %>"> <%= path %> </a>
+          <% end %>
+        </section>
+
       <% end %>
 
     </article>
