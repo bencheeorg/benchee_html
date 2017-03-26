@@ -3,20 +3,20 @@
   <%= head() %>
   <body>
 
+    <div class="header">
+      <h1>benchee report index</h1>
+      <%= version_note(system) %>
+    </div>
+
     <article>
-      <span class="version-note">
-        Elixir <%= system.elixir%>, Erlang <%= system.erlang %>
-      </span>
       <%= for {input_name, paths} <- names_to_paths do %>
         <section>
-          <%= if inputs_supplied?(input_name) do %>
-            <span class="input-label">
-              <%= input_name %>
-            </span>
-          <% end %>
-          <%= for path <- paths do %>
-            <a href="<%= path %>"> <%= path %> </a>
-          <% end %>
+          <%= input_label(input_name) %>
+          <ul>
+            <%= for path <- paths do %>
+              <li><a href="<%= path %>"> <%= path %> </a></li>
+            <% end %>
+          </ul>
         </section>
 
       <% end %>

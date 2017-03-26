@@ -1,0 +1,5 @@
+<%= if inputs_supplied?(input_name) do %>
+  <span class="input-label">
+    <%= input_name %>
+  </span>
+<% end %>

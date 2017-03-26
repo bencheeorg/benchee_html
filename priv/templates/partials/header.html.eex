@@ -1,11 +1,5 @@
 <div class="header">
   <h1>benchee report</h1>
-  <%= if inputs_supplied?(input_name) do %>
-    <span class="input-label">
-      <%= input_name %>
-    </span>
-  <% end %>
-  <span class="version-note">
-    Elixir <%= system.elixir%>, Erlang <%= system.erlang %>
-  </span>
+  <%= input_label(input_name) %>
+  <%= version_note(system) %>
 </div>
