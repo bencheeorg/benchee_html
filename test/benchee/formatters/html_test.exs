@@ -96,7 +96,6 @@ defmodule Benchee.Formatters.HTMLTest do
       run_times: %{ marker => %{"My Job" => [190, 200, 210]}},
       system: %{elixir: "1.4.0", erlang: "19.1"}
     }
-    comparison_key = [marker, "comparison"]
     format = HTML.format suite
 
     Enum.each format, fn({_, html}) ->

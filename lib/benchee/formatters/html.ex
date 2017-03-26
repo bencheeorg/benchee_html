@@ -4,15 +4,19 @@ defmodule Benchee.Formatters.HTML do
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
 
+  # Major pages
   EEx.function_from_file :defp, :comparison,
                          "priv/templates/comparison.html.eex",
                          [:input_name, :suite, :suite_json]
   EEx.function_from_file :defp, :job_detail,
                          "priv/templates/job_detail.html.eex",
-                         [:input_name, :job_name,  :measurements, :system, :job_json]
+                         [:input_name, :job_name,  :measurements, :system,
+                          :job_json]
   EEx.function_from_file :defp, :index,
                          "priv/templates/index.html.eex",
                          [:names_to_paths, :system]
+
+  # Partials
   EEx.function_from_file :defp, :head,
                          "priv/templates/partials/head.html.eex",
                          []
@@ -54,8 +58,15 @@ defmodule Benchee.Formatters.HTML do
 
   @doc """
   Uses `Benchee.Formatters.HTML.format/1` to transform the statistics output to
-  HTML with JS, but also already writes it to a file defined in the initial
-  configuration under `html: [file: "my.html"]`
+  HTML with JS, but also already writes it to files defined in the initial
+  configuration under `html: [file: "benchmark_out/my.html"]`.
+
+  Generates the following files:
+
+  * index file (exactly like `file` is named)
+  * a comparison of all the benchmarked jobs (one per benchmarked input)
+  * for each job a detail page with more detailed run time graphs for that
+    particular job (one per benchmark input)
   """
   def output(map)
   def output(suite = %{config: %{html: %{file: filename}}}) do
@@ -90,24 +101,27 @@ defmodule Benchee.Formatters.HTML do
   Transforms the statistical results from benchmarking to html to be written
   somewhere, such as a file through `IO.write/2`.
 
+  Returns a map from file name/path to file content.
   """
   def format(%{statistics: statistics, run_times: run_times, system: system,
                config: %{html: %{file: filename}}}) do
     statistics
-    |> Enum.map(fn({input, input_stats}) ->
-          reports_for_input(input, input_stats, run_times, system)
-       end)
+    |> input_job_reports(run_times, system)
     |> add_index(filename, system)
     |> List.flatten
     |> Map.new
   end
 
+  defp input_job_reports(statistics, run_times, system) do
+    Enum.map statistics, fn({input, input_stats}) ->
+      reports_for_input(input, input_stats, run_times, system)
+    end
+  end
+
   defp reports_for_input(input, input_stats, run_times, system) do
     input_run_times = Map.fetch! run_times, input
-    # render comparison
-    # individual job overviews
 
-    comparison  = comparison_report input, input_stats, input_run_times, system
+    comparison  = comparison_report(input, input_stats, input_run_times, system)
     job_reports = job_reports(input, input_stats, input_run_times, system)
     [comparison | job_reports]
   end
@@ -126,27 +140,33 @@ defmodule Benchee.Formatters.HTML do
 
   defp job_reports(input, input_stats, input_run_times, system) do
     merged_stats = merge_job_measurements(input_stats, input_run_times)
+    # extract some of me to benchee_json pretty please?
     Enum.map(merged_stats, fn({job_name, measurements})->
       job_json = Poison.encode!(measurements)
-      {[input, job_name], job_detail(input, job_name, measurements, system, job_json)}
+      {[input, job_name],
+       job_detail(input, job_name, measurements, system, job_json)}
     end)
   end
 
   def add_index(grouped_main_contents, filename, system) do
-    index_structure = input_to_paths(grouped_main_contents, filename)
-    [{[], index(index_structure, system)} | grouped_main_contents]
+    index_structure = inputs_to_paths(grouped_main_contents, filename)
+    index_entry = {[], index(index_structure, system)}
+    [index_entry | grouped_main_contents]
   end
 
-  defp input_to_paths(grouped_main_contents, filename) do
+  defp inputs_to_paths(grouped_main_contents, filename) do
     grouped_main_contents
-    |> Enum.map(fn(reports) ->
-         paths = Enum.map reports, fn({tags, _content}) ->
-           filename |> Path.basename |> FileCreation.interleave(tags)
-         end
-         [{[input_name | _], _} | _] = reports
-         {input_name, paths}
-       end)
+    |> Enum.map(fn(reports) -> input_to_paths(reports, filename) end)
     |> Map.new
+  end
+
+  defp input_to_paths(input_reports, filename) do
+    [{[input_name | _], _} | _] = input_reports
+
+    paths = Enum.map input_reports, fn({tags, _content}) ->
+      filename |> Path.basename |> FileCreation.interleave(tags)
+    end
+    {input_name, paths}
   end
 
   @doc """
