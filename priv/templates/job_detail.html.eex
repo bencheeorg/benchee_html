@@ -19,6 +19,10 @@ Raw Run Times shows all individual recorded run times in the order they were rec
         </a>
       </h2>
 
+      <section>
+        <%= data_table([{job_name, measurements.statistics}]) %>
+      </section>
+
       <section class="benchee-plot-container">
         <div id="sorted-run-times" class="plot" data-job-name="<%= job_name %>"></div>
       </section>

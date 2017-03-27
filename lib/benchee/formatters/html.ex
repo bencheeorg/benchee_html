@@ -32,6 +32,9 @@ defmodule Benchee.Formatters.HTML do
   EEx.function_from_file :defp, :input_label,
                          "priv/templates/partials/input_label.html.eex",
                          [:input_name]
+  EEx.function_from_file :defp, :data_table,
+                         "priv/templates/partials/data_table.html.eex",
+                         [:statistics]
 
 
   @moduledoc """

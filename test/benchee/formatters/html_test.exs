@@ -36,11 +36,11 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test ".format has the important suite data in the html result" do
-    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
-
-    assert_includes html,
-      ["[190,200,210]", "\"average\":200.0", "\"median\":190.0","\"ips\":5.0e3",
-       "My Job", ">3<", ">190.00 μs<", ">210.00 μs<", ">200.00 μs<"]
+    Enum.each comparison_and_job_htmls(), fn(html) ->
+      assert_includes html,
+        ["[190,200,210]", "\"average\":200.0", "\"median\":190.0","\"ips\":5.0e3",
+         "My Job", ">3<", ">190.00 μs<", ">210.00 μs<", ">200.00 μs<"]
+     end
 
   end
 
@@ -51,10 +51,17 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test ".format shows the units alright" do
-    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
+    Enum.each comparison_and_job_htmls(), fn(html) ->
+      assert html =~ "±"
+      assert html =~ "μs"
+    end
+  end
 
-    assert html =~ "±"
-    assert html =~ "μs"
+  defp comparison_and_job_htmls do
+    %{["Some Input", "comparison"] => comparison_html,
+      ["Some Input", "My Job"] => job_html} = HTML.format @sample_suite
+
+    [comparison_html, job_html]
   end
 
   test ".format includes the elixir and erlang version everywhere" do
