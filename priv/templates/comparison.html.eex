@@ -18,7 +18,7 @@ The Box Plot shows a distribution of run times with the median and outliers."
         </a>
       </h2>
       <section>
-        <%= data_table(suite.statistics) %>
+        <%= render_data_table(suite.statistics, path_information: {suite.filename, input_name}) %>
       </section>
 
       <section class="benchee-plot-container">

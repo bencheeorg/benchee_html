@@ -15,7 +15,12 @@
   <tbody>
     <%= for {name, measurements} <- statistics do %>
       <tr>
-        <td class="text-left"><a href="#<%= name %>"><%= name %></a></td>
+        <%= case Keyword.get(options, :path_information) do %>
+        <% {base_name, input_name} -> %>
+          <td class="text-left"><a href="<%= relative_file_path(base_name, [input_name, name]) %>"><%= name %></a></td>
+        <% nil -> %>
+          <td class="text-left"><%= name %></td>
+        <% end %>
         <td><%= format_count measurements.ips %></td>
         <td><%= format_duration measurements.average %></td>
         <td><%= format_percent measurements.std_dev_ratio %></td>

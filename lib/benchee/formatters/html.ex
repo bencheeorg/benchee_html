@@ -34,8 +34,12 @@ defmodule Benchee.Formatters.HTML do
                          [:input_name]
   EEx.function_from_file :defp, :data_table,
                          "priv/templates/partials/data_table.html.eex",
-                         [:statistics]
+                         [:statistics, :options]
 
+  # Small wrapper to have default arguments
+  defp render_data_table(statistics, options \\ []) do
+    data_table statistics, options
+  end
 
   @moduledoc """
   Functionality for converting Benchee benchmarking results to an HTML page
@@ -109,34 +113,34 @@ defmodule Benchee.Formatters.HTML do
   def format(%{statistics: statistics, run_times: run_times, system: system,
                config: %{html: %{file: filename}}}) do
     statistics
-    |> input_job_reports(run_times, system)
+    |> input_job_reports(run_times, system, filename)
     |> add_index(filename, system)
     |> List.flatten
     |> Map.new
   end
 
-  defp input_job_reports(statistics, run_times, system) do
+  defp input_job_reports(statistics, run_times, system, filename) do
     Enum.map statistics, fn({input, input_stats}) ->
-      reports_for_input(input, input_stats, run_times, system)
+      input_run_times = Map.fetch! run_times, input
+      reports_for_input(input, input_stats, input_run_times, system, filename)
     end
   end
 
-  defp reports_for_input(input, input_stats, run_times, system) do
-    input_run_times = Map.fetch! run_times, input
-
-    comparison  = comparison_report(input, input_stats, input_run_times, system)
+  defp reports_for_input(input, input_stats, input_run_times, system, filename) do
+    comparison  = comparison_report(input, input_stats, input_run_times, system, filename)
     job_reports = job_reports(input, input_stats, input_run_times, system)
     [comparison | job_reports]
   end
 
-  defp comparison_report(input, input_stats, input_run_times, system) do
+  defp comparison_report(input, input_stats, input_run_times, system, filename) do
     sorted_stats = Benchee.Statistics.sort input_stats
     input_json = JSON.format_measurements(input_stats, input_run_times)
     input_suite = %{
       statistics: sorted_stats,
       run_times:  input_run_times,
       system:     system,
-      job_count:  length(sorted_stats)
+      job_count:  length(sorted_stats),
+      filename:   filename
     }
     {[input, "comparison"], comparison(input, input_suite, input_json)}
   end
@@ -167,9 +171,15 @@ defmodule Benchee.Formatters.HTML do
     [{[input_name | _], _} | _] = input_reports
 
     paths = Enum.map input_reports, fn({tags, _content}) ->
-      filename |> Path.basename |> FileCreation.interleave(tags)
+      relative_file_path(filename, tags)
     end
     {input_name, paths}
+  end
+
+  defp relative_file_path(filename, tags) do
+    filename
+    |> Path.basename
+    |> FileCreation.interleave(tags)
   end
 
   @doc """
