@@ -149,7 +149,7 @@ defmodule Benchee.Formatters.HTML do
     merged_stats = merge_job_measurements(input_stats, input_run_times)
     # extract some of me to benchee_json pretty please?
     Enum.map(merged_stats, fn({job_name, measurements}) ->
-      job_json = Poison.encode!(measurements)
+      job_json = JSON.encode!(measurements)
       {[input, job_name],
        job_detail(input, job_name, measurements, system, job_json)}
     end)
