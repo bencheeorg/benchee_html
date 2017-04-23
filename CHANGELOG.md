@@ -1,6 +1,6 @@
-## 0.2.0 (unreleased)
+## 0.2.0 2017-04-23
 
-This release splits up the resulting HTML into multiple files, so that it isn't just one long HTML file and also for performance as drawing the graphs with lots of data points seems to be tedious on the browser.
+This release splits up the resulting HTML into multiple files, so that it isn't just one long HTML file and also for performance as drawing the graphs with lots of data points seems to be quite taxing on the browser.
 
 ### Features
 
