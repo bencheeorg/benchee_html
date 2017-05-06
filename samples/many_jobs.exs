@@ -18,4 +18,4 @@ Benchee.run %{
      &Benchee.Formatters.Console.output/1,
      &Benchee.Formatters.HTML.output/1
    ],
-   html: [file: "samples_output/many.html"]
+   formatter_options: [html: [file: "samples_output/many.html"]]
