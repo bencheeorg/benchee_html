@@ -6,16 +6,26 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
   @file_path "#{@test_directory}/my.html"
   @comparison_path "#{@test_directory}/my_comparison.html"
   test "works just fine" do
+    basic_test time: 0.01,
+               warmup: 0.02,
+               formatters: [&Benchee.Formatters.HTML.output/1],
+               formatter_options: [html: [file: @file_path]]
+  end
+
+  test "works fine with the legacy format" do
+    basic_test time: 0.01,
+               warmup: 0.02,
+               formatters: [&Benchee.Formatters.HTML.output/1],
+               html: [file: @file_path]
+  end
+
+  defp basic_test(options) do
     try do
       capture_io fn ->
         Benchee.run %{
           "Sleep"        => fn -> :timer.sleep(10) end,
           "Sleep longer" => fn -> :timer.sleep(20) end
-        },
-        time: 0.01,
-        warmup: 0.02,
-        formatters: [&Benchee.Formatters.HTML.output/1],
-        html: %{file: @file_path}
+        }, options
 
         assert File.exists?(@comparison_path)
         assert File.exists?("#{@test_directory}/my_sleep.html")

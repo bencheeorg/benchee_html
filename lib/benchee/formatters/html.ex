@@ -58,7 +58,7 @@ defmodule Benchee.Formatters.HTML do
           &Benchee.Formatters.HTML.output/1,
           &Benchee.Formatters.Console.output/1
         ],
-        html: [file: "samples_output/flat_map.html"],
+        formatter_options: [html: [file: "samples_output/flat_map.html"]],
       )
 
   """
@@ -66,7 +66,8 @@ defmodule Benchee.Formatters.HTML do
   @doc """
   Uses `Benchee.Formatters.HTML.format/1` to transform the statistics output to
   HTML with JS, but also already writes it to files defined in the initial
-  configuration under `html: [file: "benchmark_out/my.html"]`.
+  configuration under `formatter_options: [html: [file:
+  "benchmark_out/my.html"]]`.
 
   Generates the following files:
 
@@ -75,8 +76,11 @@ defmodule Benchee.Formatters.HTML do
   * for each job a detail page with more detailed run time graphs for that
     particular job (one per benchmark input)
   """
+  @spec output(Benchee.Suite.t) :: Benchee.Suite.t
   def output(map)
-  def output(suite = %{config: %{html: %{file: filename}}}) do
+  def output(suite = %{configuration:
+                       %{formatter_options:
+                         %{html: %{file: filename}}}}) do
     base_directory = create_base_directory(filename)
     copy_asset_files(base_directory)
 
@@ -87,7 +91,7 @@ defmodule Benchee.Formatters.HTML do
     suite
   end
   def output(_suite) do
-    raise "You need to specify a file to write the HTML to in the configuration as html: [file: \"my.html\"]"
+    raise "You need to specify a file to write the HTML to in the configuration as formatter_options: [html: [file: \"my.html\"]]"
   end
 
   defp create_base_directory(filename) do
@@ -110,8 +114,10 @@ defmodule Benchee.Formatters.HTML do
 
   Returns a map from file name/path to file content.
   """
+  @spec format(Benchee.Suite.t) :: %{Benchee.Suite.key => String.t}
   def format(%{statistics: statistics, run_times: run_times, system: system,
-               config: %{html: %{file: filename}}}) do
+               configuration: %{
+                 formatter_options: %{html: %{file: filename}}}}) do
     statistics
     |> input_job_reports(run_times, system, filename)
     |> add_index(filename, system)

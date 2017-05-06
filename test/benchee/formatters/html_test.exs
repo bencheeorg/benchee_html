@@ -8,7 +8,9 @@ defmodule Benchee.Formatters.HTMLTest do
   @filename "#{@test_directory}/my.html"
   @expected_filename "#{@test_directory}/my_some_input_comparison.html"
   @sample_suite %{
-                  config: %{html: %{file: @filename}},
+                  configuration: %{
+                    formatter_options: %{html: %{file: @filename}}
+                  },
                   statistics: %{
                     "Some Input" => %{
                       "My Job" => %{
@@ -84,7 +86,7 @@ defmodule Benchee.Formatters.HTMLTest do
   test ".format does not render the label if no input was given" do
     marker = Benchee.Benchmark.no_input
     suite = %{
-      config: %{html: %{file: @filename}},
+      configuration: %{formatter_options: %{html: %{file: @filename}}},
       statistics: %{
         marker => %{
           "My Job" => %{
