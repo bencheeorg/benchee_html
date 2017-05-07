@@ -14,7 +14,7 @@ Add `benchee_html` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:benchee_html, "~> 0.1.0", only: :dev}]
+  [{:benchee_html, "~> 0.3", only: :dev}]
 end
 ```
 

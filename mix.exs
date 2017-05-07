@@ -1,12 +1,12 @@
 defmodule BencheeHTML.Mixfile do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.3.0"
   def project do
     [
       app: :benchee_html,
       version: @version,
-      elixir: "~> 1.2",
+      elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       docs: [source_ref: @version],
