@@ -3,6 +3,7 @@ defmodule Benchee.Formatters.HTML do
   alias Benchee.Conversion.{Format, Duration, Count, DeviationPercent}
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
+  alias Benchee.{Suite, Statistics}
 
   # Major pages
   EEx.function_from_file :defp, :comparison,
@@ -76,11 +77,11 @@ defmodule Benchee.Formatters.HTML do
   * for each job a detail page with more detailed run time graphs for that
     particular job (one per benchmark input)
   """
-  @spec output(Benchee.Suite.t) :: Benchee.Suite.t
+  @spec output(Suite.t) :: Suite.t
   def output(map)
-  def output(suite = %{configuration:
-                       %{formatter_options:
-                         %{html: %{file: filename}}}}) do
+  def output(suite = %Suite{configuration:
+                            %{formatter_options:
+                              %{html: %{file: filename}}}}) do
     base_directory = create_base_directory(filename)
     copy_asset_files(base_directory)
 
@@ -114,8 +115,8 @@ defmodule Benchee.Formatters.HTML do
 
   Returns a map from file name/path to file content.
   """
-  @spec format(Benchee.Suite.t) :: %{Benchee.Suite.key => String.t}
-  def format(%{statistics: statistics, run_times: run_times, system: system,
+  @spec format(Suite.t) :: %{Suite.key => String.t}
+  def format(%Suite{statistics: statistics, run_times: run_times, system: system,
                configuration: %{
                  formatter_options: %{html: %{file: filename}}}}) do
     statistics
@@ -125,13 +126,15 @@ defmodule Benchee.Formatters.HTML do
     |> Map.new
   end
 
+  @spec input_job_reports(%{Suite.key => %{Suite.key => Statistics.t}}, %{Suite.key => %{Suite.key => [number]}}, map, String.t) :: [[String.t]]
   defp input_job_reports(statistics, run_times, system, filename) do
     Enum.map statistics, fn({input, input_stats}) ->
-      input_run_times = Map.fetch! run_times, input
+      %{^input => input_run_times} = run_times
       reports_for_input(input, input_stats, input_run_times, system, filename)
     end
   end
 
+  @spec reports_for_input(Suite.key, %{Suite.key => Statistics.t}, %{Suite.key => [number]}, map, String.t) :: [any]
   defp reports_for_input(input, input_stats, input_run_times, system, filename) do
     comparison  = comparison_report(input, input_stats, input_run_times, system, filename)
     job_reports = job_reports(input, input_stats, input_run_times, system)
@@ -151,6 +154,7 @@ defmodule Benchee.Formatters.HTML do
     {[input, "comparison"], comparison(input, input_suite, input_json)}
   end
 
+  @spec job_reports(Suite.key, %{Suite.key => Benchee.Statistics.t}, %{Suite.key => [number]}, map) :: [{[Suite.key], String.t}]
   defp job_reports(input, input_stats, input_run_times, system) do
     merged_stats = merge_job_measurements(input_stats, input_run_times)
     # extract some of me to benchee_json pretty please?
@@ -211,6 +215,7 @@ defmodule Benchee.Formatters.HTML do
         }
       }
   """
+  @spec merge_job_measurements(map, map) :: map
   def merge_job_measurements(statistics, run_times) do
     Map.merge(statistics, run_times, fn(_key, stats, times) ->
       %{
