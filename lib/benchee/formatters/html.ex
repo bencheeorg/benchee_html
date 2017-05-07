@@ -161,7 +161,7 @@ defmodule Benchee.Formatters.HTML do
     end)
   end
 
-  def add_index(grouped_main_contents, filename, system) do
+  defp add_index(grouped_main_contents, filename, system) do
     index_structure = inputs_to_paths(grouped_main_contents, filename)
     index_entry = {[], index(index_structure, system)}
     [index_entry | grouped_main_contents]
