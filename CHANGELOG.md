@@ -1,3 +1,9 @@
+## 0.3.1 2017-05-07
+
+### Bugfixes
+
+* use new benchee_json release to circumvent faulty typespec
+
 ## 0.3.0 2017-05-07
 
 Benchee 0.8.0 compatibility, typesepcs, just Elixir 1.3+ and add missing applications.

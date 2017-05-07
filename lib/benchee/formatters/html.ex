@@ -133,14 +133,14 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp reports_for_input(input, input_stats, input_run_times, system, filename) do
-    comparison  = comparison_report(input, input_stats, input_run_times, system, filename)
     job_reports = job_reports(input, input_stats, input_run_times, system)
+    comparison  = comparison_report(input, input_stats, input_run_times, system, filename)
     [comparison | job_reports]
   end
 
   defp comparison_report(input, input_stats, input_run_times, system, filename) do
-    sorted_stats = Benchee.Statistics.sort input_stats
     input_json = JSON.format_measurements(input_stats, input_run_times)
+    sorted_stats = Benchee.Statistics.sort input_stats
     input_suite = %{
       statistics: sorted_stats,
       run_times:  input_run_times,
