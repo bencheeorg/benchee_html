@@ -44,8 +44,8 @@ defmodule BencheeHTML.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:benchee,        "~> 0.7",   github: "PragTob/benchee", override: true},
-      {:benchee_json,   "~> 0.2",   github: "PragTob/benchee_json"},
+      {:benchee,        "~> 0.8"},
+      {:benchee_json,   "~> 0.3"},
       {:excoveralls,    "~> 0.6.1", only: :test},
       {:mix_test_watch, "~> 0.2",   only: :dev},
       {:credo,          "~> 0.4",   only: :dev},
