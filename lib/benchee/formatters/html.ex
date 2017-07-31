@@ -149,7 +149,8 @@ defmodule Benchee.Formatters.HTML do
     input_json = JSON.format_scenarios_for_input(scenarios)
     sorted_stastics = scenarios
                       |> Statistics.sort()
-                      |> Enum.map(fn(scenario) -> scenario.run_time_statistics end)
+                      |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_time_statistics} end)
+                      |> Map.new
     input_run_times = scenarios
                       |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_times} end)
                       |> Map.new
@@ -157,7 +158,7 @@ defmodule Benchee.Formatters.HTML do
       statistics: sorted_stastics,
       run_times:  input_run_times,
       system:     system,
-      job_count:  length(sorted_stastics),
+      job_count:  length(scenarios),
       filename:   filename
     }
     {[input_name, "comparison"], comparison(input_name, input_suite, input_json)}

@@ -41,7 +41,6 @@ defmodule Benchee.Formatters.HTMLTest do
     end
   end
 
-  @tag :skip
   test ".format has the important suite data in the html result" do
     Enum.each comparison_and_job_htmls(), fn(html) ->
       assert_includes html,
@@ -57,7 +56,6 @@ defmodule Benchee.Formatters.HTMLTest do
     assert html =~ "{\"statistics\":{\"My Job\""
   end
 
-  @tag :skip
   test ".format shows the units alright" do
     Enum.each comparison_and_job_htmls(), fn(html) ->
       assert html =~ "±"
@@ -89,7 +87,6 @@ defmodule Benchee.Formatters.HTMLTest do
     end
   end
 
-  @tag :skip
   test ".format does not render the label if no input was given" do
     marker = Benchee.Benchmark.no_input
     suite = %{
