@@ -1,5 +1,5 @@
-%{"benchee": {:hex, :benchee, "0.8.0", "fe93506d05252ad82d72257f6549aab11664088a1307f26f0ab1acb172b8c35b", [:mix], [{:deep_merge, "~> 0.1", [hex: :deep_merge, optional: false]}]},
-  "benchee_json": {:hex, :benchee_json, "0.3.1", "f1df8d92041cfd863d980ca40dcba1c852a705190e26cdd41732f76c6bd099d6", [:mix], [{:benchee, "~> 0.8", [hex: :benchee, optional: false]}, {:poison, ">= 1.4.0", [hex: :poison, optional: false]}]},
+%{"benchee": {:git, "https://github.com/PragTob/benchee.git", "ccb60384339cb793ff88db58f864a7f8fdbdf4ec", [branch: "master"]},
+  "benchee_json": {:git, "https://github.com/devonestes/benchee_json.git", "77940d53d6c884eeddc1c57188afd6bb117d7c7b", [branch: "updating-to-scenarios"]},
   "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], []},
   "certifi": {:hex, :certifi, "1.0.0", "1c787a85b1855ba354f0b8920392c19aa1d06b0ee1362f9141279620a5be2039", [:rebar3], []},
   "credo": {:hex, :credo, "0.7.3", "9827ab04002186af1aec014a811839a06f72aaae6cd5eed3919b248c8767dbf3", [:mix], [{:bunt, "~> 0.2.0", [hex: :bunt, optional: false]}]},
