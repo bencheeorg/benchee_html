@@ -1,5 +1,6 @@
 defmodule Benchee.Formatters.HTML do
   require EEx
+  alias Benchee.{Suite, Statistics}
   alias Benchee.Conversion.{Format, Duration, Count, DeviationPercent}
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
@@ -76,7 +77,7 @@ defmodule Benchee.Formatters.HTML do
   * for each job a detail page with more detailed run time graphs for that
     particular job (one per benchmark input)
   """
-  @spec output(Benchee.Suite.t) :: Benchee.Suite.t
+  @spec output(Suite.t) :: Suite.t
   def output(map)
   def output(suite = %{configuration:
                        %{formatter_options:
@@ -114,51 +115,53 @@ defmodule Benchee.Formatters.HTML do
 
   Returns a map from file name/path to file content.
   """
-  @spec format(Benchee.Suite.t) :: %{Benchee.Suite.key => String.t}
-  def format(%{statistics: statistics, run_times: run_times, system: system,
+  @spec format(Suite.t) :: %{Suite.key => String.t}
+  def format(%Suite{scenarios: scenarios, system: system,
                configuration: %{
                  formatter_options: %{html: %{file: filename}}}}) do
-    statistics
-    |> input_job_reports(run_times, system, filename)
+    scenarios
+    |> Enum.group_by(fn(scenario) -> scenario.input_name end)
+    |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename) end)
     |> add_index(filename, system)
     |> List.flatten
     |> Map.new
   end
 
-  defp input_job_reports(statistics, run_times, system, filename) do
-    Enum.map statistics, fn({input, input_stats}) ->
-      input_run_times = Map.fetch! run_times, input
-      reports_for_input(input, input_stats, input_run_times, system, filename)
-    end
-  end
-
-  defp reports_for_input(input, input_stats, input_run_times, system, filename) do
-    job_reports = job_reports(input, input_stats, input_run_times, system)
-    comparison  = comparison_report(input, input_stats, input_run_times, system, filename)
+  defp reports_for_input({input_name, scenarios}, system, filename) do
+    job_reports = job_reports(input_name, scenarios, system)
+    comparison  = comparison_report(input_name, scenarios, system, filename)
     [comparison | job_reports]
   end
 
-  defp comparison_report(input, input_stats, input_run_times, system, filename) do
-    input_json = JSON.format_measurements(input_stats, input_run_times)
-    sorted_stats = Benchee.Statistics.sort input_stats
-    input_suite = %{
-      statistics: sorted_stats,
-      run_times:  input_run_times,
-      system:     system,
-      job_count:  length(sorted_stats),
-      filename:   filename
-    }
-    {[input, "comparison"], comparison(input, input_suite, input_json)}
-  end
-
-  defp job_reports(input, input_stats, input_run_times, system) do
-    merged_stats = merge_job_measurements(input_stats, input_run_times)
+  defp job_reports(input_name, scenarios, system) do
+    merged_stats = format_job_measurements(scenarios)
     # extract some of me to benchee_json pretty please?
     Enum.map(merged_stats, fn({job_name, measurements}) ->
       job_json = JSON.encode!(measurements)
-      {[input, job_name],
-       job_detail(input, job_name, measurements, system, job_json)}
+      {
+        [input_name, job_name],
+        job_detail(input_name, job_name, measurements, system, job_json)
+      }
     end)
+  end
+
+  defp comparison_report(input_name, scenarios, system, filename) do
+    input_json = JSON.format_scenarios_for_input(scenarios)
+    sorted_statistics = scenarios
+                        |> Statistics.sort()
+                        |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_time_statistics} end)
+                        |> Map.new
+    input_run_times = scenarios
+                      |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_times} end)
+                      |> Map.new
+    input_suite = %{
+      statistics: sorted_statistics,
+      run_times:  input_run_times,
+      system:     system,
+      job_count:  length(scenarios),
+      filename:   filename
+    }
+    {[input_name, "comparison"], comparison(input_name, input_suite, input_json)}
   end
 
   defp add_index(grouped_main_contents, filename, system) do
@@ -194,30 +197,79 @@ defmodule Benchee.Formatters.HTML do
 
   ## Exmaples
 
-      iex> statistics = %{
-      ...>   "Job"   => %{average: 500.0},
-      ...>   "Other" => %{average: 200.0}
-      ...> }
-      iex> run_times = %{"Job" => [400, 600], "Other" => [150, 250]}
-      iex> Benchee.Formatters.HTML.merge_job_measurements(statistics, run_times)
+      iex> scenarios = [
+      ...>   %Benchee.Benchmark.Scenario{
+      ...>     job_name: "Job",
+      ...>     run_times: [400, 600],
+      ...>     run_time_statistics: %Benchee.Statistics{
+      ...>       average:       500.0,
+      ...>       ips:           2000.0,
+      ...>       std_dev:       20,
+      ...>       std_dev_ratio: 0.1,
+      ...>       std_dev_ips:   500,
+      ...>       median:        190.0,
+      ...>       sample_size:   3,
+      ...>       minimum:       190,
+      ...>       maximum:       210
+      ...>     }
+      ...>   },
+      ...>   %Benchee.Benchmark.Scenario{
+      ...>     job_name: "Other",
+      ...>     run_times: [150, 250],
+      ...>     run_time_statistics: %Benchee.Statistics{
+      ...>       average:       200.0,
+      ...>       ips:           5000.0,
+      ...>       std_dev:       20,
+      ...>       std_dev_ratio: 0.1,
+      ...>       std_dev_ips:   500,
+      ...>       median:        190.0,
+      ...>       sample_size:   3,
+      ...>       minimum:       190,
+      ...>       maximum:       210
+      ...>     }
+      ...>   }
+      ...> ]
+      iex> Benchee.Formatters.HTML.format_job_measurements(scenarios)
       %{
         "Job" => %{
-          statistics: %{average: 500.0},
+          statistics: %Benchee.Statistics{
+            average:       500.0,
+            ips:           2000.0,
+            std_dev:       20,
+            std_dev_ratio: 0.1,
+            std_dev_ips:   500,
+            median:        190.0,
+            sample_size:   3,
+            minimum:       190,
+            maximum:       210
+          },
           run_times:  [400, 600]
         },
         "Other" => %{
-          statistics: %{average: 200.0},
+          statistics: %Benchee.Statistics{
+            average:       200.0,
+            ips:           5000.0,
+            std_dev:       20,
+            std_dev_ratio: 0.1,
+            std_dev_ips:   500,
+            median:        190.0,
+            sample_size:   3,
+            minimum:       190,
+            maximum:       210
+          },
           run_times: [150, 250]
         }
       }
   """
-  def merge_job_measurements(statistics, run_times) do
-    Map.merge(statistics, run_times, fn(_key, stats, times) ->
-      %{
-        statistics: stats,
-        run_times: times
-      }
-    end)
+  def format_job_measurements(scenarios) do
+    scenarios
+    |> Enum.map(fn(scenario) ->
+         {scenario.job_name, %{
+           statistics: scenario.run_time_statistics,
+           run_times: scenario.run_times
+         }}
+       end)
+    |> Map.new
   end
 
   defp format_duration(duration) do
@@ -232,9 +284,9 @@ defmodule Benchee.Formatters.HTML do
     DeviationPercent.format deviation_percent
   end
 
-  defp inputs_supplied?(input_name) do
-    input_name != Benchee.Benchmark.no_input
-  end
+  @no_input Benchee.Benchmark.no_input()
+  defp inputs_supplied?(@no_input), do: false
+  defp inputs_supplied?(_), do: true
 
   defp input_headline(input_name) do
     if inputs_supplied?(input_name) do
