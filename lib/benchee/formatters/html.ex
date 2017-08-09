@@ -121,7 +121,7 @@ defmodule Benchee.Formatters.HTML do
                  formatter_options: %{html: %{file: filename}}}}) do
     scenarios
     |> Enum.group_by(fn(scenario) -> scenario.input_name end)
-    |> Enum.map(fn(tuple) -> reports_for_input(tuple, system, filename) end)
+    |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename) end)
     |> add_index(filename, system)
     |> List.flatten
     |> Map.new
@@ -134,7 +134,7 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp job_reports(input_name, scenarios, system) do
-    merged_stats = format_runtime_stats(scenarios)
+    merged_stats = format_job_measurements(scenarios)
     # extract some of me to benchee_json pretty please?
     Enum.map(merged_stats, fn({job_name, measurements}) ->
       job_json = JSON.encode!(measurements)
@@ -147,15 +147,15 @@ defmodule Benchee.Formatters.HTML do
 
   defp comparison_report(input_name, scenarios, system, filename) do
     input_json = JSON.format_scenarios_for_input(scenarios)
-    sorted_stastics = scenarios
-                      |> Statistics.sort()
-                      |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_time_statistics} end)
-                      |> Map.new
+    sorted_statistics = scenarios
+                        |> Statistics.sort()
+                        |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_time_statistics} end)
+                        |> Map.new
     input_run_times = scenarios
                       |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_times} end)
                       |> Map.new
     input_suite = %{
-      statistics: sorted_stastics,
+      statistics: sorted_statistics,
       run_times:  input_run_times,
       system:     system,
       job_count:  length(scenarios),
@@ -229,7 +229,7 @@ defmodule Benchee.Formatters.HTML do
       ...>     }
       ...>   }
       ...> ]
-      iex> Benchee.Formatters.HTML.format_runtime_stats(scenarios)
+      iex> Benchee.Formatters.HTML.format_job_measurements(scenarios)
       %{
         "Job" => %{
           statistics: %Benchee.Statistics{
@@ -261,7 +261,7 @@ defmodule Benchee.Formatters.HTML do
         }
       }
   """
-  def format_runtime_stats(scenarios) do
+  def format_job_measurements(scenarios) do
     scenarios
     |> Enum.map(fn(scenario) ->
          {scenario.job_name, %{
