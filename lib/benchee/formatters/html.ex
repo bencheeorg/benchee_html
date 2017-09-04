@@ -118,22 +118,14 @@ defmodule Benchee.Formatters.HTML do
   @spec format(Suite.t) :: %{Suite.key => String.t}
   def format(%Suite{scenarios: scenarios, system: system,
                configuration: %{
-                 formatter_options: %{html: %{file: filename, unit_scaling: unit_scaling}}}}) do
-    format(scenarios, system, filename, unit_scaling)
-  end
+                 formatter_options: %{html: html_options}}}) do
+    default_html_options = %{unit_scaling: :best}
+    html_options = Map.merge(default_html_options, html_options)
 
-  @spec format(Suite.t) :: %{Suite.key => String.t}
-  def format(%Suite{scenarios: scenarios, system: system,
-               configuration: %{
-                 formatter_options: %{html: %{file: filename}}}}) do
-    format(scenarios, system, filename, :best)
-  end
-
-  defp format(scenarios, system, filename, unit_scaling) do
     scenarios
     |> Enum.group_by(fn(scenario) -> scenario.input_name end)
-    |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename, unit_scaling) end)
-    |> add_index(filename, system)
+    |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, html_options.file, html_options.unit_scaling) end)
+    |> add_index(html_options.file, system)
     |> List.flatten
     |> Map.new
   end
