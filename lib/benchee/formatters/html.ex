@@ -1,7 +1,7 @@
 defmodule Benchee.Formatters.HTML do
   require EEx
   alias Benchee.{Suite, Statistics}
-  alias Benchee.Conversion.{Format, Duration, Count, DeviationPercent}
+  alias Benchee.Conversion.{Duration, Count, DeviationPercent}
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
 
@@ -126,10 +126,10 @@ defmodule Benchee.Formatters.HTML do
   def format(%Suite{scenarios: scenarios, system: system,
                configuration: %{
                  formatter_options: %{html: %{file: filename}}}}) do
-    format(scenarios, system, filename, :none)
+    format(scenarios, system, filename, :best)
   end
 
-  defp format(scenarios, system, filename, unit_scaling \\ :best) do
+  defp format(scenarios, system, filename, unit_scaling) do
     scenarios
     |> Enum.group_by(fn(scenario) -> scenario.input_name end)
     |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename, unit_scaling) end)
