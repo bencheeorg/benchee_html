@@ -34,7 +34,7 @@ defmodule Benchee.Formatters.HTMLTest do
                  }
 
   test ".format returns an HTML-ish string for every input" do
-    format = HTML.format @sample_suite
+    {format, _} = HTML.format @sample_suite
 
     Enum.each format, fn({_, html}) ->
       assert html =~ ~r/<html>.+<article>.+<\/html>/si
@@ -45,13 +45,13 @@ defmodule Benchee.Formatters.HTMLTest do
     Enum.each comparison_and_job_htmls(), fn(html) ->
       assert_includes html,
         ["[190,200,210]", "\"average\":200.0", "\"median\":190.0","\"ips\":5.0e3",
-         "My Job", ">3<", ">190.00 μs<", ">210.00 μs<", ">200.00 μs<"]
+         "My Job", ">3<", ">190 μs<", ">210 μs<", ">200 μs<"]
      end
 
   end
 
   test ".format produces the right JSON data without the input level" do
-    %{["Some Input", "comparison"] => html} = HTML.format @sample_suite
+    {%{["Some Input", "comparison"] => html}, _} = HTML.format @sample_suite
 
     assert html =~ "{\"statistics\":{\"My Job\""
   end
@@ -64,14 +64,14 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   defp comparison_and_job_htmls do
-    %{["Some Input", "comparison"] => comparison_html,
-      ["Some Input", "My Job"] => job_html} = HTML.format @sample_suite
+    {%{["Some Input", "comparison"] => comparison_html,
+      ["Some Input", "My Job"] => job_html}, _} = HTML.format @sample_suite
 
     [comparison_html, job_html]
   end
 
   test ".format includes the elixir and erlang version everywhere" do
-    format = HTML.format @sample_suite
+    {format, _} = HTML.format @sample_suite
 
     Enum.each format, fn({_, html}) ->
       assert html =~ "Elixir 1.4.0"
@@ -80,7 +80,7 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test ".format mentions the input" do
-    format = HTML.format @sample_suite
+    {format, _} = HTML.format @sample_suite
 
     Enum.each format, fn({_, html}) ->
       assert html =~ "Some Input"
@@ -115,7 +115,7 @@ defmodule Benchee.Formatters.HTMLTest do
                }
              }
 
-    format = HTML.format suite
+    {format, _} = HTML.format suite
 
     Enum.each format, fn({_, html}) ->
       refute html =~ "#{marker}"

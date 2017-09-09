@@ -1,4 +1,5 @@
 defmodule Benchee.Formatters.HTML do
+  @behaviour Benchee.Formatter
   require EEx
   alias Benchee.{Suite, Statistics}
   alias Benchee.Conversion.{Format, Duration, Count, DeviationPercent}
@@ -78,21 +79,43 @@ defmodule Benchee.Formatters.HTML do
     particular job (one per benchmark input)
   """
   @spec output(Suite.t) :: Suite.t
-  def output(map)
-  def output(suite = %{configuration:
-                       %{formatter_options:
-                         %{html: %{file: filename}}}}) do
-    base_directory = create_base_directory(filename)
-    copy_asset_files(base_directory)
-
+  def output(suite = %{configuration: %{formatter_options: %{html: %{file: _}}}}) do
     suite
     |> format
-    |> FileCreation.each(filename)
+    |> write
 
     suite
   end
   def output(_suite) do
     raise "You need to specify a file to write the HTML to in the configuration as formatter_options: [html: [file: \"my.html\"]]"
+  end
+
+  @doc """
+  Transforms the statistical results from benchmarking to html to be written
+  somewhere, such as a file through `IO.write/2`.
+
+  Returns a map from file name/path to file content.
+  """
+  @spec format(Suite.t) :: {%{Suite.key => String.t}, String.t}
+  def format(%Suite{scenarios: scenarios, system: system,
+               configuration: %{
+                 formatter_options: %{html: %{file: filename}}}}) do
+    data = scenarios
+           |> Enum.group_by(fn(scenario) -> scenario.input_name end)
+           |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename) end)
+           |> add_index(filename, system)
+           |> List.flatten
+           |> Map.new
+
+    {data, filename}
+  end
+
+  @spec write({%{Suite.key => String.t}, String.t}) :: :ok
+  def write({data, filename}) do
+    filename |> create_base_directory |> copy_asset_files
+
+    FileCreation.each(data, filename)
+    :ok
   end
 
   defp create_base_directory(filename) do
@@ -109,23 +132,6 @@ defmodule Benchee.Formatters.HTML do
     File.cp_r! asset_source_directory, asset_target_directory
   end
 
-  @doc """
-  Transforms the statistical results from benchmarking to html to be written
-  somewhere, such as a file through `IO.write/2`.
-
-  Returns a map from file name/path to file content.
-  """
-  @spec format(Suite.t) :: %{Suite.key => String.t}
-  def format(%Suite{scenarios: scenarios, system: system,
-               configuration: %{
-                 formatter_options: %{html: %{file: filename}}}}) do
-    scenarios
-    |> Enum.group_by(fn(scenario) -> scenario.input_name end)
-    |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename) end)
-    |> add_index(filename, system)
-    |> List.flatten
-    |> Map.new
-  end
 
   defp reports_for_input({input_name, scenarios}, system, filename) do
     job_reports = job_reports(input_name, scenarios, system)
