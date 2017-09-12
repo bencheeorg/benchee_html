@@ -100,7 +100,7 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp update_filename(suite) do
-    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: %{:file => @default_filename}}}
+    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: %{file: @default_filename}}}
     %Suite{suite | configuration: updated_configuration}
   end
 

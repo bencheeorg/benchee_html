@@ -11,7 +11,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
   @default_comparison_path "#{@default_test_directory}/my_comparison.html"
 
   test "works just fine" do
-    banchee_options = [time: 0.01, 
+    benchee_options = [time: 0.01, 
                       warmup: 0.02, 
                       formatters: [&Benchee.Formatters.HTML.output/1], 
                       formatter_options: [html: [file: @file_path]]]
@@ -20,11 +20,11 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
                       test_directory: @test_directory, 
                       file_path: @file_path}
 
-    basic_test(banchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data)
   end
 
   test "works fine with the legacy format" do
-    banchee_options = [time: 0.01, 
+    benchee_options = [time: 0.01, 
                       warmup: 0.02, 
                       formatters: [&Benchee.Formatters.HTML.output/1], 
                       html: [file: @file_path]]
@@ -33,11 +33,11 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
                       test_directory: @test_directory, 
                       file_path: @file_path}
 
-    basic_test(banchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data)
   end
 
   test "works fine with filename not provided" do
-    banchee_options = [time: 0.01, 
+    benchee_options = [time: 0.01, 
                       warmup: 0.02, 
                       formatters: [&Benchee.Formatters.HTML.output/1]]
 
@@ -45,16 +45,16 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
                       test_directory: @default_test_directory, 
                       file_path: @default_file_path}
 
-    basic_test(banchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data)
   end
 
-  defp basic_test(banchee_options, assertion_data) do
+  defp basic_test(benchee_options, assertion_data) do
     try do
       capture_io fn ->
         Benchee.run %{
           "Sleep"        => fn -> :timer.sleep(10) end,
           "Sleep longer" => fn -> :timer.sleep(20) end
-        }, banchee_options
+        }, benchee_options
 
         assert File.exists?(assertion_data.comparison_path)
         assert File.exists?("#{assertion_data.test_directory}/my_sleep.html")
