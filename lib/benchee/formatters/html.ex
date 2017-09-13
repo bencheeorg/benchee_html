@@ -1,7 +1,7 @@
 defmodule Benchee.Formatters.HTML do
   @behaviour Benchee.Formatter
   require EEx
-  alias Benchee.{Suite, Statistics}
+  alias Benchee.{Suite, Statistics, Configuration}
   alias Benchee.Conversion.{Format, Duration, Count, DeviationPercent}
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
@@ -86,8 +86,17 @@ defmodule Benchee.Formatters.HTML do
 
     suite
   end
-  def output(_suite) do
-    raise "You need to specify a file to write the HTML to in the configuration as formatter_options: [html: [file: \"my.html\"]]"
+
+  @default_filename "benchmark_output/my.html"
+  def output(suite) do
+    suite
+    |> update_filename()
+    |> output()
+  end
+
+  defp update_filename(suite) do
+    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: %{file: @default_filename}}}
+    %Suite{suite | configuration: updated_configuration}
   end
 
   @doc """
