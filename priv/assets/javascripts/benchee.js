@@ -12,7 +12,10 @@ var runtimeHistogramData = function(runTimeData) {
 };
 
 var drawGraph = function(node, data, layout) {
-  Plotly.newPlot(node, data, layout, { displaylogo: false });
+  Plotly.newPlot(node, data, layout, {
+    displaylogo: false,
+    modeBarButtonsToRemove: ['sendDataToCloud']
+  });
 };
 
 var rawRunTimeData = function(runTimeData) {
