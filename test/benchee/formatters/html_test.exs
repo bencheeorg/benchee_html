@@ -161,6 +161,6 @@ defmodule Benchee.Formatters.HTMLTest do
 
   defp assert_assets_copied do
     assert File.exists? "#{@test_directory}/assets/javascripts/benchee.js"
-    assert File.exists? "#{@test_directory}/assets/javascripts/plotly-1.20.5.min.js"
+    assert File.exists? "#{@test_directory}/assets/javascripts/plotly-1.30.1.min.js"
   end
 end
