@@ -45,7 +45,8 @@ defmodule BencheeHTML.Mixfile do
   defp deps do
     [
       {:benchee,        github: "PragTob/benchee", branch: "master"},
-      {:benchee_json,   github: "devonestes/benchee_json", branch: "updating-to-scenarios"},
+      {:benchee_json,   github: "PragTob/benchee_json", branch: "master"},
+      {:poison,         "3.1.0",    optional: true},
       {:excoveralls,    "~> 0.6.1", only: :test},
       {:mix_test_watch, "~> 0.2",   only: :dev},
       {:credo,          "~> 0.4",   only: :dev},
