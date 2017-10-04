@@ -84,6 +84,7 @@ defmodule Benchee.Formatters.HTML do
     |> format
     |> write
 
+    open_report(suite.configuration.formatter_options.html.file)
     suite
   end
 
@@ -318,4 +319,16 @@ defmodule Benchee.Formatters.HTML do
     "#{@job_count_class}#{job_count}"
   end
   defp max_width_class(_job_count), do: ""
+  
+  defp open_report(url) do
+    System.cmd(get_browser(), [url])
+  end
+
+  defp get_browser do
+    case :os.type() do
+      {:unix, :darwin} -> "open"
+      {:unix, _} -> "xdg-open"
+      {:win32, _} -> "explorer"
+    end
+  end
 end
