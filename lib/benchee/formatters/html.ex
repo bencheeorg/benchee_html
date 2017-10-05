@@ -84,8 +84,7 @@ defmodule Benchee.Formatters.HTML do
     |> format
     |> write
 
-    open_report(suite.configuration.formatter_options.html.file)
-    suite
+    open_report(suite)
   end
 
   @default_filename "benchmark_output/my.html"
@@ -319,9 +318,13 @@ defmodule Benchee.Formatters.HTML do
     "#{@job_count_class}#{job_count}"
   end
   defp max_width_class(_job_count), do: ""
-  
-  defp open_report(url) do
-    System.cmd(get_browser(), [url])
+
+  defp open_report(suite) do
+    browser = get_browser()
+    {_, exit_code} = System.cmd(browser, [suite.configuration.formatter_options.html.file])
+    unless exit_code > 0, do: IO.puts "Opened report using #{browser}"
+
+    suite
   end
 
   defp get_browser do
