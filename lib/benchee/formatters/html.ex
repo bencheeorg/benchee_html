@@ -9,7 +9,7 @@ defmodule Benchee.Formatters.HTML do
   # Major pages
   EEx.function_from_file :defp, :comparison,
                          "priv/templates/comparison.html.eex",
-                         [:input_name, :suite, :suite_json]
+                         [:input_name, :suite, :units, :suite_json]
   EEx.function_from_file :defp, :job_detail,
                          "priv/templates/job_detail.html.eex",
                          [:input_name, :job_name, :job_statistics, :system,
@@ -36,11 +36,11 @@ defmodule Benchee.Formatters.HTML do
                          [:input_name]
   EEx.function_from_file :defp, :data_table,
                          "priv/templates/partials/data_table.html.eex",
-                         [:statistics, :options]
+                         [:statistics, :units, :options]
 
   # Small wrapper to have default arguments
-  defp render_data_table(statistics, options \\ []) do
-    data_table statistics, options
+  defp render_data_table(statistics, units, options \\ []) do
+    data_table statistics, units, options
   end
 
   @moduledoc """
@@ -169,7 +169,7 @@ defmodule Benchee.Formatters.HTML do
 
     sorted_statistics = scenarios
                         |> Statistics.sort()
-                        |> Enum.map(fn(scenario) -> {scenario.job_name, %{measurements: scenario.run_time_statistics, units: units}} end)
+                        |> Enum.map(fn(scenario) -> {scenario.job_name, %{measurements: scenario.run_time_statistics}} end)
                         |> Map.new
 
     input_run_times = scenarios
@@ -183,7 +183,7 @@ defmodule Benchee.Formatters.HTML do
       filename:   filename
     }
 
-    {[input_name, "comparison"], comparison(input_name, input_suite, input_json)}
+    {[input_name, "comparison"], comparison(input_name, input_suite, units, input_json)}
   end
 
   defp units(scenarios, unit_scaling) do
