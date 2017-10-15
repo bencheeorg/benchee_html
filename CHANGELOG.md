@@ -1,3 +1,10 @@
+## unreleased
+
+### Features
+
+* uses the `unit_scaling` option from benchee and scales units accordingly
+* automatically open the report in a web browser after creation is finished
+
 ## 0.3.1 2017-05-07
 
 ### Bugfixes
