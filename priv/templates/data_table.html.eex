@@ -21,7 +21,7 @@
         <% nil -> %>
           <td class="text-left"><%= name %></td>
         <% end %>
-        <td><%= format_count measurements.ips, units.ips %></td>
+        <td><%= format_count measurements.ips, units.run_time %></td>
         <td><%= format_duration measurements.average, units.run_time %></td>
         <td><%= format_percent measurements.std_dev_ratio %></td>
         <td><%= format_duration measurements.median, units.run_time %></td>

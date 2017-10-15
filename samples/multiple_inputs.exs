@@ -8,7 +8,7 @@ Benchee.run(%{
     &Benchee.Formatters.HTML.output/1,
     &Benchee.Formatters.Console.output/1
   ],
-  formatter_options: [html: [file: "samples_output/my.html"]],
+  formatter_options: [html: [file: "samples_output/my.html", unit_scaling: :best]],
   time: 7,
   warmup: 3,
   inputs: %{
