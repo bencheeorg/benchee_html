@@ -169,7 +169,7 @@ defmodule Benchee.Formatters.HTML do
 
     sorted_statistics = scenarios
                         |> Statistics.sort()
-                        |> Enum.map(fn(scenario) -> {scenario.job_name, %{measurements: scenario.run_time_statistics}} end)
+                        |> Enum.map(fn(scenario) -> {scenario.job_name, %{run_time_statistics: scenario.run_time_statistics}} end)
                         |> Map.new
 
     input_run_times = scenarios
