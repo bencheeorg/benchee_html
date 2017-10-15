@@ -4,6 +4,9 @@
 
 * uses the `unit_scaling` option from benchee and scales units accordingly
 * automatically open the report in a web browser after creation is finished
+* update plotly.js version
+* hide the save and edit in cloud link from plotly graphs
+* use a default file name so you don't HAVE to supply a file name
 
 ## 0.3.1 2017-05-07
 
