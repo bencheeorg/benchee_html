@@ -108,10 +108,12 @@ defmodule Benchee.Formatters.HTML do
   @spec format(Suite.t) :: {%{Suite.key => String.t}, String.t}
   def format(%Suite{scenarios: scenarios, system: system,
                configuration: %{
-                 formatter_options: %{html: %{file: filename}}}}) do
+                 formatter_options: %{html: %{file: filename}},
+                 unit_scaling: unit_scaling
+               }}) do
     data = scenarios
            |> Enum.group_by(fn(scenario) -> scenario.input_name end)
-           |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename) end)
+           |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename, unit_scaling) end)
            |> add_index(filename, system)
            |> List.flatten
            |> Map.new
@@ -162,7 +164,7 @@ defmodule Benchee.Formatters.HTML do
 
   defp comparison_report(input_name, scenarios, system, filename, unit_scaling) do
     input_json = JSON.format_scenarios_for_input(scenarios)
-    
+
     units = units(scenarios, unit_scaling)
     sorted_statistics = scenarios
                         |> Statistics.sort()
@@ -193,7 +195,7 @@ defmodule Benchee.Formatters.HTML do
          end)
       |> Enum.group_by(fn({stat_name, _}) -> stat_name end,
                        fn({_, value}) -> value end)
-    
+
     %{
       run_time: Duration.best(measurements.average, strategy: unit_scaling),
       ips:      Count.best(measurements.ips, strategy: unit_scaling),
@@ -282,14 +284,14 @@ defmodule Benchee.Formatters.HTML do
           units: %{
             ips: %Benchee.Conversion.Unit{
               label: "K",
-              long: "Thousand", 
-              magnitude: 1000, 
+              long: "Thousand",
+              magnitude: 1000,
               name: :thousand
             },
             run_time: %Benchee.Conversion.Unit{
               label: "μs",
-              long: "Microseconds", 
-              magnitude: 1, 
+              long: "Microseconds",
+              magnitude: 1,
               name: :microsecond
             }
           },
@@ -310,14 +312,14 @@ defmodule Benchee.Formatters.HTML do
           units: %{
             ips: %Benchee.Conversion.Unit{
               label: "K",
-              long: "Thousand", 
-              magnitude: 1000, 
+              long: "Thousand",
+              magnitude: 1000,
               name: :thousand
             },
             run_time: %Benchee.Conversion.Unit{
               label: "μs",
-              long: "Microseconds", 
-              magnitude: 1, 
+              long: "Microseconds",
+              magnitude: 1,
               name: :microsecond
             }
           },
