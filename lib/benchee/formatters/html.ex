@@ -2,6 +2,7 @@ defmodule Benchee.Formatters.HTML do
   @behaviour Benchee.Formatter
   require EEx
   alias Benchee.{Suite, Statistics, Configuration}
+  alias Benchee.Conversion
   alias Benchee.Conversion.{Duration, Count, DeviationPercent}
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
@@ -144,7 +145,7 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp reports_for_input({input_name, scenarios}, system, filename, unit_scaling) do
-    units = units(scenarios, unit_scaling)
+    units = Conversion.units(scenarios, unit_scaling)
     job_reports = job_reports(input_name, scenarios, system, units)
     comparison  = comparison_report(input_name, scenarios, system, filename, units)
     [comparison | job_reports]
@@ -184,23 +185,6 @@ defmodule Benchee.Formatters.HTML do
     }
 
     {[input_name, "comparison"], comparison(input_name, input_suite, units, input_json)}
-  end
-
-  defp units(scenarios, unit_scaling) do
-    # Produces a map like
-    #   %{run_time: [12345, 15431, 13222], ips: [1, 2, 3]}
-    measurements =
-      scenarios
-      |> Enum.flat_map(fn(scenario) ->
-           Map.to_list(scenario.run_time_statistics)
-         end)
-      |> Enum.group_by(fn({stat_name, _}) -> stat_name end,
-                       fn({_, value}) -> value end)
-
-    %{
-      run_time: Duration.best(measurements.average, strategy: unit_scaling),
-      ips:      Count.best(measurements.ips, strategy: unit_scaling),
-    }
   end
 
   defp add_index(grouped_main_contents, filename, system) do
