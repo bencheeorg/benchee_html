@@ -2,18 +2,19 @@ defmodule Benchee.Formatters.HTML do
   @behaviour Benchee.Formatter
   require EEx
   alias Benchee.{Suite, Statistics, Configuration}
-  alias Benchee.Conversion.{Format, Duration, Count, DeviationPercent}
+  alias Benchee.Conversion
+  alias Benchee.Conversion.{Duration, Count, DeviationPercent}
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
 
   # Major pages
   EEx.function_from_file :defp, :comparison,
                          "priv/templates/comparison.html.eex",
-                         [:input_name, :suite, :suite_json]
+                         [:input_name, :suite, :units, :suite_json]
   EEx.function_from_file :defp, :job_detail,
                          "priv/templates/job_detail.html.eex",
-                         [:input_name, :job_name,  :measurements, :system,
-                          :job_json]
+                         [:input_name, :job_name, :job_statistics, :system,
+                          :units, :job_json]
   EEx.function_from_file :defp, :index,
                          "priv/templates/index.html.eex",
                          [:names_to_paths, :system]
@@ -36,11 +37,11 @@ defmodule Benchee.Formatters.HTML do
                          [:input_name]
   EEx.function_from_file :defp, :data_table,
                          "priv/templates/partials/data_table.html.eex",
-                         [:statistics, :options]
+                         [:statistics, :units, :options]
 
   # Small wrapper to have default arguments
-  defp render_data_table(statistics, options \\ []) do
-    data_table statistics, options
+  defp render_data_table(statistics, units, options \\ []) do
+    data_table statistics, units, options
   end
 
   @moduledoc """
@@ -108,10 +109,12 @@ defmodule Benchee.Formatters.HTML do
   @spec format(Suite.t) :: {%{Suite.key => String.t}, String.t}
   def format(%Suite{scenarios: scenarios, system: system,
                configuration: %{
-                 formatter_options: %{html: %{file: filename}}}}) do
+                 formatter_options: %{html: %{file: filename}},
+                 unit_scaling: unit_scaling
+               }}) do
     data = scenarios
            |> Enum.group_by(fn(scenario) -> scenario.input_name end)
-           |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename) end)
+           |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename, unit_scaling) end)
            |> add_index(filename, system)
            |> List.flatten
            |> Map.new
@@ -141,31 +144,35 @@ defmodule Benchee.Formatters.HTML do
     File.cp_r! asset_source_directory, asset_target_directory
   end
 
-
-  defp reports_for_input({input_name, scenarios}, system, filename) do
-    job_reports = job_reports(input_name, scenarios, system)
-    comparison  = comparison_report(input_name, scenarios, system, filename)
+  defp reports_for_input({input_name, scenarios}, system, filename, unit_scaling) do
+    units = Conversion.units(scenarios, unit_scaling)
+    job_reports = job_reports(input_name, scenarios, system, units)
+    comparison  = comparison_report(input_name, scenarios, system, filename, units)
     [comparison | job_reports]
   end
 
-  defp job_reports(input_name, scenarios, system) do
-    merged_stats = format_job_measurements(scenarios)
+  defp job_reports(input_name, scenarios, system, units) do
     # extract some of me to benchee_json pretty please?
-    Enum.map(merged_stats, fn({job_name, measurements}) ->
-      job_json = JSON.encode!(measurements)
+    Enum.map(scenarios, fn(scenario) ->
+      job_json = JSON.encode!(%{
+        statistics: scenario.run_time_statistics,
+        run_times: scenario.run_times
+      })
       {
-        [input_name, job_name],
-        job_detail(input_name, job_name, measurements, system, job_json)
+        [input_name, scenario.job_name],
+        job_detail(input_name, scenario.job_name, scenario.run_time_statistics, system, units, job_json)
       }
     end)
   end
 
-  defp comparison_report(input_name, scenarios, system, filename) do
+  defp comparison_report(input_name, scenarios, system, filename, units) do
     input_json = JSON.format_scenarios_for_input(scenarios)
+
     sorted_statistics = scenarios
                         |> Statistics.sort()
-                        |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_time_statistics} end)
+                        |> Enum.map(fn(scenario) -> {scenario.job_name, %{run_time_statistics: scenario.run_time_statistics}} end)
                         |> Map.new
+
     input_run_times = scenarios
                       |> Enum.map(fn(scenario) -> {scenario.job_name, scenario.run_times} end)
                       |> Map.new
@@ -176,7 +183,8 @@ defmodule Benchee.Formatters.HTML do
       job_count:  length(scenarios),
       filename:   filename
     }
-    {[input_name, "comparison"], comparison(input_name, input_suite, input_json)}
+
+    {[input_name, "comparison"], comparison(input_name, input_suite, units, input_json)}
   end
 
   defp add_index(grouped_main_contents, filename, system) do
@@ -206,93 +214,12 @@ defmodule Benchee.Formatters.HTML do
     |> FileCreation.interleave(tags)
   end
 
-  @doc """
-  Given statistics and run times for an input get all the data of a job
-  together.
-
-  ## Exmaples
-
-      iex> scenarios = [
-      ...>   %Benchee.Benchmark.Scenario{
-      ...>     job_name: "Job",
-      ...>     run_times: [400, 600],
-      ...>     run_time_statistics: %Benchee.Statistics{
-      ...>       average:       500.0,
-      ...>       ips:           2000.0,
-      ...>       std_dev:       20,
-      ...>       std_dev_ratio: 0.1,
-      ...>       std_dev_ips:   500,
-      ...>       median:        190.0,
-      ...>       sample_size:   3,
-      ...>       minimum:       190,
-      ...>       maximum:       210
-      ...>     }
-      ...>   },
-      ...>   %Benchee.Benchmark.Scenario{
-      ...>     job_name: "Other",
-      ...>     run_times: [150, 250],
-      ...>     run_time_statistics: %Benchee.Statistics{
-      ...>       average:       200.0,
-      ...>       ips:           5000.0,
-      ...>       std_dev:       20,
-      ...>       std_dev_ratio: 0.1,
-      ...>       std_dev_ips:   500,
-      ...>       median:        190.0,
-      ...>       sample_size:   3,
-      ...>       minimum:       190,
-      ...>       maximum:       210
-      ...>     }
-      ...>   }
-      ...> ]
-      iex> Benchee.Formatters.HTML.format_job_measurements(scenarios)
-      %{
-        "Job" => %{
-          statistics: %Benchee.Statistics{
-            average:       500.0,
-            ips:           2000.0,
-            std_dev:       20,
-            std_dev_ratio: 0.1,
-            std_dev_ips:   500,
-            median:        190.0,
-            sample_size:   3,
-            minimum:       190,
-            maximum:       210
-          },
-          run_times:  [400, 600]
-        },
-        "Other" => %{
-          statistics: %Benchee.Statistics{
-            average:       200.0,
-            ips:           5000.0,
-            std_dev:       20,
-            std_dev_ratio: 0.1,
-            std_dev_ips:   500,
-            median:        190.0,
-            sample_size:   3,
-            minimum:       190,
-            maximum:       210
-          },
-          run_times: [150, 250]
-        }
-      }
-  """
-  def format_job_measurements(scenarios) do
-    scenarios
-    |> Enum.map(fn(scenario) ->
-         {scenario.job_name, %{
-           statistics: scenario.run_time_statistics,
-           run_times: scenario.run_times
-         }}
-       end)
-    |> Map.new
+  defp format_duration(duration, unit) do
+    Duration.format({Duration.scale(duration, unit), unit})
   end
 
-  defp format_duration(duration) do
-    Format.format({:erlang.float(duration), :microsecond}, Duration)
-  end
-
-  defp format_count(count) do
-    Format.format({count, :one}, Count)
+  defp format_count(count, unit) do
+    Count.format({Count.scale(count, unit), unit})
   end
 
   defp format_percent(deviation_percent) do

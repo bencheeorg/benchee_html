@@ -14,6 +14,7 @@ Benchee.run %{
   "100k" => fn -> Enum.sort(list_100k) end,
 }, time:   2,
    warmup: 0,
+   unit_scaling: :largest,
    formatters: [
      &Benchee.Formatters.Console.output/1,
      &Benchee.Formatters.HTML.output/1

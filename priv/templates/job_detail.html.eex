@@ -20,7 +20,7 @@ Raw Run Times shows all individual recorded run times in the order they were rec
       </h2>
 
       <section>
-        <%= render_data_table(%{job_name => measurements.statistics}) %>
+        <%= render_data_table(%{job_name => %{run_time_statistics: job_statistics}}, units) %>
       </section>
 
       <section class="benchee-plot-container">

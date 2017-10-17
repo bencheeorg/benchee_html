@@ -7,26 +7,25 @@ defmodule Benchee.Formatters.HTMLTest do
   @test_directory "test_output"
   @filename "#{@test_directory}/my.html"
   @expected_filename "#{@test_directory}/my_some_input_comparison.html"
+  @scenario %Benchee.Benchmark.Scenario{
+    job_name: "My Job",
+    run_times: [190, 200, 210],
+    input_name: "Some Input",
+    input: "Some Input",
+    run_time_statistics: %Benchee.Statistics{
+      average:       200.0,
+      ips:           5000.0,
+      std_dev:       20,
+      std_dev_ratio: 0.1,
+      std_dev_ips:   500,
+      median:        190.0,
+      sample_size:   3,
+      minimum:       190,
+      maximum:       210
+    }
+  }
   @sample_suite %Benchee.Suite{
-                   scenarios: [
-                     %Benchee.Benchmark.Scenario{
-                       job_name: "My Job",
-                       run_times: [190, 200, 210],
-                       input_name: "Some Input",
-                       input: "Some Input",
-                       run_time_statistics: %Benchee.Statistics{
-                        average:       200.0,
-                        ips:           5000.0,
-                        std_dev:       20,
-                        std_dev_ratio: 0.1,
-                        std_dev_ips:   500,
-                        median:        190.0,
-                        sample_size:   3,
-                        minimum:       190,
-                        maximum:       210
-                       }
-                     }
-                   ],
+                   scenarios: [@scenario],
                    system: %{elixir: "1.4.0", erlang: "19.1"},
                    configuration: %Benchee.Configuration{
                      formatter_options: %{html: %{file: @filename}}
@@ -45,10 +44,35 @@ defmodule Benchee.Formatters.HTMLTest do
   test ".format has the important suite data in the html result" do
     Enum.each comparison_and_job_htmls(), fn(html) ->
       assert_includes html,
-        ["[190,200,210]", "\"average\":200.0", "\"median\":190.0","\"ips\":5.0e3",
-         "My Job", ">3<", ">190 μs<", ">210 μs<", ">200 μs<"]
-     end
+        [
+          "[190,200,210]", "\"average\":200.0", "\"median\":190.0",
+          "\"ips\":5.0e3", "My Job", ">3<", ">190 μs<", ">210 μs<", ">200 μs<",
+          "5 K"
+        ]
+    end
+  end
 
+  test ".format also scales the run times to ms" do
+    statistics = %Benchee.Statistics{
+      average:       1500.0,
+      ips:           666.66,
+      std_dev:       150,
+      std_dev_ratio: 0.1,
+      std_dev_ips:   66.66,
+      median:        1400.0,
+      sample_size:   3,
+      minimum:       1300,
+      maximum:       1700
+    }
+    scenario = %Benchee.Benchmark.Scenario{
+      @scenario | run_time_statistics: statistics
+    }
+    suite = %Benchee.Suite{@sample_suite | scenarios: [scenario]}
+
+    Enum.each comparison_and_job_htmls(suite), fn(html) ->
+      assert_includes html,
+        [">1.50 ms<", ">666.66<", ">1.40 ms<", ">1.30 ms<", ">1.70 ms<"]
+    end
   end
 
   test ".format produces the right JSON data without the input level" do
@@ -64,9 +88,9 @@ defmodule Benchee.Formatters.HTMLTest do
     end
   end
 
-  defp comparison_and_job_htmls do
+  defp comparison_and_job_htmls(suite \\ @sample_suite) do
     {%{["Some Input", "comparison"] => comparison_html,
-      ["Some Input", "My Job"] => job_html}, _} = HTML.format @sample_suite
+      ["Some Input", "My Job"] => job_html}, _} = HTML.format suite
 
     [comparison_html, job_html]
   end
