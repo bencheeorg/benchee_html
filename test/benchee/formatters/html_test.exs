@@ -155,10 +155,12 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test ".output returns the suite again unchanged, produces files and opens them in the default browser" do
+    custom_config = update_in(@sample_suite.configuration |> Map.from_struct(), [:formatter_options, :html, :auto_open], &(&1 || true))
+    custom_suite = %Benchee.Suite{ @sample_suite | configuration: struct(Benchee.Configuration, custom_config) }
     try do
       output = capture_io fn ->
-        return = Benchee.Formatters.HTML.output(@sample_suite)
-        assert return == @sample_suite
+        return = Benchee.Formatters.HTML.output(custom_suite)
+        assert return == custom_suite
       end
 
       assert File.exists? @expected_filename

@@ -8,7 +8,9 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
 
   @default_test_directory "benchmark_output"
   @default_file_path "#{@default_test_directory}/my.html"
+  @default_auto_open true
   @default_comparison_path "#{@default_test_directory}/my_comparison.html"
+  @expected_open_report_output ~r/Opened report using (open|xdg-open|explorer)/
 
   test "works just fine" do
     benchee_options = [time: 0.01, 
@@ -43,14 +45,14 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
 
     assertion_data = %{comparison_path: @default_comparison_path, 
                       test_directory: @default_test_directory, 
-                      file_path: @default_file_path}
+                      file_path: @default_file_path, auto_open: @default_auto_open}
 
     basic_test(benchee_options, assertion_data)
   end
 
   defp basic_test(benchee_options, assertion_data) do
     try do
-      capture_io fn ->
+      out = capture_io fn ->
         Benchee.run %{
           "Sleep"        => fn -> :timer.sleep(10) end,
           "Sleep longer" => fn -> :timer.sleep(20) end
@@ -67,6 +69,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
         assert html =~ "Sleep longer"
         assert html =~ "ips-comparison"
       end
+      if assertion_data.auto_open, do: assert out =~ @expected_open_report_output
     after
       if File.exists?(assertion_data.test_directory), do: File.rm_rf! assertion_data.test_directory
     end
