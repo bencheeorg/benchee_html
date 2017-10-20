@@ -80,23 +80,29 @@ defmodule Benchee.Formatters.HTML do
     particular job (one per benchmark input)
   """
   @spec output(Suite.t) :: Suite.t
-  def output(suite = %{configuration: %{formatter_options: %{html: %{file: _}}}}) do
+  def output(suite = %{configuration: %{formatter_options: %{html: %{file: _, auto_open: auto_open?}}}}) do
     suite
     |> format
     |> write
 
-    open_report(suite)
+    if auto_open?, do: open_report(suite)
+    suite
   end
 
   @default_filename "benchmark_output/my.html"
+  @default_auto_open true
   def output(suite) do
     suite
-    |> update_filename()
+    |> fallback_default_config()
     |> output()
   end
 
-  defp update_filename(suite) do
-    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: %{file: @default_filename}}}
+  defp fallback_default_config(suite) do
+    opts = suite.configuration.formatter_options
+           |> Map.get(:html, %{})
+           |> Map.put_new(:file, @default_filename)
+           |> Map.put_new(:auto_open, @default_auto_open) 
+    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: opts}}
     %Suite{suite | configuration: updated_configuration}
   end
 
@@ -250,8 +256,6 @@ defmodule Benchee.Formatters.HTML do
     browser = get_browser()
     {_, exit_code} = System.cmd(browser, [suite.configuration.formatter_options.html.file])
     unless exit_code > 0, do: IO.puts "Opened report using #{browser}"
-
-    suite
   end
 
   defp get_browser do

@@ -21,6 +21,7 @@ end
 ## Usage
 
 Just use it as a formatter for [benchee](github.com/PragTob/benchee) and tell it through `html: [file: "your_file.html"]` where the html report should be written to.
+By default, the default browser is opened for viewing reports. You can override this behaviour by passing `html: [file: "your_file.html", auto_open: false]` as a formatting option.
 
 ```elixir
 list = Enum.to_list(1..10_000)
