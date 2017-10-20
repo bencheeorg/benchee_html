@@ -14,11 +14,11 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
     benchee_options = [time: 0.01, 
                       warmup: 0.02, 
                       formatters: [&Benchee.Formatters.HTML.output/1], 
-                      formatter_options: [html: [file: @file_path]]]
+                      formatter_options: [html: [file: @file_path, auto_open: false]]]
 
     assertion_data = %{comparison_path: @comparison_path, 
                       test_directory: @test_directory, 
-                      file_path: @file_path}
+                      file_path: @file_path, auto_open: false}
 
     basic_test(benchee_options, assertion_data)
   end
@@ -27,11 +27,11 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
     benchee_options = [time: 0.01, 
                       warmup: 0.02, 
                       formatters: [&Benchee.Formatters.HTML.output/1], 
-                      html: [file: @file_path]]
+                      html: [file: @file_path, auto_open: false]]
 
     assertion_data = %{comparison_path: @comparison_path, 
                       test_directory: @test_directory, 
-                      file_path: @file_path}
+                      file_path: @file_path, auto_open: false}
 
     basic_test(benchee_options, assertion_data)
   end

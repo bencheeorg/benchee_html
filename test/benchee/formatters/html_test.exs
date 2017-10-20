@@ -28,7 +28,7 @@ defmodule Benchee.Formatters.HTMLTest do
                    scenarios: [@scenario],
                    system: %{elixir: "1.4.0", erlang: "19.1"},
                    configuration: %Benchee.Configuration{
-                     formatter_options: %{html: %{file: @filename}}
+                     formatter_options: %{html: %{file: @filename, auto_open: false}}
                    }
                  }
   @expected_open_report_output ~r/Opened report using (open|xdg-open|explorer)/
@@ -136,7 +136,7 @@ defmodule Benchee.Formatters.HTMLTest do
                ],
                system: %{elixir: "1.4.0", erlang: "19.1"},
                configuration: %Benchee.Configuration{
-                 formatter_options: %{html: %{file: @filename}}
+                 formatter_options: %{html: %{file: @filename, auto_open: false}}
                }
              }
 
