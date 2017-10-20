@@ -90,14 +90,18 @@ defmodule Benchee.Formatters.HTML do
   end
 
   @default_filename "benchmark_output/my.html"
+  @default_auto_open true
   def output(suite) do
     suite
-    |> update_filename()
+    |> fallback_default_config()
     |> output()
   end
 
-  defp update_filename(suite) do
-    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: %{file: @default_filename}}}
+  defp fallback_default_config(suite) do
+    opts = Map.get(suite.configuration.formatter_options, :html, %{})
+           |> Map.put_new(:file, @default_filename)
+           |> Map.put_new(:auto_open, @default_auto_open) 
+    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: opts}}
     %Suite{suite | configuration: updated_configuration}
   end
 
