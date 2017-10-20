@@ -98,7 +98,8 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp fallback_default_config(suite) do
-    opts = Map.get(suite.configuration.formatter_options, :html, %{})
+    opts = suite.configuration.formatter_options
+           |> Map.get(:html, %{})
            |> Map.put_new(:file, @default_filename)
            |> Map.put_new(:auto_open, @default_auto_open) 
     updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: opts}}
