@@ -23,7 +23,8 @@ var rawRunTimeData = function(runTimeData) {
   var data = [
     {
       y: runTimeData,
-      type: "bar"
+      type: "bar",
+      y0: 500
     }
   ];
 
