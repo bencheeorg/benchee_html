@@ -13,7 +13,6 @@ matrix:
       otp_release: 20.0
 
 before_script:
-  - rm /home/travis/build/PragTob/benchee_html/_build/dev/*.hash
   - MIX_ENV=test mix compile --warnings-as-errors
   - travis_wait mix dialyzer --plt
 script:
