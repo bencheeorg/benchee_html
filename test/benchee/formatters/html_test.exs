@@ -31,8 +31,6 @@ defmodule Benchee.Formatters.HTMLTest do
                      formatter_options: %{html: %{file: @filename, auto_open: false}}
                    }
                  }
-  @expected_open_report_output ~r/Opened report using (open|xdg-open|explorer)/
-
   test ".format returns an HTML-ish string for every input" do
     {format, _} = HTML.format @sample_suite
 
@@ -154,13 +152,11 @@ defmodule Benchee.Formatters.HTMLTest do
     end
   end
 
-  test ".output returns the suite again unchanged, produces files and opens them in the default browser" do
-    custom_config = update_in(@sample_suite.configuration |> Map.from_struct(), [:formatter_options, :html, :auto_open], &(&1 || true))
-    custom_suite = %Benchee.Suite{ @sample_suite | configuration: struct(Benchee.Configuration, custom_config) }
+  test ".output returns the suite again unchanged, produces files" do
     try do
-      output = capture_io fn ->
-        return = Benchee.Formatters.HTML.output(custom_suite)
-        assert return == custom_suite
+      capture_io fn ->
+        return = Benchee.Formatters.HTML.output(@sample_suite)
+        assert return == @sample_suite
       end
 
       assert File.exists? @expected_filename
@@ -168,8 +164,6 @@ defmodule Benchee.Formatters.HTMLTest do
 
       content = File.read! @expected_filename
       assert_includes content, ["My Job", "average"]
-
-      assert output =~ @expected_open_report_output
     after
       if File.exists?(@test_directory), do: File.rm_rf! @test_directory
     end
