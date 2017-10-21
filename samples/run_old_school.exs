@@ -1,3 +1,5 @@
+# It is possible to use multiple formatters so that you have both the Console
+# output and an HTML file.
 list = Enum.to_list(1..10_000)
 map_fun = fn(i) -> [i, i * i] end
 
@@ -6,10 +8,7 @@ Benchee.run(%{
   "map.flatten" => fn -> list |> Enum.map(map_fun) |> List.flatten end
 },
   formatters: [
-    Benchee.Formatters.HTML,
-    Benchee.Formatters.Console
-  ],
-  formatter_options: [html: [file: "samples_output/my.html"]],
-  time: 2,
-  warmup: 0
+    &Benchee.Formatters.HTML.output/1,
+    &Benchee.Formatters.Console.output/1
+  ]
 )

@@ -8,8 +8,7 @@ Benchee.run(%{
   "map.flatten" => fn -> list |> Enum.map(map_fun) |> List.flatten end
 },
   formatters: [
-    &Benchee.Formatters.HTML.output/1,
-    &Benchee.Formatters.Console.output/1
-  ],
-  formatter_options: [html: [file: "samples_output/flattening_map.html"]],
+    Benchee.Formatters.HTML,
+    Benchee.Formatters.Console
+  ]
 )

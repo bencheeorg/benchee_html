@@ -16,7 +16,7 @@ Benchee.run %{
    warmup: 0,
    unit_scaling: :largest,
    formatters: [
-     &Benchee.Formatters.Console.output/1,
-     &Benchee.Formatters.HTML.output/1
+     Benchee.Formatters.Console,
+     Benchee.Formatters.HTML
    ],
    formatter_options: [html: [file: "samples_output/many.html"]]

@@ -101,7 +101,7 @@ defmodule Benchee.Formatters.HTML do
     |> do_format
   end
 
-  @default_filename "benchmarks/my.html"
+  @default_filename "benchmarks/output/results.html"
   @default_auto_open true
   defp default_configuration(suite) do
     opts = suite.configuration.formatter_options
