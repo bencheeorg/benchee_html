@@ -117,15 +117,6 @@ defmodule Benchee.Formatters.HTMLTest do
     [comparison_html, job_html]
   end
 
-  test ".format includes the elixir and erlang version everywhere" do
-    {format, _} = HTML.format @sample_suite
-
-    Enum.each format, fn({_, html}) ->
-      assert html =~ "Elixir 1.4.0"
-      assert html =~ "Erlang 19.1"
-    end
-  end
-
   test ".format mentions the input" do
     {format, _} = HTML.format @sample_suite
 
