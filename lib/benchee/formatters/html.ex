@@ -41,11 +41,15 @@ defmodule Benchee.Formatters.HTML do
 
   EEx.function_from_file :defp, :system_info,
                          "priv/templates/partials/system_info.html.eex",
-                         [:system]
+                         [:system, :options]
 
   # Small wrapper to have default arguments
   defp render_data_table(statistics, units, options \\ []) do
     data_table statistics, units, options
+  end
+
+  defp render_system_info(system, options \\ [visible: false]) do
+    system_info(system, options)
   end
 
   @moduledoc """

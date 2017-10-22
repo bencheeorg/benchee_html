@@ -8,7 +8,7 @@
       <%= version_note(system) %>
     </div>
     
-    <%= system_info(system) %>
+    <%= render_system_info(system, visible: true) %>
     
     <article>
       <%= for {input_name, paths} <- names_to_paths do %>
@@ -24,5 +24,7 @@
       <% end %>
 
     </article>
+
+    <%= js_includes() %>
   </body>
 </html>

@@ -5,7 +5,7 @@
 
     <%= header(input_name, system) %>
 
-    <%= system_info(system) %>
+    <%= render_system_info(system) %>
     
     <article>
       <h2>

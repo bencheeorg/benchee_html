@@ -124,6 +124,10 @@ a:hover {
   text-decoration: none;
 }
 
+.benchee-systeminfo {
+  display: none;
+}
+
 ul.benchee-systeminfo-list {
   columns: 2;
   -webkit-columns: 2;

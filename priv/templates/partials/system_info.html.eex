@@ -1,4 +1,4 @@
-<article>
+<article id="system-info" class="benchee-systeminfo" <%= if options[:visible] do %>style="display: block;"<% end %>>
   <h3>System info</h3>
   <ul class="benchee-systeminfo-list">
     <li>Elixir: <%= system.elixir%></li>
