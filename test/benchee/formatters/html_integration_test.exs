@@ -66,6 +66,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
         assert html =~ "Sleep"
         assert html =~ "Sleep longer"
         assert html =~ "ips-comparison"
+        assert html =~ "<h3>System info</h3>"
       end
     after
       if File.exists?(assertion_data.test_directory), do: File.rm_rf! assertion_data.test_directory

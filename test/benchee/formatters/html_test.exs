@@ -60,6 +60,20 @@ defmodule Benchee.Formatters.HTMLTest do
     end
   end
 
+  test ".format has system info in the html result" do
+    Enum.each comparison_and_job_htmls(), fn(html) ->
+      assert_includes html,
+        [
+          "Elixir: #{@system_info[:elixir]}",
+          "Erlang: #{@system_info[:erlang]}",
+          "Operating system: #{@system_info[:os]}",
+          "Available memory: #{@system_info[:available_memory]}",
+          "CPU Information: #{@system_info[:cpu_speed]}",
+          "Number of Available Cores: #{@system_info[:num_cores]}",
+        ]
+    end
+  end
+
   test ".format also scales the run times to ms" do
     statistics = %Benchee.Statistics{
       average:       1500.0,
