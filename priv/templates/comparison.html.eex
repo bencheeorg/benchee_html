@@ -5,6 +5,8 @@
 
     <%= header(input_name, suite.system) %>
 
+    <%= system_info(suite.system) %>
+
     <article>
       <h2>
         Comparison

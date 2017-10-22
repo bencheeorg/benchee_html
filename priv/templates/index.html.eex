@@ -7,7 +7,9 @@
       <h1>benchee report index</h1>
       <%= version_note(system) %>
     </div>
-
+    
+    <%= system_info(system) %>
+    
     <article>
       <%= for {input_name, paths} <- names_to_paths do %>
         <section>

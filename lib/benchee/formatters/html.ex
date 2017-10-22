@@ -39,6 +39,10 @@ defmodule Benchee.Formatters.HTML do
                          "priv/templates/partials/data_table.html.eex",
                          [:statistics, :units, :options]
 
+  EEx.function_from_file :defp, :system_info,
+                         "priv/templates/partials/system_info.html.eex",
+                         [:system]
+
   # Small wrapper to have default arguments
   defp render_data_table(statistics, units, options \\ []) do
     data_table statistics, units, options
