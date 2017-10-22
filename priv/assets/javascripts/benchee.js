@@ -94,7 +94,7 @@ window.drawRawRunTimeCharts = function(runTimes, statistics, inputHeadline) {
   var layout = {
     title: jobName + " Raw Run Times" + inputHeadline,
     yaxis: { title: RUN_TIME_AXIS_TITLE, range: [minY, maxY] },
-    xaxis: { title: "Sample number"},
+    xaxis: { title: "Sample number"}
   };
   drawGraph(runTimeNode, rawRunTimeData(runTimes), layout);
 };
