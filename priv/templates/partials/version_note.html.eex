@@ -1,3 +1,3 @@
-<a class="version-note" href="javascript:toggleSystemDataInfo();">
-  Elixir <%= system.elixir%>, Erlang <%= system.erlang %>
-</a>
+<span class="version-note">
+  <a href="javascript:toggleSystemDataInfo();" title="Click to toggle system info">Elixir <%= system.elixir%>, Erlang <%= system.erlang %></a>
+</span>
