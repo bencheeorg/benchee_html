@@ -7,6 +7,14 @@ defmodule Benchee.Formatters.HTMLTest do
   @test_directory "test_output"
   @filename "#{@test_directory}/my.html"
   @expected_filename "#{@test_directory}/my_some_input_comparison.html"
+  @system_info %{
+    elixir: "1.4.0",
+    erlang: "19.1",
+    os: "macOS",
+    available_memory: "2 GB",
+    cpu_speed: "2.80GHz",
+    num_cores: 2
+  }
   @scenario %Benchee.Benchmark.Scenario{
     job_name: "My Job",
     run_times: [190, 200, 210],
@@ -26,7 +34,7 @@ defmodule Benchee.Formatters.HTMLTest do
   }
   @sample_suite %Benchee.Suite{
                    scenarios: [@scenario],
-                   system: %{elixir: "1.4.0", erlang: "19.1"},
+                   system: @system_info,
                    configuration: %Benchee.Configuration{
                      formatter_options: %{html: %{file: @filename}}
                    }
@@ -134,7 +142,7 @@ defmodule Benchee.Formatters.HTMLTest do
                    }
                  }
                ],
-               system: %{elixir: "1.4.0", erlang: "19.1"},
+               system: @system_info,
                configuration: %Benchee.Configuration{
                  formatter_options: %{html: %{file: @filename}}
                }
