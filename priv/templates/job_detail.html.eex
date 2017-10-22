@@ -36,10 +36,11 @@ Raw Run Times shows all individual recorded run times in the order they were rec
     <script>
       var measurements = <%= job_json %>;
       var runTimes     = measurements.run_times;
+      var statistics   = measurements.statistics;
 
       var inputHeadline = "<%= input_headline(input_name) %>"
 
-      drawRawRunTimeCharts(runTimes, inputHeadline);
+      drawRawRunTimeCharts(runTimes, inputHeadline, statistics);
       drawRunTimeHistograms(runTimes, inputHeadline);
     </script>
   </body>

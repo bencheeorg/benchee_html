@@ -87,13 +87,15 @@ window.drawComparisonBoxPlot = function(runTimes, sortOrder, inputHeadline) {
   drawGraph(boxNode, boxPlotData(runTimes, sortOrder), layout);
 };
 
-window.drawRawRunTimeCharts = function(runTimes, inputHeadline) {
+window.drawRawRunTimeCharts = function(runTimes, statistics, inputHeadline) {
   var runTimeNode = document.getElementById("raw-run-times");
   var jobName = runTimeNode.getAttribute("data-job-name");
+  var minY = (statistics.minimum) - (0.1 * statistics.minimum);
+  var maxY = statistics.maximum;
   var layout = {
     title: jobName + " Raw Run Times" + inputHeadline,
-    yaxis: { title: RUN_TIME_AXIS_TITLE },
-    xaxis: { title: "Sample number"}
+    yaxis: { title: RUN_TIME_AXIS_TITLE, range: [minY, maxY] },
+    xaxis: { title: "Sample number"},
   };
   drawGraph(runTimeNode, rawRunTimeData(runTimes), layout);
 };
