@@ -2,12 +2,14 @@
 
 ### Features
 
+* Benchee 0.10.0 compatibility
 * uses the `unit_scaling` option from benchee and scales units accordingly
 * automatically open the report in a web browser after creation is finished
 * update plotly.js version
 * hide the save and edit in cloud link from plotly graphs
 * use a default file name so you don't HAVE to supply a file name
 * New "System info" link at the top right to display system information like OS, CPU, RAM etc.
+* You can now specify the formatter as just `Benchee.Formatters.HTML`
 
 ## 0.3.1 2017-05-07
 
