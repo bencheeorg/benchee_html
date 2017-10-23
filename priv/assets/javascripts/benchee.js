@@ -107,3 +107,10 @@ window.drawRunTimeHistograms = function(runTimes, inputHeadline) {
   };
   drawGraph(runTimeHistogramNode, runtimeHistogramData(runTimes), layout);
 };
+
+window.toggleSystemDataInfo = function() {
+  var systemDataNode = document.getElementById("system-info");
+  var newState = (systemDataNode.style.display === 'block') ? 'none' : 'block';
+  
+  systemDataNode.style.display = newState;
+};

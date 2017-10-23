@@ -25,13 +25,13 @@ defmodule Benchee.Formatters.HTML do
                          []
   EEx.function_from_file :defp, :header,
                          "priv/templates/partials/header.html.eex",
-                         [:input_name, :system]
+                         [:input_name]
   EEx.function_from_file :defp, :js_includes,
                          "priv/templates/partials/js_includes.html.eex",
                          []
   EEx.function_from_file :defp, :version_note,
                          "priv/templates/partials/version_note.html.eex",
-                         [:system]
+                         []
   EEx.function_from_file :defp, :input_label,
                          "priv/templates/partials/input_label.html.eex",
                          [:input_name]
@@ -39,9 +39,16 @@ defmodule Benchee.Formatters.HTML do
                          "priv/templates/partials/data_table.html.eex",
                          [:statistics, :units, :options]
 
-  # Small wrapper to have default arguments
+  EEx.function_from_file :defp, :system_info,
+                         "priv/templates/partials/system_info.html.eex",
+                         [:system, :options]
+
+  # Small wrappers to have default arguments
   defp render_data_table(statistics, units, options \\ []) do
     data_table statistics, units, options
+  end
+  defp render_system_info(system, options \\ [visible: false]) do
+    system_info(system, options)
   end
 
   @moduledoc """

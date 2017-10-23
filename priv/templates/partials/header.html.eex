@@ -1,5 +1,5 @@
 <div class="header">
   <h1>benchee report</h1>
   <%= input_label(input_name) %>
-  <%= version_note(system) %>
+  <%= version_note() %>
 </div>

@@ -3,8 +3,10 @@
   <%= head() %>
   <body>
 
-    <%= header(input_name, system) %>
+    <%= header(input_name) %>
 
+    <%= render_system_info(system) %>
+    
     <article>
       <h2>
         <a name="<%= job_name %>"></a>

@@ -7,6 +7,14 @@ defmodule Benchee.Formatters.HTMLTest do
   @test_directory "test_output"
   @filename "#{@test_directory}/my.html"
   @expected_filename "#{@test_directory}/my_some_input_comparison.html"
+  @system_info %{
+    elixir: "1.4.0",
+    erlang: "19.1",
+    os: "macOS",
+    available_memory: "2 GB",
+    cpu_speed: "2.80GHz",
+    num_cores: 2
+  }
   @scenario %Benchee.Benchmark.Scenario{
     job_name: "My Job",
     run_times: [190, 200, 210],
@@ -26,7 +34,7 @@ defmodule Benchee.Formatters.HTMLTest do
   }
   @sample_suite %Benchee.Suite{
                    scenarios: [@scenario],
-                   system: %{elixir: "1.4.0", erlang: "19.1"},
+                   system: @system_info,
                    configuration: %Benchee.Configuration{
                      formatter_options: %{html: %{file: @filename}}
                    }
@@ -48,6 +56,20 @@ defmodule Benchee.Formatters.HTMLTest do
           "[190,200,210]", "\"average\":200.0", "\"median\":190.0",
           "\"ips\":5.0e3", "My Job", ">3<", ">190 μs<", ">210 μs<", ">200 μs<",
           "5 K"
+        ]
+    end
+  end
+
+  test ".format has system info in the html result" do
+    Enum.each comparison_and_job_htmls(), fn(html) ->
+      assert_includes html,
+        [
+          "Elixir: #{@system_info[:elixir]}",
+          "Erlang: #{@system_info[:erlang]}",
+          "Operating system: #{@system_info[:os]}",
+          "Available memory: #{@system_info[:available_memory]}",
+          "CPU Information: #{@system_info[:cpu_speed]}",
+          "Number of Available Cores: #{@system_info[:num_cores]}",
         ]
     end
   end
@@ -95,15 +117,6 @@ defmodule Benchee.Formatters.HTMLTest do
     [comparison_html, job_html]
   end
 
-  test ".format includes the elixir and erlang version everywhere" do
-    {format, _} = HTML.format @sample_suite
-
-    Enum.each format, fn({_, html}) ->
-      assert html =~ "Elixir 1.4.0"
-      assert html =~ "Erlang 19.1"
-    end
-  end
-
   test ".format mentions the input" do
     {format, _} = HTML.format @sample_suite
 
@@ -134,7 +147,7 @@ defmodule Benchee.Formatters.HTMLTest do
                    }
                  }
                ],
-               system: %{elixir: "1.4.0", erlang: "19.1"},
+               system: @system_info,
                configuration: %Benchee.Configuration{
                  formatter_options: %{html: %{file: @filename}}
                }

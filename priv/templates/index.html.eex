@@ -5,9 +5,11 @@
 
     <div class="header">
       <h1>benchee report index</h1>
-      <%= version_note(system) %>
+      <%= version_note() %>
     </div>
-
+    
+    <%= render_system_info(system, visible: true) %>
+    
     <article>
       <%= for {input_name, paths} <- names_to_paths do %>
         <section>
@@ -22,5 +24,7 @@
       <% end %>
 
     </article>
+
+    <%= js_includes() %>
   </body>
 </html>
