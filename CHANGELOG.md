@@ -7,6 +7,7 @@
 * update plotly.js version
 * hide the save and edit in cloud link from plotly graphs
 * use a default file name so you don't HAVE to supply a file name
+* New "System info" link at the top right to display system information like OS, CPU, RAM etc.
 
 ## 0.3.1 2017-05-07
 
