@@ -3,47 +3,71 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
   import ExUnit.CaptureIO
 
   @test_directory "test_output"
-  @file_path "#{@test_directory}/my.html"
-  @comparison_path "#{@test_directory}/my_comparison.html"
+  @base_name "my"
+  @file_path "#{@test_directory}/#{@base_name}.html"
+  @comparison_path "#{@test_directory}/#{@base_name}_comparison.html"
 
-  @default_test_directory "benchmark_output"
-  @default_file_path "#{@default_test_directory}/my.html"
-  @default_comparison_path "#{@default_test_directory}/my_comparison.html"
+  @default_test_directory "benchmarks/output"
+  @default_base_name "results"
+  @default_file_path "#{@default_test_directory}/#{@default_base_name}.html"
+  @default_comparison_path "#{@default_test_directory}/#{@default_base_name}_comparison.html"
 
   test "works just fine" do
-    benchee_options = [time: 0.01, 
-                      warmup: 0.02, 
-                      formatters: [&Benchee.Formatters.HTML.output/1], 
-                      formatter_options: [html: [file: @file_path]]]
+    benchee_options = [time: 0.01,
+                      warmup: 0.02,
+                      formatters: [Benchee.Formatters.HTML],
+                      formatter_options: [html: [file: @file_path, auto_open: false]]]
 
-    assertion_data = %{comparison_path: @comparison_path, 
-                      test_directory: @test_directory, 
-                      file_path: @file_path}
+    assertion_data = %{comparison_path: @comparison_path,
+                       test_directory: @test_directory,
+                       file_path: @file_path,
+                       base_name: @base_name
+                     }
 
     basic_test(benchee_options, assertion_data)
   end
 
-  test "works fine with the legacy format" do
-    benchee_options = [time: 0.01, 
-                      warmup: 0.02, 
-                      formatters: [&Benchee.Formatters.HTML.output/1], 
-                      html: [file: @file_path]]
+  test "works with the old school function as formatter" do
+    benchee_options = [time: 0.01,
+                      warmup: 0.02,
+                      formatters: [&Benchee.Formatters.HTML.output/1],
+                      formatter_options: [html: [file: @file_path, auto_open: false]]]
 
-    assertion_data = %{comparison_path: @comparison_path, 
-                      test_directory: @test_directory, 
-                      file_path: @file_path}
+    assertion_data = %{comparison_path: @comparison_path,
+                       test_directory: @test_directory,
+                       file_path: @file_path,
+                       base_name: @base_name
+                     }
+
+    basic_test(benchee_options, assertion_data)
+  end
+
+  test "works fine with the legacy configuration format" do
+    benchee_options = [time: 0.01,
+                      warmup: 0.02,
+                      formatters: [Benchee.Formatters.HTML],
+                      html: [file: @file_path, auto_open: false]]
+
+    assertion_data = %{comparison_path: @comparison_path,
+                       test_directory: @test_directory,
+                       file_path: @file_path,
+                       base_name: @base_name
+                     }
 
     basic_test(benchee_options, assertion_data)
   end
 
   test "works fine with filename not provided" do
-    benchee_options = [time: 0.01, 
-                      warmup: 0.02, 
-                      formatters: [&Benchee.Formatters.HTML.output/1]]
+    benchee_options = [time: 0.01,
+                      warmup: 0.02,
+                      formatters: [Benchee.Formatters.HTML],
+                      formatter_options: [html: [auto_open: false]]]
 
-    assertion_data = %{comparison_path: @default_comparison_path, 
-                      test_directory: @default_test_directory, 
-                      file_path: @default_file_path}
+    assertion_data = %{comparison_path: @default_comparison_path,
+                       test_directory: @default_test_directory,
+                       file_path: @default_file_path,
+                       base_name: @default_base_name
+                     }
 
     basic_test(benchee_options, assertion_data)
   end
@@ -57,8 +81,8 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
         }, benchee_options
 
         assert File.exists?(assertion_data.comparison_path)
-        assert File.exists?("#{assertion_data.test_directory}/my_sleep.html")
-        assert File.exists?("#{assertion_data.test_directory}/my_sleep_longer.html")
+        assert File.exists?("#{assertion_data.test_directory}/#{assertion_data.base_name}_sleep.html")
+        assert File.exists?("#{assertion_data.test_directory}/#{assertion_data.base_name}_sleep_longer.html")
         assert File.exists?(assertion_data.file_path)
         html = File.read! assertion_data.comparison_path
 

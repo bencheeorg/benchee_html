@@ -9,7 +9,5 @@ Benchee.run(%{
     Benchee.Formatters.HTML,
     Benchee.Formatters.Console
   ],
-  formatter_options: [html: [file: "samples_output/my.html"]],
-  time: 2,
-  warmup: 0
+  formatter_options: [html: [file: "output/my.html", auto_open: false]]
 )

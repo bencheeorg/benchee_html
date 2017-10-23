@@ -87,54 +87,70 @@ defmodule Benchee.Formatters.HTML do
     particular job (one per benchmark input)
   """
   @spec output(Suite.t) :: Suite.t
-  def output(suite = %{configuration: %{formatter_options: %{html: %{file: _}}}}) do
+  def output(suite) do
     suite
     |> format
     |> write
 
-    open_report(suite)
-  end
-
-  @default_filename "benchmark_output/my.html"
-  def output(suite) do
     suite
-    |> update_filename()
-    |> output()
-  end
-
-  defp update_filename(suite) do
-    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: %{file: @default_filename}}}
-    %Suite{suite | configuration: updated_configuration}
   end
 
   @doc """
   Transforms the statistical results from benchmarking to html to be written
   somewhere, such as a file through `IO.write/2`.
 
-  Returns a map from file name/path to file content.
+  Returns a map from file name/path to file content along with formatter options.
   """
-  @spec format(Suite.t) :: {%{Suite.key => String.t}, String.t}
-  def format(%Suite{scenarios: scenarios, system: system,
+  @spec format(Suite.t) :: {%{Suite.key => String.t}, map}
+  def format(suite) do
+    suite
+    |> default_configuration
+    |> do_format
+  end
+
+  @default_filename "benchmarks/output/results.html"
+  @default_auto_open true
+  defp default_configuration(suite) do
+    opts = suite.configuration.formatter_options
+           |> Map.get(:html, %{})
+           |> Map.put_new(:file, @default_filename)
+           |> Map.put_new(:auto_open, @default_auto_open)
+    updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: opts}}
+    %Suite{suite | configuration: updated_configuration}
+  end
+
+  defp do_format(%Suite{scenarios: scenarios, system: system,
                configuration: %{
-                 formatter_options: %{html: %{file: filename}},
+                 formatter_options: %{html: options = %{file: filename}},
                  unit_scaling: unit_scaling
                }}) do
     data = scenarios
            |> Enum.group_by(fn(scenario) -> scenario.input_name end)
-           |> Enum.map(fn(tagged_scenarios) -> reports_for_input(tagged_scenarios, system, filename, unit_scaling) end)
+           |> Enum.map(fn(tagged_scenarios) ->
+                reports_for_input(tagged_scenarios, system, filename, unit_scaling)
+              end)
            |> add_index(filename, system)
            |> List.flatten
            |> Map.new
 
-    {data, filename}
+    {data, options}
   end
 
-  @spec write({%{Suite.key => String.t}, String.t}) :: :ok
-  def write({data, filename}) do
-    filename |> create_base_directory |> copy_asset_files
+  @spec write({%{Suite.key => String.t}, map}) :: :ok
+  def write({data, %{file: filename, auto_open: auto_open?}}) do
+    prepare_folder_structure(filename)
 
     FileCreation.each(data, filename)
+
+    if auto_open?, do: open_report(filename)
+
     :ok
+  end
+
+  defp prepare_folder_structure(filename) do
+    filename
+    |> create_base_directory
+    |> copy_asset_files
   end
 
   defp create_base_directory(filename) do
@@ -253,12 +269,10 @@ defmodule Benchee.Formatters.HTML do
   end
   defp max_width_class(_job_count), do: ""
 
-  defp open_report(suite) do
+  defp open_report(filename) do
     browser = get_browser()
-    {_, exit_code} = System.cmd(browser, [suite.configuration.formatter_options.html.file])
+    {_, exit_code} = System.cmd(browser, [filename])
     unless exit_code > 0, do: IO.puts "Opened report using #{browser}"
-
-    suite
   end
 
   defp get_browser do

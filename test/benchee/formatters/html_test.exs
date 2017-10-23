@@ -36,11 +36,9 @@ defmodule Benchee.Formatters.HTMLTest do
                    scenarios: [@scenario],
                    system: @system_info,
                    configuration: %Benchee.Configuration{
-                     formatter_options: %{html: %{file: @filename}}
+                     formatter_options: %{html: %{file: @filename, auto_open: false}}
                    }
                  }
-  @expected_open_report_output ~r/Opened report using (open|xdg-open|explorer)/
-
   test ".format returns an HTML-ish string for every input" do
     {format, _} = HTML.format @sample_suite
 
@@ -149,7 +147,7 @@ defmodule Benchee.Formatters.HTMLTest do
                ],
                system: @system_info,
                configuration: %Benchee.Configuration{
-                 formatter_options: %{html: %{file: @filename}}
+                 formatter_options: %{html: %{file: @filename, auto_open: false}}
                }
              }
 
@@ -167,9 +165,9 @@ defmodule Benchee.Formatters.HTMLTest do
     end
   end
 
-  test ".output returns the suite again unchanged, produces files and opens them in the default browser" do
+  test ".output returns the suite again unchanged, produces files" do
     try do
-      output = capture_io fn ->
+      capture_io fn ->
         return = Benchee.Formatters.HTML.output(@sample_suite)
         assert return == @sample_suite
       end
@@ -179,8 +177,6 @@ defmodule Benchee.Formatters.HTMLTest do
 
       content = File.read! @expected_filename
       assert_includes content, ["My Job", "average"]
-
-      assert output =~ @expected_open_report_output
     after
       if File.exists?(@test_directory), do: File.rm_rf! @test_directory
     end

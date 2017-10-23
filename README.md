@@ -20,7 +20,7 @@ end
 
 ## Usage
 
-Just use it as a formatter for [benchee](github.com/PragTob/benchee) and tell it through `html: [file: "your_file.html"]` where the html report should be written to.
+Just use it as a formatter for [benchee](github.com/PragTob/benchee):
 
 ```elixir
 list = Enum.to_list(1..10_000)
@@ -31,12 +31,15 @@ Benchee.run(%{
   "map.flatten" => fn -> list |> Enum.map(map_fun) |> List.flatten end
 },
   formatters: [
-    &Benchee.Formatters.HTML.output/1,
-    &Benchee.Formatters.Console.output/1
-  ],
-  formatter_options: [html: [file: "samples_output/my.html"]],
+    Benchee.Formatters.HTML,
+    Benchee.Formatters.Console
+  ]
+  # override defaults
+  #, formatter_options: [html: [file: "output/my.html", auto_open: false]]
 )
 ```
+
+The report index page will be written to `"benchmarks/output/results.html"` and opened in your standard browser automatically. Of course you can also pass in `formatter_options` to specify a different destination for the reports: `html: [file: "your_file.html"]`. Auto open behaviour can be overridden in the same manner: `html: [auto_open: false]`
 
 Of course it also works with multiple inputs, in that case one file per input is generated:
 
@@ -48,8 +51,8 @@ Benchee.run(%{
   "map.flatten" => fn(list) -> list |> Enum.map(map_fun) |> List.flatten end
 },
   formatters: [
-    &Benchee.Formatters.HTML.output/1,
-    &Benchee.Formatters.Console.output/1
+    Benchee.Formatters.HTML,
+    Benchee.Formatters.Console
   ],
   formatter_options: [html: [file: "samples_output/my.html"]],
   time: 7,
