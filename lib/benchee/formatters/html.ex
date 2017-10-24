@@ -1,5 +1,6 @@
 defmodule Benchee.Formatters.HTML do
-  @behaviour Benchee.Formatter
+  use Benchee.Formatter
+
   require EEx
   alias Benchee.{Suite, Statistics, Configuration}
   alias Benchee.Conversion
@@ -74,28 +75,6 @@ defmodule Benchee.Formatters.HTML do
   """
 
   @doc """
-  Uses `Benchee.Formatters.HTML.format/1` to transform the statistics output to
-  HTML with JS, but also already writes it to files defined in the initial
-  configuration under `formatter_options: [html: [file:
-  "benchmark_out/my.html"]]`.
-
-  Generates the following files:
-
-  * index file (exactly like `file` is named)
-  * a comparison of all the benchmarked jobs (one per benchmarked input)
-  * for each job a detail page with more detailed run time graphs for that
-    particular job (one per benchmark input)
-  """
-  @spec output(Suite.t) :: Suite.t
-  def output(suite) do
-    suite
-    |> format
-    |> write
-
-    suite
-  end
-
-  @doc """
   Transforms the statistical results from benchmarking to html to be written
   somewhere, such as a file through `IO.write/2`.
 
@@ -136,6 +115,19 @@ defmodule Benchee.Formatters.HTML do
     {data, options}
   end
 
+  @doc """
+  Uses output of `Benchee.Formatters.HTML.format/1` to transform the statistics
+  output to HTML with JS, but also already writes it to files defined in the
+  initial configuration under `formatter_options: [html: [file:
+  "benchmark_out/my.html"]]`.
+
+  Generates the following files:
+
+  * index file (exactly like `file` is named)
+  * a comparison of all the benchmarked jobs (one per benchmarked input)
+  * for each job a detail page with more detailed run time graphs for that
+    particular job (one per benchmark input)
+  """
   @spec write({%{Suite.key => String.t}, map}) :: :ok
   def write({data, %{file: filename, auto_open: auto_open?}}) do
     prepare_folder_structure(filename)
