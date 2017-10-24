@@ -1,5 +1,5 @@
-%{"benchee": {:git, "https://github.com/PragTob/benchee.git", "85c5bdb4834338395bde97e75025d7ea54b9d8b7", [branch: "master"]},
-  "benchee_json": {:git, "https://github.com/PragTob/benchee_json.git", "aee41496d0e6fa43bdfc5f264831e903356c3a35", [branch: "master"]},
+%{"benchee": {:hex, :benchee, "0.10.0", "7227e83ab81e4753610125d251bbf78c99167fbe7f931a8cbfbc3eda8526259c", [:mix], [{:deep_merge, "~> 0.1", [hex: :deep_merge, repo: "hexpm", optional: false]}], "hexpm"},
+  "benchee_json": {:hex, :benchee_json, "0.4.0", "59d3277829bd1dca8373cdb20b916cb435c2647be235d09963fc0959db908c36", [:mix], [{:benchee, "~> 0.10", [hex: :benchee, repo: "hexpm", optional: false]}, {:poison, ">= 1.4.0", [hex: :poison, repo: "hexpm", optional: false]}], "hexpm"},
   "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], []},
   "certifi": {:hex, :certifi, "1.0.0", "1c787a85b1855ba354f0b8920392c19aa1d06b0ee1362f9141279620a5be2039", [:rebar3], []},
   "credo": {:hex, :credo, "0.8.6", "335f723772d35da499b5ebfdaf6b426bfb73590b6fcbc8908d476b75f8cbca3f", [:mix], [{:bunt, "~> 0.2.0", [repo: "hexpm", hex: :bunt, optional: false]}], "hexpm"},
