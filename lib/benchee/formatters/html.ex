@@ -4,6 +4,7 @@ defmodule Benchee.Formatters.HTML do
   alias Benchee.Conversion.{Format, Duration, Count, DeviationPercent}
   alias Benchee.Utility.FileCreation
   alias Benchee.Formatters.JSON
+  alias Benchee.Formatters.Utility.Browser
 
   # Major pages
   EEx.function_from_file :defp, :comparison,
@@ -89,10 +90,16 @@ defmodule Benchee.Formatters.HTML do
     |> format
     |> FileCreation.each(filename)
 
+    open_report(suite.configuration.formatter_options.html, filename)
+
     suite
   end
   def output(_suite) do
     raise "You need to specify a file to write the HTML to in the configuration as formatter_options: [html: [file: \"my.html\"]]"
+  end
+
+  defp open_report(%{auto_open: true}, filename), do: Browser.open(filename)
+  defp open_report(_, _) do
   end
 
   defp create_base_directory(filename) do
