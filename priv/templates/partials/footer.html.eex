@@ -1,0 +1,4 @@
+<a href="https://github.com/PragTob/benchee" target="blank">benchee version: <%= dependencies.benchee %> </a>
+<br/>
+<a href="https://github.com/PragTob/benchee_html" target="blank">benchee_html version: <%= dependencies.benchee_html %></a>
+
