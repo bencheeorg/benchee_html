@@ -8,10 +8,14 @@ body {
   font-weight: 300;
 }
 
-article, .header {
+article, footer, .header {
   margin: 10px auto;
   width: 100%;
   max-width: 1200px;
+}
+
+footer {
+  font-size: 12px;
 }
 
 .header h1 {
