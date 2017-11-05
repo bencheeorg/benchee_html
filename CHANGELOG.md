@@ -1,3 +1,10 @@
+## unreleased
+
+### Features
+
+* y-axis doesn't always start at 0 anymore for raw run times so that the space can be used
+* note benchee & html versions down in the footer
+
 ## 0.4.0 (2017-10-24)
 
 ### Features
