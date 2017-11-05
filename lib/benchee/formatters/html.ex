@@ -50,14 +50,16 @@ defmodule Benchee.Formatters.HTML do
   defp render_data_table(statistics, units, options \\ []) do
     data_table statistics, units, options
   end
+
   defp render_system_info(system, options \\ [visible: false]) do
     system_info(system, options)
   end
+  
   defp render_footer do
-    %{
+    footer(%{
       benchee: Application.spec(:benchee, :vsn),
       benchee_html: Application.spec(:benchee_html, :vsn)
-    } |> footer()
+    })
   end
 
   @moduledoc """
