@@ -39,17 +39,27 @@ defmodule Benchee.Formatters.HTML do
   EEx.function_from_file :defp, :data_table,
                          "priv/templates/partials/data_table.html.eex",
                          [:statistics, :units, :options]
-
   EEx.function_from_file :defp, :system_info,
                          "priv/templates/partials/system_info.html.eex",
                          [:system, :options]
+  EEx.function_from_file :defp, :footer,
+                         "priv/templates/partials/footer.html.eex",
+                         [:dependencies]
 
   # Small wrappers to have default arguments
   defp render_data_table(statistics, units, options \\ []) do
     data_table statistics, units, options
   end
+
   defp render_system_info(system, options \\ [visible: false]) do
     system_info(system, options)
+  end
+  
+  defp render_footer do
+    footer(%{
+      benchee: Application.spec(:benchee, :vsn),
+      benchee_html: Application.spec(:benchee_html, :vsn)
+    })
   end
 
   @moduledoc """

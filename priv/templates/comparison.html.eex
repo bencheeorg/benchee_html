@@ -32,6 +32,10 @@ The Box Plot shows a distribution of run times with the median and outliers."
       </section>
     </article>
 
+    <footer>
+      <%= render_footer() %>
+    </footer>
+
     <%= js_includes() %>
 
     <script>

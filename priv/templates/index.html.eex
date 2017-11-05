@@ -25,6 +25,10 @@
 
     </article>
 
+    <footer>
+      <%= render_footer() %>
+    </footer>
+
     <%= js_includes() %>
   </body>
 </html>
