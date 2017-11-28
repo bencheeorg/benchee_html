@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <%= head() %>
+  <%= head(inline_assets) %>
   <body>
 
     <div class="header">
       <h1>benchee report index</h1>
       <%= version_note() %>
     </div>
-    
+
     <%= render_system_info(system, visible: true) %>
-    
+
     <article>
       <%= for {input_name, paths} <- names_to_paths do %>
         <section>
@@ -29,6 +29,6 @@
       <%= render_footer() %>
     </footer>
 
-    <%= js_includes() %>
+    <%= js_includes(inline_assets) %>
   </body>
 </html>

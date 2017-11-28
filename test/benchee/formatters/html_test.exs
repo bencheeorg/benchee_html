@@ -182,6 +182,29 @@ defmodule Benchee.Formatters.HTMLTest do
     end
   end
 
+  test "assets should not be copied when assets inlining is on" do
+    try do
+      suite = %Benchee.Suite{
+                scenarios: [@scenario],
+                system: @system_info,
+                configuration: %Benchee.Configuration{
+                  formatter_options: %{html: %{file: @filename, auto_open: false, inline_assets: true}}
+                }
+              }
+
+      capture_io fn ->
+        return = Benchee.Formatters.HTML.output(suite)
+        assert return == suite
+      end
+
+      assert File.exists? @expected_filename
+      assert !File.exists? "#{@test_directory}/assets/javascripts/benchee.js"
+      assert !File.exists? "#{@test_directory}/assets/javascripts/plotly-1.30.1.min.js"
+    after
+      if File.exists?(@test_directory), do: File.rm_rf! @test_directory
+    end
+  end
+
   test ".output lets you know where it put the html" do
     try do
       output = capture_io fn ->
