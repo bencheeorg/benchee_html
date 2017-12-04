@@ -154,7 +154,7 @@ defmodule Benchee.Formatters.HTML do
   defp prepare_folder_structure(filename, inline_assets?) do
     base_directory = create_base_directory(filename)
 
-    if not inline_assets?, do: copy_asset_files(base_directory)
+    unless inline_assets?, do: copy_asset_files(base_directory)
 
     base_directory
   end
@@ -264,22 +264,6 @@ defmodule Benchee.Formatters.HTML do
     else
       ""
     end
-  end
-
-  defp inline_stylesheets, do: inline_assets("stylesheets", "style")
-  defp inline_javascripts, do: inline_assets("javascripts", "script")
-
-  defp inline_assets(type, tag_name) do
-    stylesheets_dir = Application.app_dir(:benchee_html, "priv/assets/#{type}/")
-
-    stylesheets_dir
-    |> File.ls!()
-    |> Enum.map(fn(file) -> File.read!(Path.join(stylesheets_dir, file)) end)
-    |> format_assets(tag_name)
-  end
-
-  defp format_assets(assets, tag_name) do
-    "<#{tag_name}>#{Enum.join(assets)}</#{tag_name}>"
   end
 
   @job_count_class "job-count-"

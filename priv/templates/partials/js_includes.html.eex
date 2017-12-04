@@ -1,5 +1,9 @@
 <%= if inline_assets do %>
-  <%= inline_javascripts() %>
+  <script>
+    <% javascripts_path = Application.app_dir(:benchee_html, "priv/assets/javascripts/") %>
+    <%= File.read! Path.join(javascripts_path, "benchee.js") %>
+    <%= File.read! Path.join(javascripts_path, "plotly-1.30.1.min.js") %>
+  </script>
 <% else %>
   <script src="assets/javascripts/plotly-1.30.1.min.js"></script>
   <script src="assets/javascripts/benchee.js"></script>

@@ -4,7 +4,10 @@
   <meta http-equiv="content-type" content="text/html; charset=utf8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%= if inline_assets do %>
-    <%= inline_stylesheets() %>
+    <style>
+      <%= File.read! Path.join(Application.app_dir(:benchee_html, "priv/assets/stylesheets/"), "benchee.css") %>
+      <%= File.read! Path.join(Application.app_dir(:benchee_html, "priv/assets/fontello/css/"), "fontello.css") %>
+    </style>
   <% else %>
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/benchee.css">
     <link rel="stylesheet" type="text/css" href="assets/fontello/css/fontello.css">

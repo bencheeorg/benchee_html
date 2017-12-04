@@ -198,10 +198,20 @@ defmodule Benchee.Formatters.HTMLTest do
       end
 
       assert File.exists? @expected_filename
-      assert !File.exists? "#{@test_directory}/assets/javascripts/benchee.js"
-      assert !File.exists? "#{@test_directory}/assets/javascripts/plotly-1.30.1.min.js"
+
+      content = File.read! @expected_filename
+      assets_inlined content, ["<style>", "<script>"]
+
+      refute File.exists? "#{@test_directory}/assets/javascripts/benchee.js"
+      refute File.exists? "#{@test_directory}/assets/javascripts/plotly-1.30.1.min.js"
     after
       if File.exists?(@test_directory), do: File.rm_rf! @test_directory
+    end
+  end
+
+  defp assets_inlined(html, assets) do
+    Enum.each assets, fn(asset) ->
+      assert html =~ asset
     end
   end
 
