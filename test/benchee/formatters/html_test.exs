@@ -166,47 +166,43 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test ".output returns the suite again unchanged, produces files" do
-    try do
-      capture_io fn ->
-        return = Benchee.Formatters.HTML.output(@sample_suite)
-        assert return == @sample_suite
-      end
-
-      assert File.exists? @expected_filename
-      assert_assets_copied()
-
-      content = File.read! @expected_filename
-      assert_includes content, ["My Job", "average"]
-    after
-      if File.exists?(@test_directory), do: File.rm_rf! @test_directory
+    capture_io fn ->
+      return = Benchee.Formatters.HTML.output(@sample_suite)
+      assert return == @sample_suite
     end
+
+    assert File.exists? @expected_filename
+    assert_assets_copied()
+
+    content = File.read! @expected_filename
+    assert_includes content, ["My Job", "average"]
+  after
+    if File.exists?(@test_directory), do: File.rm_rf! @test_directory
   end
 
   test "assets should not be copied when assets inlining is on" do
-    try do
-      suite = %Benchee.Suite{
-                scenarios: [@scenario],
-                system: @system_info,
-                configuration: %Benchee.Configuration{
-                  formatter_options: %{html: %{file: @filename, auto_open: false, inline_assets: true}}
-                }
+    suite = %Benchee.Suite{
+              scenarios: [@scenario],
+              system: @system_info,
+              configuration: %Benchee.Configuration{
+                formatter_options: %{html: %{file: @filename, auto_open: false, inline_assets: true}}
               }
+            }
 
-      capture_io fn ->
-        return = Benchee.Formatters.HTML.output(suite)
-        assert return == suite
-      end
-
-      assert File.exists? @expected_filename
-
-      content = File.read! @expected_filename
-      assets_inlined content, ["<style>", "<script>"]
-
-      refute File.exists? "#{@test_directory}/assets/javascripts/benchee.js"
-      refute File.exists? "#{@test_directory}/assets/javascripts/plotly-1.30.1.min.js"
-    after
-      if File.exists?(@test_directory), do: File.rm_rf! @test_directory
+    capture_io fn ->
+      return = Benchee.Formatters.HTML.output(suite)
+      assert return == suite
     end
+
+    assert File.exists? @expected_filename
+
+    content = File.read! @expected_filename
+    assets_inlined content, ["<style>", "<script>"]
+
+    refute File.exists? "#{@test_directory}/assets/javascripts/benchee.js"
+    refute File.exists? "#{@test_directory}/assets/javascripts/plotly-1.30.1.min.js"
+  after
+    if File.exists?(@test_directory), do: File.rm_rf! @test_directory
   end
 
   defp assets_inlined(html, assets) do
@@ -216,16 +212,14 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test ".output lets you know where it put the html" do
-    try do
-      output = capture_io fn ->
-        Benchee.Formatters.HTML.output(@sample_suite)
-      end
-
-      assert output =~ @expected_filename
-      assert File.exists? @expected_filename
-    after
-      if File.exists?(@test_directory), do: File.rm_rf! @test_directory
+    output = capture_io fn ->
+      Benchee.Formatters.HTML.output(@sample_suite)
     end
+
+    assert output =~ @expected_filename
+    assert File.exists? @expected_filename
+  after
+    if File.exists?(@test_directory), do: File.rm_rf! @test_directory
   end
 
   defp assert_assets_copied do

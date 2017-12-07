@@ -73,29 +73,27 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
   end
 
   defp basic_test(benchee_options, assertion_data) do
-    try do
-      capture_io fn ->
-        Benchee.run %{
-          "Sleep"        => fn -> :timer.sleep(10) end,
-          "Sleep longer" => fn -> :timer.sleep(20) end
-        }, benchee_options
+    capture_io fn ->
+      Benchee.run %{
+        "Sleep"        => fn -> :timer.sleep(10) end,
+        "Sleep longer" => fn -> :timer.sleep(20) end
+      }, benchee_options
 
-        assert File.exists?(assertion_data.comparison_path)
-        assert File.exists?("#{assertion_data.test_directory}/#{assertion_data.base_name}_sleep.html")
-        assert File.exists?("#{assertion_data.test_directory}/#{assertion_data.base_name}_sleep_longer.html")
-        assert File.exists?(assertion_data.file_path)
-        html = File.read! assertion_data.comparison_path
+      assert File.exists?(assertion_data.comparison_path)
+      assert File.exists?("#{assertion_data.test_directory}/#{assertion_data.base_name}_sleep.html")
+      assert File.exists?("#{assertion_data.test_directory}/#{assertion_data.base_name}_sleep_longer.html")
+      assert File.exists?(assertion_data.file_path)
+      html = File.read! assertion_data.comparison_path
 
-        assert html =~ "<body>"
-        assert html =~ "Sleep"
-        assert html =~ "Sleep longer"
-        assert html =~ "ips-comparison"
-        assert html =~ "System info</a>"
-        assert html =~ "benchee version"
-        assert html =~ "benchee_html version"
-      end
-    after
-      if File.exists?(assertion_data.test_directory), do: File.rm_rf! assertion_data.test_directory
+      assert html =~ "<body>"
+      assert html =~ "Sleep"
+      assert html =~ "Sleep longer"
+      assert html =~ "ips-comparison"
+      assert html =~ "System info</a>"
+      assert html =~ "benchee version"
+      assert html =~ "benchee_html version"
     end
+  after
+    if File.exists?(assertion_data.test_directory), do: File.rm_rf! assertion_data.test_directory
   end
 end
