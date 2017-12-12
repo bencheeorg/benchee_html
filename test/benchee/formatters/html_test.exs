@@ -199,6 +199,9 @@ defmodule Benchee.Formatters.HTMLTest do
     content = File.read! @expected_filename
     assets_inlined content, ["<style>", "<script>"]
 
+    refute File.exists? "#{@test_directory}/assets/stylesheets/benchee.css"
+    refute File.exists? "#{@test_directory}/assets/fontello/css/fontello.css"
+
     refute File.exists? "#{@test_directory}/assets/javascripts/benchee.js"
     refute File.exists? "#{@test_directory}/assets/javascripts/plotly-1.30.1.min.js"
   after
