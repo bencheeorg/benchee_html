@@ -15,7 +15,7 @@
           <i
             class="benchee-help-icon icon-question-circle-o"
             title="Graphs showing the individual run time distribution for <%= job_name %>.
-Run Times Histpgram shows the distribution of occurences of specific run times in buckets.
+Run Times Histogram shows the distribution of occurrences of specific run times in buckets.
 Raw Run Times shows all individual recorded run times in the order they were recorded in."
           ></i>
         </a>
