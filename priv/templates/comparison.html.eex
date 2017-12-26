@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <%= head() %>
+  <%= head(inline_assets) %>
   <body>
 
     <%= header(input_name) %>
@@ -36,7 +36,7 @@ The Box Plot shows a distribution of run times with the median and outliers."
       <%= render_footer() %>
     </footer>
 
-    <%= js_includes() %>
+    <%= js_includes(inline_assets) %>
 
     <script>
       var suite      = <%= suite_json %>;

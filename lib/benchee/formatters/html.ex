@@ -11,25 +11,25 @@ defmodule Benchee.Formatters.HTML do
   # Major pages
   EEx.function_from_file :defp, :comparison,
                          "priv/templates/comparison.html.eex",
-                         [:input_name, :suite, :units, :suite_json]
+                         [:input_name, :suite, :units, :suite_json, :inline_assets]
   EEx.function_from_file :defp, :job_detail,
                          "priv/templates/job_detail.html.eex",
                          [:input_name, :job_name, :job_statistics, :system,
-                          :units, :job_json]
+                          :units, :job_json, :inline_assets]
   EEx.function_from_file :defp, :index,
                          "priv/templates/index.html.eex",
-                         [:names_to_paths, :system]
+                         [:names_to_paths, :system, :inline_assets]
 
   # Partials
   EEx.function_from_file :defp, :head,
                          "priv/templates/partials/head.html.eex",
-                         []
+                         [:inline_assets]
   EEx.function_from_file :defp, :header,
                          "priv/templates/partials/header.html.eex",
                          [:input_name]
   EEx.function_from_file :defp, :js_includes,
                          "priv/templates/partials/js_includes.html.eex",
-                         []
+                         [:inline_assets]
   EEx.function_from_file :defp, :version_note,
                          "priv/templates/partials/version_note.html.eex",
                          []
@@ -54,7 +54,7 @@ defmodule Benchee.Formatters.HTML do
   defp render_system_info(system, options \\ [visible: false]) do
     system_info(system, options)
   end
-  
+
   defp render_footer do
     footer(%{
       benchee: Application.spec(:benchee, :vsn),
@@ -99,26 +99,28 @@ defmodule Benchee.Formatters.HTML do
 
   @default_filename "benchmarks/output/results.html"
   @default_auto_open true
+  @default_inline_assets false
   defp default_configuration(suite) do
     opts = suite.configuration.formatter_options
            |> Map.get(:html, %{})
            |> Map.put_new(:file, @default_filename)
            |> Map.put_new(:auto_open, @default_auto_open)
+           |> Map.put_new(:inline_assets, @default_inline_assets)
     updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: opts}}
     %Suite{suite | configuration: updated_configuration}
   end
 
   defp do_format(%Suite{scenarios: scenarios, system: system,
                configuration: %{
-                 formatter_options: %{html: options = %{file: filename}},
+                 formatter_options: %{html: options = %{file: filename, inline_assets: inline_assets}},
                  unit_scaling: unit_scaling
                }}) do
     data = scenarios
            |> Enum.group_by(fn(scenario) -> scenario.input_name end)
            |> Enum.map(fn(tagged_scenarios) ->
-                reports_for_input(tagged_scenarios, system, filename, unit_scaling)
+                reports_for_input(tagged_scenarios, system, filename, unit_scaling, inline_assets)
               end)
-           |> add_index(filename, system)
+           |> add_index(filename, system, inline_assets)
            |> List.flatten
            |> Map.new
 
@@ -139,8 +141,8 @@ defmodule Benchee.Formatters.HTML do
     particular job (one per benchmark input)
   """
   @spec write({%{Suite.key => String.t}, map}) :: :ok
-  def write({data, %{file: filename, auto_open: auto_open?}}) do
-    prepare_folder_structure(filename)
+  def write({data, %{file: filename, auto_open: auto_open?, inline_assets: inline_assets?}}) do
+    prepare_folder_structure(filename, inline_assets?)
 
     FileCreation.each(data, filename)
 
@@ -149,10 +151,12 @@ defmodule Benchee.Formatters.HTML do
     :ok
   end
 
-  defp prepare_folder_structure(filename) do
-    filename
-    |> create_base_directory
-    |> copy_asset_files
+  defp prepare_folder_structure(filename, inline_assets?) do
+    base_directory = create_base_directory(filename)
+
+    unless inline_assets?, do: copy_asset_files(base_directory)
+
+    base_directory
   end
 
   defp create_base_directory(filename) do
@@ -164,19 +168,18 @@ defmodule Benchee.Formatters.HTML do
   @asset_directory "assets"
   defp copy_asset_files(base_directory) do
     asset_target_directory = Path.join(base_directory, @asset_directory)
-    asset_source_directory = Application.app_dir(:benchee_html,
-                                                 "priv/assets/")
+    asset_source_directory = Application.app_dir(:benchee_html, "priv/assets/")
     File.cp_r! asset_source_directory, asset_target_directory
   end
 
-  defp reports_for_input({input_name, scenarios}, system, filename, unit_scaling) do
+  defp reports_for_input({input_name, scenarios}, system, filename, unit_scaling, inline_assets) do
     units = Conversion.units(scenarios, unit_scaling)
-    job_reports = job_reports(input_name, scenarios, system, units)
-    comparison  = comparison_report(input_name, scenarios, system, filename, units)
+    job_reports = job_reports(input_name, scenarios, system, units, inline_assets)
+    comparison  = comparison_report(input_name, scenarios, system, filename, units, inline_assets)
     [comparison | job_reports]
   end
 
-  defp job_reports(input_name, scenarios, system, units) do
+  defp job_reports(input_name, scenarios, system, units, inline_assets) do
     # extract some of me to benchee_json pretty please?
     Enum.map(scenarios, fn(scenario) ->
       job_json = JSON.encode!(%{
@@ -185,12 +188,12 @@ defmodule Benchee.Formatters.HTML do
       })
       {
         [input_name, scenario.job_name],
-        job_detail(input_name, scenario.job_name, scenario.run_time_statistics, system, units, job_json)
+        job_detail(input_name, scenario.job_name, scenario.run_time_statistics, system, units, job_json, inline_assets)
       }
     end)
   end
 
-  defp comparison_report(input_name, scenarios, system, filename, units) do
+  defp comparison_report(input_name, scenarios, system, filename, units, inline_assets) do
     input_json = JSON.format_scenarios_for_input(scenarios)
 
     sorted_statistics = scenarios
@@ -209,12 +212,12 @@ defmodule Benchee.Formatters.HTML do
       filename:   filename
     }
 
-    {[input_name, "comparison"], comparison(input_name, input_suite, units, input_json)}
+    {[input_name, "comparison"], comparison(input_name, input_suite, units, input_json, inline_assets)}
   end
 
-  defp add_index(grouped_main_contents, filename, system) do
+  defp add_index(grouped_main_contents, filename, system, inline_assets) do
     index_structure = inputs_to_paths(grouped_main_contents, filename)
-    index_entry = {[], index(index_structure, system)}
+    index_entry = {[], index(index_structure, system, inline_assets)}
     [index_entry | grouped_main_contents]
   end
 

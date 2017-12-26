@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <%= head() %>
+  <%= head(inline_assets) %>
   <body>
 
     <%= header(input_name) %>
 
     <%= render_system_info(system) %>
-    
+
     <article>
       <h2>
         <a name="<%= job_name %>"></a>
@@ -37,7 +37,7 @@ Raw Run Times shows all individual recorded run times in the order they were rec
       <%= render_footer() %>
     </footer>
 
-    <%= js_includes() %>
+    <%= js_includes(inline_assets) %>
 
     <script>
       var measurements = <%= job_json %>;
