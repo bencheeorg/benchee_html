@@ -9,5 +9,7 @@ Benchee.run(%{
     Benchee.Formatters.HTML,
     Benchee.Formatters.Console
   ],
-  formatter_options: [html: [file: "output/my.html", auto_open: false]]
+  formatter_options: [
+    html: [file: "output/my.html", auto_open: false, inline_assets: true]
+  ]
 )
