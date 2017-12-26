@@ -1,9 +1,10 @@
-## unreleased
+## 0.5.0 (unreleases)
 
 ### Features
 
 * y-axis doesn't always start at 0 anymore for raw run times so that the space can be used
 * note benchee & html versions down in the footer
+* option to inline all assets `inline_assets`
 
 ## 0.4.0 (2017-10-24)
 
