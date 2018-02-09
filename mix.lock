@@ -1,5 +1,5 @@
 %{"benchee": {:hex, :benchee, "0.12.0", "771e919505cbe399df5f49b8a21c56af5225542ca5c877e0baa0c503efb4e626", [:mix], [{:deep_merge, "~> 0.1", [hex: :deep_merge, repo: "hexpm", optional: false]}], "hexpm"},
-  "benchee_json": {:git, "https://github.com/PragTob/benchee_json.git", "c8b478b1f7732bad9d1ca431129a77158b1a1787", [branch: "job-names"]},
+  "benchee_json": {:git, "https://github.com/PragTob/benchee_json.git", "e7697dcd67171a6e41504aa07288fcdffe0d64db", []},
   "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], []},
   "certifi": {:hex, :certifi, "2.0.0", "a0c0e475107135f76b8c1d5bc7efb33cd3815cb3cf3dea7aefdd174dabead064", [:rebar3], [], "hexpm"},
   "credo": {:hex, :credo, "0.8.6", "335f723772d35da499b5ebfdaf6b426bfb73590b6fcbc8908d476b75f8cbca3f", [:mix], [{:bunt, "~> 0.2.0", [repo: "hexpm", hex: :bunt, optional: false]}], "hexpm"},
