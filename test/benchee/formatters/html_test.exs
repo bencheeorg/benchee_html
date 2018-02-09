@@ -17,6 +17,7 @@ defmodule Benchee.Formatters.HTMLTest do
   }
   @scenario %Benchee.Benchmark.Scenario{
     job_name: "My Job",
+    name: "My Job",
     run_times: [190, 200, 210],
     input_name: "Some Input",
     input: "Some Input",
@@ -129,6 +130,7 @@ defmodule Benchee.Formatters.HTMLTest do
                scenarios: [
                  %Benchee.Benchmark.Scenario{
                    job_name: "My Job",
+                   name: "My Job",
                    run_times: [190, 200, 210],
                    input_name: marker,
                    input: marker,
