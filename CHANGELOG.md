@@ -5,6 +5,11 @@
 * y-axis doesn't always start at 0 anymore for raw run times so that the space can be used
 * note benchee & html versions down in the footer
 * option to inline all assets `inline_assets`
+* Support for benche `0.12`'s tags and names that are now displayed correctly
+
+### Bugfixes
+ 
+* Through a change in `benchee_json` formatter generation won't fail any longer if you're using `poison` < 3
 
 ## 0.4.0 (2017-10-24)
 
