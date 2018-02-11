@@ -99,7 +99,7 @@ defmodule Benchee.Formatters.HTMLTest do
   test ".format produces the right JSON data without the input level" do
     {%{["Some Input", "comparison"] => html}, _} = HTML.format @sample_suite
 
-    assert html =~ "{\"statistics\":{\"My Job\""
+    assert html =~ "\"statistics\":{\"My Job\""
   end
 
   test ".format shows the units alright" do
