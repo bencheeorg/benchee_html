@@ -107,7 +107,13 @@ defmodule Benchee.Formatters.HTML do
            |> Map.put_new(:auto_open, @default_auto_open)
            |> Map.put_new(:inline_assets, @default_inline_assets)
     updated_configuration = %Configuration{suite.configuration | formatter_options: %{html: opts}}
+    load_specs_for_versions()
     %Suite{suite | configuration: updated_configuration}
+  end
+
+  defp load_specs_for_versions do
+    _ = Application.load :benchee
+    _ = Application.load :benchee_html
   end
 
   defp do_format(%Suite{scenarios: scenarios, system: system,
