@@ -47,14 +47,14 @@ defmodule BencheeHTML.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:benchee, "~> 0.12"},
-      {:benchee_json, "~> 0.5"},
+      {:benchee, github: "PragTob/benchee"},
+      {:benchee_json, github: "PragTob/benchee_json"},
       {:excoveralls, "~> 0.8.1", only: :test},
       {:mix_test_watch, "~> 0.2", only: :dev},
-      {:credo, "~> 0.4", only: :dev},
+      {:credo, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:earmark, "~> 1.2", only: :dev},
-      {:dialyxir, "~> 0.5", only: :dev, runtime: false}
+      {:dialyxir, "~> 1.0.0-rc.4", only: :dev, runtime: false}
     ]
   end
 
