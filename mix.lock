@@ -1,6 +1,6 @@
 %{
   "benchee": {:git, "https://github.com/PragTob/benchee.git", "ee9f7233f94ea8b38795be24c7e5714761d45add", []},
-  "benchee_json": {:git, "https://github.com/PragTob/benchee_json.git", "7c719bb18de353888de031a4c3f6d7e32e186015", []},
+  "benchee_json": {:git, "https://github.com/PragTob/benchee_json.git", "bede232dee5363c74e14e84b6da16e3a9da41610", [branch: "add-memory-measurements"]},
   "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], [], "hexpm"},
   "certifi": {:hex, :certifi, "2.4.2", "75424ff0f3baaccfd34b1214184b6ef616d89e420b258bb0a5ea7d7bc628f7f0", [:rebar3], [{:parse_trans, "~>3.3", [hex: :parse_trans, repo: "hexpm", optional: false]}], "hexpm"},
   "credo": {:hex, :credo, "1.0.0", "aaa40fdd0543a0cf8080e8c5949d8c25f0a24e4fc8c1d83d06c388f5e5e0ea42", [:mix], [{:bunt, "~> 0.2.0", [hex: :bunt, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm"},

@@ -9,18 +9,16 @@
 
     <article>
       <h2>
-        Comparison
+        Run Time Comparison
         <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#comparison">
           <i
           class="benchee-help-icon icon-question-circle-o"
-          title="Comparisons of the different benchmarking jobs.
-For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better.
-The Box Plot shows a distribution of run times with the median and outliers."
+          title="Comparisons of the different benchmarking jobs. For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better. The Box Plot shows a distribution of run times with the median and outliers."
           ></i>
         </a>
       </h2>
       <section>
-        <%= render_data_table(suite.statistics, units, path_information: {suite.filename, input_name}) %>
+        <%= render_data_table(suite.run_time_statistics, units, path_information: {suite.filename, input_name}, run_time: true) %>
       </section>
 
       <section class="benchee-plot-container">
@@ -32,6 +30,23 @@ The Box Plot shows a distribution of run times with the median and outliers."
       </section>
     </article>
 
+    <%= if suite.memory_usage_statistics do %>
+      <article>
+        <h2>
+          Memory Usage Comparison
+          <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#comparison">
+            <i
+            class="benchee-help-icon icon-question-circle-o"
+            title="This is a memory usage comparison"
+            ></i>
+          </a>
+        </h2>
+        <section>
+          <%= render_data_table(suite.memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
+        </section>
+      </article>
+    <% end %>
+
     <footer>
       <%= render_footer() %>
     </footer>
@@ -41,7 +56,7 @@ The Box Plot shows a distribution of run times with the median and outliers."
     <script>
       var suite      = <%= suite_json %>;
       var runTimes   = suite.run_times;
-      var statistics = suite.statistics;
+      var statistics = suite.run_time_statistics;
       var sortOrder  = suite.sort_order;
 
       var inputHeadline = "<%= input_headline(input_name) %>"

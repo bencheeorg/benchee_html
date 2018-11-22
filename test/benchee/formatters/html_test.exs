@@ -20,6 +20,7 @@ defmodule Benchee.Formatters.HTMLTest do
     job_name: "My Job",
     name: "My Job",
     run_times: [190, 200, 210],
+    memory_usages: [190, 200, 210],
     input_name: "Some Input",
     input: "Some Input",
     run_time_statistics: %Benchee.Statistics{
@@ -28,6 +29,17 @@ defmodule Benchee.Formatters.HTMLTest do
       std_dev: 20,
       std_dev_ratio: 0.1,
       std_dev_ips: 500,
+      median: 190.0,
+      sample_size: 3,
+      minimum: 190,
+      maximum: 210
+    },
+    memory_usage_statistics: %Benchee.Statistics{
+      average: 200.0,
+      ips: nil,
+      std_dev: 20,
+      std_dev_ratio: 0.1,
+      std_dev_ips: nil,
       median: 190.0,
       sample_size: 3,
       minimum: 190,
@@ -49,7 +61,9 @@ defmodule Benchee.Formatters.HTMLTest do
     end
 
     test "has the important suite data in the html result" do
-      Enum.each(comparison_and_job_htmls(), fn html ->
+      [comparison_html, run_time_html, memory_html] = comparison_and_job_htmls()
+
+      Enum.each([comparison_html, run_time_html], fn html ->
         assert_includes(
           html,
           [
@@ -66,6 +80,17 @@ defmodule Benchee.Formatters.HTMLTest do
           ]
         )
       end)
+
+      assert_includes(memory_html, [
+        "[190,200,210]",
+        "\"average\":200.0",
+        "\"median\":190.0",
+        "My Job",
+        ">3<",
+        ">190 B<",
+        ">210 B<",
+        ">200 B<"
+      ])
     end
 
     test "has system info in the html result" do
@@ -104,7 +129,9 @@ defmodule Benchee.Formatters.HTMLTest do
 
       suite = %Benchee.Suite{@sample_suite | scenarios: [scenario]}
 
-      Enum.each(comparison_and_job_htmls(suite), fn html ->
+      [comparison_html, run_time_html, _memory_html] = comparison_and_job_htmls(suite)
+
+      Enum.each([comparison_html, run_time_html], fn html ->
         assert_includes(
           html,
           [">1.50 μs<", ">666.66<", ">1.40 μs<", ">1.30 μs<", ">1.70 μs<"]
@@ -114,11 +141,12 @@ defmodule Benchee.Formatters.HTMLTest do
 
     test "produces the right JSON data without the input level" do
       %{["Some Input", "comparison"] => html} = HTML.format(@sample_suite, @default_options)
-      assert html =~ "\"statistics\":{\"My Job\""
+      assert html =~ "\"run_time_statistics\":{\"My Job\""
     end
 
     test "shows the units alright" do
-      Enum.each(comparison_and_job_htmls(), fn html ->
+      [comparison_html, run_time_html, _memory_html] = comparison_and_job_htmls()
+      Enum.each([comparison_html, run_time_html], fn html ->
         assert html =~ "±"
         assert html =~ "ns"
       end)
@@ -193,10 +221,13 @@ defmodule Benchee.Formatters.HTMLTest do
          suite \\ @sample_suite,
          options \\ %{html: %{file: @filename, auto_open: false}}
        ) do
-    %{["Some Input", "comparison"] => comparison_html, ["Some Input", "My Job"] => job_html} =
-      HTML.format(suite, options)
+    assert %{
+             ["Some Input", "comparison"] => comparison_html,
+             ["run_time", "Some Input", "My Job"] => run_time_html,
+             ["memory", "Some Input", "My Job"] => memory_html
+           } = HTML.format(suite, options)
 
-    [comparison_html, job_html]
+    [comparison_html, run_time_html, memory_html]
   end
 
   defp assert_includes(html, expected_contents) do

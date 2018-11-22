@@ -118,45 +118,80 @@ defmodule Benchee.Formatters.HTML do
 
   defp reports_for_input({input_name, scenarios}, system, filename, unit_scaling, inline_assets) do
     units = Conversion.units(scenarios, unit_scaling)
-    job_reports = job_reports(input_name, scenarios, system, units, inline_assets)
+    scenario_reports = scenario_reports(input_name, scenarios, system, units, inline_assets)
     comparison = comparison_report(input_name, scenarios, system, filename, units, inline_assets)
-    [comparison | job_reports]
+    [comparison | scenario_reports]
   end
 
-  defp job_reports(input_name, scenarios, system, units, inline_assets) do
+  defp scenario_reports(input_name, scenarios, system, units, inline_assets) do
     # extract some of me to benchee_json pretty please?
-    Enum.map(scenarios, fn scenario ->
-      job_json =
-        JSON.encode!(%{
-          statistics: scenario.run_time_statistics,
-          run_times: scenario.run_times
-        })
+    Enum.flat_map(scenarios, fn scenario ->
+      inputs =
+        if scenario.memory_usage_statistics do
+          [
+            {"run_time", scenario.run_time_statistics, scenario.run_times,
+             :run_time_scenario_detail},
+            {"memory", scenario.memory_usage_statistics, scenario.memory_usages,
+             :memory_scenario_detail}
+          ]
+        else
+          [
+            {"run_time", scenario.run_time_statistics, scenario.run_times,
+             :run_time_scenario_detail}
+          ]
+        end
 
-      {
-        [input_name, scenario.name],
-        job_detail(
-          input_name,
-          scenario.name,
-          scenario.run_time_statistics,
-          system,
-          units,
-          job_json,
-          inline_assets
-        )
-      }
+      Enum.map(inputs, fn {label, stats, raw_measurements, template_fun} ->
+        scenario_json =
+          JSON.encode!(%{
+            statistics: stats,
+            raw_measurements: raw_measurements
+          })
+
+        {
+          [label, input_name, scenario.name],
+          apply(__MODULE__, template_fun, [
+            input_name,
+            scenario.name,
+            stats,
+            system,
+            units,
+            scenario_json,
+            inline_assets
+          ])
+        }
+      end)
     end)
   end
 
   defp comparison_report(input_name, scenarios, system, filename, units, inline_assets) do
     input_json = JSON.format_scenarios_for_input(scenarios)
 
-    sorted_statistics =
+    sorted_run_time_statistics =
       scenarios
       |> Statistics.sort()
       |> Enum.map(fn scenario ->
-        {scenario.name, %{run_time_statistics: scenario.run_time_statistics}}
+        {scenario.name, %{statistics: scenario.run_time_statistics}}
       end)
       |> Map.new()
+
+    sorted_memory_statistics =
+      scenarios
+      |> Statistics.sort()
+      |> Enum.map(fn scenario ->
+        {scenario.name, %{statistics: scenario.memory_usage_statistics}}
+      end)
+      |> Map.new()
+
+    sorted_memory_statistics =
+      if Enum.all?(sorted_memory_statistics, fn
+        {_, %{statistics: nil}} -> true
+        _ -> false
+      end) do
+        nil
+      else
+        sorted_memory_statistics
+      end
 
     input_run_times =
       scenarios
@@ -164,7 +199,8 @@ defmodule Benchee.Formatters.HTML do
       |> Map.new()
 
     input_suite = %{
-      statistics: sorted_statistics,
+      run_time_statistics: sorted_run_time_statistics,
+      memory_usage_statistics: sorted_memory_statistics,
       run_times: input_run_times,
       system: system,
       job_count: length(scenarios),
@@ -207,6 +243,8 @@ defmodule Benchee.Formatters.HTML do
   defp format_duration(duration, unit) do
     Duration.format({Duration.scale(duration, unit), unit})
   end
+
+  defp format_count(nil, _), do: nil
 
   defp format_count(count, unit) do
     Count.format({Count.scale(count, unit), unit})
@@ -260,15 +298,35 @@ defmodule Benchee.Formatters.HTML do
     :inline_assets
   ])
 
-  EEx.function_from_file(:defp, :job_detail, "priv/templates/job_detail.html.eex", [
-    :input_name,
-    :job_name,
-    :job_statistics,
-    :system,
-    :units,
-    :job_json,
-    :inline_assets
-  ])
+  EEx.function_from_file(
+    :def,
+    :memory_scenario_detail,
+    "priv/templates/memory_scenario_detail.html.eex",
+    [
+      :input_name,
+      :scenario_name,
+      :scenario_statistics,
+      :system,
+      :units,
+      :scenario_json,
+      :inline_assets
+    ]
+  )
+
+  EEx.function_from_file(
+    :def,
+    :run_time_scenario_detail,
+    "priv/templates/run_time_scenario_detail.html.eex",
+    [
+      :input_name,
+      :scenario_name,
+      :scenario_statistics,
+      :system,
+      :units,
+      :scenario_json,
+      :inline_assets
+    ]
+  )
 
   EEx.function_from_file(:defp, :index, "priv/templates/index.html.eex", [
     :names_to_paths,
@@ -311,7 +369,7 @@ defmodule Benchee.Formatters.HTML do
   ])
 
   # Small wrappers to have default arguments
-  defp render_data_table(statistics, units, options \\ []) do
+  defp render_data_table(statistics, units, options) do
     data_table(statistics, units, options)
   end
 
