@@ -9,12 +9,12 @@
 
     <article>
       <h2>
-        <a name="<%= job_name %>"></a>
-        <%= job_name %>
+        <a name="<%= scenario_name %>"></a>
+        <%= scenario_name %>
         <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
           <i
             class="benchee-help-icon icon-question-circle-o"
-            title="Graphs showing the individual run time distribution for <%= job_name %>.
+            title="Graphs showing the individual run time distribution for <%= scenario_name %>.
 Run Times Histogram shows the distribution of occurrences of specific run times in buckets.
 Raw Run Times shows all individual recorded run times in the order they were recorded in."
           ></i>
@@ -22,14 +22,14 @@ Raw Run Times shows all individual recorded run times in the order they were rec
       </h2>
 
       <section>
-        <%= render_data_table(%{job_name => %{run_time_statistics: job_statistics}}, units) %>
+        <%= render_data_table(%{scenario_name => %{statistics: scenario_statistics}}, units, run_time: true) %>
       </section>
 
       <section class="benchee-plot-container">
-        <div id="sorted-run-times" class="plot" data-job-name="<%= job_name %>"></div>
+        <div id="sorted-run-times" class="plot" data-job-name="<%= scenario_name %>"></div>
       </section>
       <section class="benchee-plot-container">
-        <div id="raw-run-times" class="plot" data-job-name="<%= job_name %>"></div>
+        <div id="raw-run-times" class="plot" data-job-name="<%= scenario_name %>"></div>
       </section>
     </article>
 
@@ -40,14 +40,14 @@ Raw Run Times shows all individual recorded run times in the order they were rec
     <%= js_includes(inline_assets) %>
 
     <script>
-      var measurements = <%= job_json %>;
-      var runTimes     = measurements.run_times;
-      var statistics   = measurements.statistics;
+      var measurements = <%= scenario_json %>;
+      var rawMeasurements = measurements.raw_measurements;
+      var statistics = measurements.statistics;
 
       var inputHeadline = "<%= input_headline(input_name) %>"
 
-      drawRawRunTimeCharts(runTimes, inputHeadline, statistics);
-      drawRunTimeHistograms(runTimes, inputHeadline);
+      drawRawRunTimeCharts(rawMeasurements, inputHeadline, statistics);
+      drawRunTimeHistograms(rawMeasurements, inputHeadline);
     </script>
   </body>
 </html>

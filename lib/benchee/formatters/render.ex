@@ -17,15 +17,35 @@ defmodule Benchee.Formatters.HTML.Render do
     :inline_assets
   ])
 
-  EEx.function_from_file(:def, :job_detail, "priv/templates/job_detail.html.eex", [
-    :input_name,
-    :job_name,
-    :job_statistics,
-    :system,
-    :units,
-    :job_json,
-    :inline_assets
-  ])
+  EEx.function_from_file(
+    :def,
+    :run_time_scenario_detail,
+    "priv/templates/run_time_scenario_detail.html.eex",
+    [
+      :input_name,
+      :scenario_name,
+      :scenario_statistics,
+      :system,
+      :units,
+      :scenario_json,
+      :inline_assets
+    ]
+  )
+
+  EEx.function_from_file(
+    :def,
+    :memory_scenario_detail,
+    "priv/templates/memory_scenario_detail.html.eex",
+    [
+      :input_name,
+      :scenario_name,
+      :scenario_statistics,
+      :system,
+      :units,
+      :scenario_json,
+      :inline_assets
+    ]
+  )
 
   EEx.function_from_file(:def, :index, "priv/templates/index.html.eex", [
     :names_to_paths,
@@ -74,7 +94,7 @@ defmodule Benchee.Formatters.HTML.Render do
   end
 
   # Small wrappers to have default arguments
-  defp render_data_table(statistics, units, options \\ []) do
+  defp render_data_table(statistics, units, options) do
     data_table(statistics, units, options)
   end
 

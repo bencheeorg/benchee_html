@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <%= head(inline_assets) %>
+  <body>
+
+    <%= header(input_name) %>
+
+    <%= render_system_info(system) %>
+
+    <article>
+      <h2>
+        <a name="<%= scenario_name %>"></a>
+        <%= scenario_name %>
+        <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
+          <i
+            class="benchee-help-icon icon-question-circle-o"
+            title="Graphs showing the individual memory usage distribution for <%= scenario_name %>.
+Run Times Histogram shows the distribution of occurrences of specific run times in buckets.
+Raw Run Times shows all individual recorded run times in the order they were recorded in."
+          ></i>
+        </a>
+      </h2>
+
+      <section>
+        <%= render_data_table(%{scenario_name => %{statistics: scenario_statistics}}, units, run_time: false) %>
+      </section>
+
+      <%= if scenario_statistics.minimum != scenario_statistics.maximum do %>
+        <section class="benchee-plot-container">
+          <div id="sorted-run-times" class="plot" data-job-name="<%= scenario_name %>"></div>
+        </section>
+        <section class="benchee-plot-container">
+          <div id="raw-run-times" class="plot" data-job-name="<%= scenario_name %>"></div>
+        </section>
+      <% end %>
+    </article>
+
+    <footer>
+      <%= render_footer() %>
+    </footer>
+
+    <%= js_includes(inline_assets) %>
+
+    <script>
+      var measurements = <%= scenario_json %>;
+      var rawMeasurements = measurements.raw_measurements;
+      var statistics = measurements.statistics;
+
+      var inputHeadline = "<%= input_headline(input_name) %>"
+
+      drawRawRunTimeCharts(rawMeasurements, inputHeadline, statistics);
+      drawRunTimeHistograms(rawMeasurements, inputHeadline);
+    </script>
+  </body>
+</html>
