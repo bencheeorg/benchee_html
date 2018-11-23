@@ -16,44 +16,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
     benchee_options = [
       time: 0.01,
       warmup: 0.02,
-      formatters: [Benchee.Formatters.HTML],
-      formatter_options: [html: [file: @file_path, auto_open: false]]
-    ]
-
-    assertion_data = %{
-      comparison_path: @comparison_path,
-      test_directory: @test_directory,
-      file_path: @file_path,
-      base_name: @base_name
-    }
-
-    basic_test(benchee_options, assertion_data)
-  end
-
-  test "works with the old school function as formatter" do
-    benchee_options = [
-      time: 0.01,
-      warmup: 0.02,
-      formatters: [&Benchee.Formatters.HTML.output/1],
-      formatter_options: [html: [file: @file_path, auto_open: false]]
-    ]
-
-    assertion_data = %{
-      comparison_path: @comparison_path,
-      test_directory: @test_directory,
-      file_path: @file_path,
-      base_name: @base_name
-    }
-
-    basic_test(benchee_options, assertion_data)
-  end
-
-  test "works fine with the legacy configuration format" do
-    benchee_options = [
-      time: 0.01,
-      warmup: 0.02,
-      formatters: [Benchee.Formatters.HTML],
-      html: [file: @file_path, auto_open: false]
+      formatters: [{Benchee.Formatters.HTML, file: @file_path, auto_open: false}]
     ]
 
     assertion_data = %{
@@ -70,8 +33,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
     benchee_options = [
       time: 0.01,
       warmup: 0.02,
-      formatters: [Benchee.Formatters.HTML],
-      formatter_options: [html: [auto_open: false]]
+      formatters: [{Benchee.Formatters.HTML, auto_open: false}]
     ]
 
     assertion_data = %{
