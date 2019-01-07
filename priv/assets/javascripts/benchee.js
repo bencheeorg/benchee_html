@@ -30,60 +30,47 @@ var rawRunTimeData = function(runTimeData) {
   return data;
 };
 
-var ipsComparisonData = function(statistics, sortOrder) {
-  var names = [];
-  var ips = [];
-  var errors = [];
-  sortOrder.forEach(function(name) {
-    names.push(name);
-    ips.push(statistics[name]["ips"]);
-    errors.push(statistics[name]["std_dev_ips"]);
-  });
-
-  var data = [
+var ipsComparisonData = function(scenarios) {
+  return [
     {
       type: "bar",
-      x: names,
-      y: ips,
+      x: scenarios.map(function(scenario) { return scenario["name"]; }),
+      y: scenarios.map(function(scenario) { return scenario["run_time_statistics"]["ips"]; }),
       error_y: {
         type: "data",
-        array: errors,
+        array: scenarios.map(function(scenario) { return scenario["run_time_statistics"]["std_dev_ips"]; }),
         visible: true
       }
     }
   ];
-
-  return data;
 };
 
 var boxPlotData = function(runTimes, sortOrder) {
-  var data = sortOrder.map(function(name) {
+  return scenarios.map(function(scenario) {
     return {
-      name: name,
-      y: runTimes[name],
+      name: scenario["name"],
+      y: scenario["run_times"],
       type: "box"
     };
   });
-
-  return data;
 };
 
-window.drawIpsComparisonChart = function(statistics, sortOrder, inputHeadline) {
+window.drawIpsComparisonChart = function(scenarios, inputHeadline) {
   var ipsNode = document.getElementById("ips-comparison");
   var layout = {
     title: "Average Iterations per Second" + inputHeadline,
     yaxis: { title: "Iterations per Second" }
   };
-  drawGraph(ipsNode, ipsComparisonData(statistics, sortOrder), layout);
+  drawGraph(ipsNode, ipsComparisonData(scenarios), layout);
 };
 
-window.drawComparisonBoxPlot = function(runTimes, sortOrder, inputHeadline) {
+window.drawComparisonBoxPlot = function(scenarios, inputHeadline) {
   var boxNode = document.getElementById("box-plot");
   var layout = {
     title: "Run Time Boxplot" + inputHeadline,
     yaxis: { title: RUN_TIME_AXIS_TITLE }
   };
-  drawGraph(boxNode, boxPlotData(runTimes, sortOrder), layout);
+  drawGraph(boxNode, boxPlotData(scenarios), layout);
 };
 
 window.drawRawRunTimeCharts = function(runTimes, inputHeadline, statistics) {

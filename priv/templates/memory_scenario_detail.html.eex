@@ -22,7 +22,7 @@ Raw Run Times shows all individual recorded run times in the order they were rec
       </h2>
 
       <section>
-        <%= render_data_table(%{scenario_name => %{statistics: scenario_statistics}}, units, run_time: false) %>
+        <%= #render_data_table(%{scenario_name => %{statistics: scenario_statistics}}, units, run_time: false) %>
       </section>
 
       <%= if scenario_statistics.minimum != scenario_statistics.maximum do %>

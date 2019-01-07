@@ -13,7 +13,7 @@ defmodule Benchee.Formatters.HTML.Render do
     :input_name,
     :suite,
     :units,
-    :suite_json,
+    :scenarios_json,
     :inline_assets
   ])
 
@@ -110,6 +110,8 @@ defmodule Benchee.Formatters.HTML.Render do
   end
 
   defp format_duration(duration, unit) do
+    IO.inspect(duration)
+    IO.inspect(unit)
     Duration.format({Duration.scale(duration, unit), unit})
   end
 

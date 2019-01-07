@@ -42,7 +42,7 @@
           </a>
         </h2>
         <section>
-          <%= render_data_table(suite.memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
+          <%= #render_data_table(suite.memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
         </section>
       </article>
     <% end %>
@@ -54,15 +54,11 @@
     <%= js_includes(inline_assets) %>
 
     <script>
-      var suite      = <%= suite_json %>;
-      var runTimes   = suite.run_times;
-      var statistics = suite.run_time_statistics;
-      var sortOrder  = suite.sort_order;
+      var scenarios     = <%= scenarios_json %>;
+      var inputHeadline = "<%= input_headline(input_name) %>";
 
-      var inputHeadline = "<%= input_headline(input_name) %>"
-
-      drawIpsComparisonChart(statistics, sortOrder, inputHeadline);
-      drawComparisonBoxPlot(runTimes, sortOrder, inputHeadline);
+      drawIpsComparisonChart(scenarios, inputHeadline);
+      drawComparisonBoxPlot(scenarios, inputHeadline);
     </script>
   </body>
 </html>

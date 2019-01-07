@@ -151,7 +151,7 @@ defmodule Benchee.Formatters.HTML do
 
         {
           [label, input_name, scenario.name],
-          apply(__MODULE__, template_fun, [
+          apply(Render, template_fun, [
             input_name,
             scenario.name,
             stats,
@@ -167,7 +167,7 @@ defmodule Benchee.Formatters.HTML do
 
   defp comparison_report(input_name, scenarios, system, filename, units, inline_assets) do
     # TODcredoplsImtryingtoremindmyselfO: reinstate me or use the new version to its fullest extent ;)
-    input_json = JSON.format_scenarios_for_input(scenarios)
+    scenarios_json = JSON.encode!(scenarios)
 
     sorted_run_time_statistics =
       scenarios
@@ -210,7 +210,7 @@ defmodule Benchee.Formatters.HTML do
     }
 
     {[input_name, "comparison"],
-     Render.comparison(input_name, input_suite, units, input_json, inline_assets)}
+     Render.comparison(input_name, input_suite, units, scenarios_json, inline_assets)}
   end
 
   defp add_index(grouped_main_contents, filename, system, inline_assets) do
