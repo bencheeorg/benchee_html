@@ -166,7 +166,6 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp comparison_report(input_name, scenarios, system, filename, units, inline_assets) do
-    # TODcredoplsImtryingtoremindmyselfO: reinstate me or use the new version to its fullest extent ;)
     scenarios_json = JSON.encode!(scenarios)
 
     sorted_run_time_statistics =
@@ -183,11 +182,12 @@ defmodule Benchee.Formatters.HTML do
       |> Enum.map(fn scenario ->
         {scenario.name, %{statistics: scenario.memory_usage_statistics}}
       end)
+      |> IO.inspect()
       |> Map.new()
 
     sorted_memory_statistics =
       if Enum.all?(sorted_memory_statistics, fn
-           {_, %{statistics: nil}} -> true
+           {_, %{statistics: %{sample_size: 0}}} -> true
            _ -> false
          end) do
         nil

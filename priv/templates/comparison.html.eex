@@ -42,7 +42,7 @@
           </a>
         </h2>
         <section>
-          <%= #render_data_table(suite.memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
+          <%= render_data_table(suite.memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
         </section>
       </article>
     <% end %>

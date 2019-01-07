@@ -110,8 +110,6 @@ defmodule Benchee.Formatters.HTML.Render do
   end
 
   defp format_duration(duration, unit) do
-    IO.inspect(duration)
-    IO.inspect(unit)
     Duration.format({Duration.scale(duration, unit), unit})
   end
 
