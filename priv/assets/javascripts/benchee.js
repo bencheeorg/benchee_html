@@ -1,33 +1,10 @@
-var RUN_TIME_AXIS_TITLE = "Run Time in microseconds";
-
-var runtimeHistogramData = function(runTimeData) {
-  var data = [
-    {
-      type: "histogram",
-      x: scenario.run_times
-    }
-  ];
-
-  return data;
-};
+var RUN_TIME_AXIS_TITLE = "Run Time in nanoseconds";
 
 var drawGraph = function(node, data, layout) {
   Plotly.newPlot(node, data, layout, {
     displaylogo: false,
     modeBarButtonsToRemove: ['sendDataToCloud']
   });
-};
-
-var rawRunTimeData = function(scenario) {
-
-  var data = [
-    {
-      y: scenario.run_times,
-      type: "bar"
-    }
-  ];
-
-  return data;
 };
 
 var ipsComparisonData = function(scenarios) {
@@ -73,27 +50,90 @@ window.drawComparisonBoxPlot = function(scenarios, inputHeadline) {
   drawGraph(boxNode, boxPlotData(scenarios), layout);
 };
 
-window.drawRawRunTimeCharts = function(scenario, inputHeadline) {
-  var runTimeNode = document.getElementById("raw-run-times");
-  var minY = scenario.run_time_statistics.minimum * 0.9;
-  var maxY = scenario.run_time_statistics.maximum;
-  var layout = {
-    title: scenario.name + " Raw Run Times" + inputHeadline,
-    yaxis: { title: RUN_TIME_AXIS_TITLE, range: [minY, maxY] },
+const rawChartLayout = function(title, y_axis_title, statistics) {
+  var minY = statistics.minimum * 0.9;
+  var maxY = statistics.maximum;
+
+  return {
+    title: title,
+    yaxis: { title: y_axis_title, range: [minY, maxY] },
     xaxis: { title: "Sample number"},
     annotations: [{ x: 0, y: minY, text: parseInt(minY), showarrow: false, xref: "x", yref: "y", xshift: -10 }]
   };
-  drawGraph(runTimeNode, rawRunTimeData(scenario), layout);
+}
+
+const barChart = function(data) {
+  return [
+    {
+      y: data,
+      type: "bar"
+    }
+  ];
 };
 
-window.drawRunTimeHistograms = function(scenario, inputHeadline) {
-  var runTimeHistogramNode = document.getElementById("sorted-run-times");
+window.drawRawRunTimeChart = function(scenario, inputHeadline) {
+  var layout = rawChartLayout(
+    scenario.name + " Raw Run Times" + inputHeadline,
+    RUN_TIME_AXIS_TITLE,
+    scenario.run_time_statistics
+  )
+  
+  drawGraph(
+    document.getElementById("raw-run-times"),
+    barChart(scenario.run_times),
+    layout
+  );
+};
+
+window.drawRawMemoryChart = function(scenario, inputHeadline) {
+  var layout = rawChartLayout(
+    scenario.name + " Raw Memory Usages" + inputHeadline,
+    "Raw Memory Usages in Bytes",
+    scenario.memory_usage_statistics
+  )
+  
+  drawGraph(
+    document.getElementById("raw-memory"),
+    barChart(scenario.memory_usages),
+    layout
+  );
+};
+
+var histogramData = function(data) {
+  return [
+    {
+      type: "histogram",
+      x: data
+    }
+  ];
+};
+
+window.drawRunTimeHistogram = function(scenario, inputHeadline) {
   var layout = {
     title: scenario.name + " Run Times Histogram" + inputHeadline,
-    xaxis: { title: "Raw run time buckets in microseconds" },
+    xaxis: { title: "Raw run time buckets in nanoseconds" },
     yaxis: { title: "Occurences in sample" }
   };
-  drawGraph(runTimeHistogramNode, runtimeHistogramData(scenario), layout);
+
+  drawGraph(
+    document.getElementById("run-times-histogram"),
+    histogramData(scenario.run_times),
+    layout
+  );
+};
+
+window.drawMemoryHistogram = function(scenario, inputHeadline) {
+  var layout = {
+    title: scenario.name + " Memory Histogram" + inputHeadline,
+    xaxis: { title: "Raw memory usage buckets in bytes" },
+    yaxis: { title: "Occurences in sample" }
+  };
+
+  drawGraph(
+    document.getElementById("memory-histogram"),
+    histogramData(scenario.memory_usages),
+    layout
+  );
 };
 
 window.toggleSystemDataInfo = function() {

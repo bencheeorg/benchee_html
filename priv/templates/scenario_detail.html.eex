@@ -9,7 +9,7 @@
 
     <article>
       <h2>
-        <a name="<%= scenario.name %>"></a>
+        <a name="<%= scenario.name %>_run_time"></a>
         <%= scenario.name %>
         <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
           <i
@@ -26,12 +26,42 @@ Raw Run Times shows all individual recorded run times in the order they were rec
       </section>
 
       <section class="benchee-plot-container">
-        <div id="sorted-run-times" class="plot"></div>
+        <div id="run-times-histogram" class="plot"></div>
       </section>
       <section class="benchee-plot-container">
         <div id="raw-run-times" class="plot"></div>
       </section>
     </article>
+
+    <%= if scenario.memory_usage_statistics.sample_size > 0 do %>
+      <article>
+        <h2>
+          <a name="<%= scenario.name %>_memory"></a>
+          <%= scenario.name %>
+          <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
+            <i
+              class="benchee-help-icon icon-question-circle-o"
+              title="Graphs showing the individual memory usage distribution for <%= scenario.name %>.
+  Run Times Histogram shows the distribution of occurrences of specific run times in buckets.
+  Raw Run Times shows all individual recorded run times in the order they were recorded in."
+            ></i>
+          </a>
+        </h2>
+
+        <section>
+          <%= render_data_table(%{scenario.name => %{statistics: scenario.memory_usage_statistics}}, units, run_time: false) %>
+        </section>
+
+        <%= if scenario.memory_usage_statistics.std_dev != 0 do %>
+          <section class="benchee-plot-container">
+            <div id="memory-histogram" class="plot"></div>
+          </section>
+          <section class="benchee-plot-container">
+            <div id="raw-memory" class="plot"></div>
+          </section>
+        <% end %>
+      </article>
+    <% end %>
 
     <footer>
       <%= render_footer() %>
@@ -44,8 +74,13 @@ Raw Run Times shows all individual recorded run times in the order they were rec
 
       var inputHeadline = "<%= input_headline(scenario.input_name) %>"
 
-      drawRawRunTimeCharts(scenario, inputHeadline);
-      drawRunTimeHistograms(scenario, inputHeadline);
+      drawRunTimeHistogram(scenario, inputHeadline);
+      drawRawRunTimeChart(scenario, inputHeadline);
+
+      if (scenario.memory_usage_statistics.std_dev !== 0) {
+        drawMemoryHistogram(scenario, inputHeadline);
+        drawRawMemoryChart(scenario, inputHeadline);
+      };
     </script>
   </body>
 </html>

@@ -5,7 +5,7 @@ defmodule Benchee.Formatters.HTML.Render do
 
   require EEx
 
-  alias Benchee.Conversion.{Count, DeviationPercent, Duration, Format, Scale}
+  alias Benchee.Conversion.{DeviationPercent, Format, Scale}
   alias Benchee.Utility.FileCreation
 
   # Major pages
