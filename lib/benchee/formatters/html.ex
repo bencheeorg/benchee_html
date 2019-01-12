@@ -125,43 +125,19 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp scenario_reports(input_name, scenarios, system, units, inline_assets) do
-    # extract some of me to benchee_json pretty please?
-    Enum.flat_map(scenarios, fn scenario ->
-      inputs =
-        if scenario.memory_usage_statistics do
-          [
-            {"run_time", scenario.run_time_statistics, scenario.run_times,
-             :run_time_scenario_detail},
-            {"memory", scenario.memory_usage_statistics, scenario.memory_usages,
-             :memory_scenario_detail}
-          ]
-        else
-          [
-            {"run_time", scenario.run_time_statistics, scenario.run_times,
-             :run_time_scenario_detail}
-          ]
-        end
+    Enum.map(scenarios, fn scenario ->
+      scenario_json = JSON.encode!(scenario)
 
-      Enum.map(inputs, fn {label, stats, raw_measurements, template_fun} ->
-        scenario_json =
-          JSON.encode!(%{
-            statistics: stats,
-            raw_measurements: raw_measurements
-          })
-
-        {
-          [label, input_name, scenario.name],
-          apply(Render, template_fun, [
-            input_name,
-            scenario.name,
-            stats,
-            system,
-            units,
-            scenario_json,
-            inline_assets
-          ])
-        }
-      end)
+      {
+        [input_name, scenario.name],
+        Render.scenario_detail(
+          scenario,
+          scenario_json,
+          system,
+          units,
+          inline_assets
+        )
+      }
     end)
   end
 
@@ -182,7 +158,6 @@ defmodule Benchee.Formatters.HTML do
       |> Enum.map(fn scenario ->
         {scenario.name, %{statistics: scenario.memory_usage_statistics}}
       end)
-      |> IO.inspect()
       |> Map.new()
 
     sorted_memory_statistics =

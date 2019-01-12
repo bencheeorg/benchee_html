@@ -61,19 +61,11 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       assert File.exists?(assertion_data.comparison_path)
 
       assert File.exists?(
-               "#{assertion_data.test_directory}/#{assertion_data.base_name}_memory_sleep.html"
+               "#{assertion_data.test_directory}/#{assertion_data.base_name}_sleep.html"
              )
 
       assert File.exists?(
-               "#{assertion_data.test_directory}/#{assertion_data.base_name}_run_time_sleep.html"
-             )
-
-      assert File.exists?(
-               "#{assertion_data.test_directory}/#{assertion_data.base_name}_memory_list.html"
-             )
-
-      assert File.exists?(
-               "#{assertion_data.test_directory}/#{assertion_data.base_name}_run_time_list.html"
+               "#{assertion_data.test_directory}/#{assertion_data.base_name}_list.html"
              )
 
       assert File.exists?(assertion_data.file_path)

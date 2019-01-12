@@ -8,9 +8,9 @@
       <% end %>
       <th>Average</th>
       <th>Deviation</th>
-      <th>median</th>
-      <th>minimum</th>
-      <th>maximum</th>
+      <th>Median</th>
+      <th>Minimum</th>
+      <th>Maximum</th>
       <th>Sample size</th>
     </tr>
   </thead>
@@ -24,18 +24,18 @@
           <td class="text-left"><%= name %></td>
         <% end %>
         <%= if options[:run_time] do %>
-          <td><%= format_count statistics.ips, units.ips %></td>
-          <td><%= format_duration statistics.average, units.run_time %></td>
+          <td><%= format_property statistics.ips, units.ips %></td>
+          <td><%= format_property statistics.average, units.run_time %></td>
           <td><%= format_percent statistics.std_dev_ratio %></td>
-          <td><%= format_duration statistics.median, units.run_time %></td>
-          <td><%= format_duration statistics.minimum, units.run_time %></td>
-          <td><%= format_duration statistics.maximum, units.run_time %></td>
+          <td><%= format_property statistics.median, units.run_time %></td>
+          <td><%= format_property statistics.minimum, units.run_time %></td>
+          <td><%= format_property statistics.maximum, units.run_time %></td>
         <% else %>
-          <td><%= format_duration statistics.average, units.memory %></td>
+          <td><%= format_property statistics.average, units.memory %></td>
           <td><%= format_percent statistics.std_dev_ratio %></td>
-          <td><%= format_duration statistics.median, units.memory %></td>
-          <td><%= format_duration statistics.minimum, units.memory %></td>
-          <td><%= format_duration statistics.maximum, units.memory %></td>
+          <td><%= format_property statistics.median, units.memory %></td>
+          <td><%= format_property statistics.minimum, units.memory %></td>
+          <td><%= format_property statistics.maximum, units.memory %></td>
         <% end %>
         <td><%= statistics.sample_size %></td>
       </tr>

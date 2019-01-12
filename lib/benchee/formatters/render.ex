@@ -5,7 +5,7 @@ defmodule Benchee.Formatters.HTML.Render do
 
   require EEx
 
-  alias Benchee.Conversion.{Count, DeviationPercent, Duration}
+  alias Benchee.Conversion.{Count, DeviationPercent, Duration, Format, Scale}
   alias Benchee.Utility.FileCreation
 
   # Major pages
@@ -19,30 +19,13 @@ defmodule Benchee.Formatters.HTML.Render do
 
   EEx.function_from_file(
     :def,
-    :run_time_scenario_detail,
-    "priv/templates/run_time_scenario_detail.html.eex",
+    :scenario_detail,
+    "priv/templates/scenario_detail.html.eex",
     [
-      :input_name,
-      :scenario_name,
-      :scenario_statistics,
+      :scenario,
+      :scenario_json,
       :system,
       :units,
-      :scenario_json,
-      :inline_assets
-    ]
-  )
-
-  EEx.function_from_file(
-    :def,
-    :memory_scenario_detail,
-    "priv/templates/memory_scenario_detail.html.eex",
-    [
-      :input_name,
-      :scenario_name,
-      :scenario_statistics,
-      :system,
-      :units,
-      :scenario_json,
       :inline_assets
     ]
   )
@@ -109,12 +92,8 @@ defmodule Benchee.Formatters.HTML.Render do
     })
   end
 
-  defp format_duration(duration, unit) do
-    Duration.format({Duration.scale(duration, unit), unit})
-  end
-
-  defp format_count(count, unit) do
-    Count.format({Count.scale(count, unit), unit})
+  defp format_property(value, unit) do
+    Format.format({Scale.scale(value, unit), unit})
   end
 
   defp format_percent(deviation_percent) do

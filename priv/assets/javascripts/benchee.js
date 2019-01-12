@@ -4,7 +4,7 @@ var runtimeHistogramData = function(runTimeData) {
   var data = [
     {
       type: "histogram",
-      x: runTimeData
+      x: scenario.run_times
     }
   ];
 
@@ -18,11 +18,11 @@ var drawGraph = function(node, data, layout) {
   });
 };
 
-var rawRunTimeData = function(runTimeData) {
+var rawRunTimeData = function(scenario) {
 
   var data = [
     {
-      y: runTimeData,
+      y: scenario.run_times,
       type: "bar"
     }
   ];
@@ -73,29 +73,27 @@ window.drawComparisonBoxPlot = function(scenarios, inputHeadline) {
   drawGraph(boxNode, boxPlotData(scenarios), layout);
 };
 
-window.drawRawRunTimeCharts = function(runTimes, inputHeadline, statistics) {
+window.drawRawRunTimeCharts = function(scenario, inputHeadline) {
   var runTimeNode = document.getElementById("raw-run-times");
-  var jobName = runTimeNode.getAttribute("data-job-name");
-  var minY = statistics.minimum * 0.9;
-  var maxY = statistics.maximum;
+  var minY = scenario.run_time_statistics.minimum * 0.9;
+  var maxY = scenario.run_time_statistics.maximum;
   var layout = {
-    title: jobName + " Raw Run Times" + inputHeadline,
+    title: scenario.name + " Raw Run Times" + inputHeadline,
     yaxis: { title: RUN_TIME_AXIS_TITLE, range: [minY, maxY] },
     xaxis: { title: "Sample number"},
     annotations: [{ x: 0, y: minY, text: parseInt(minY), showarrow: false, xref: "x", yref: "y", xshift: -10 }]
   };
-  drawGraph(runTimeNode, rawRunTimeData(runTimes), layout);
+  drawGraph(runTimeNode, rawRunTimeData(scenario), layout);
 };
 
-window.drawRunTimeHistograms = function(runTimes, inputHeadline) {
+window.drawRunTimeHistograms = function(scenario, inputHeadline) {
   var runTimeHistogramNode = document.getElementById("sorted-run-times");
-  var jobName = runTimeHistogramNode.getAttribute("data-job-name");
   var layout = {
-    title: jobName + " Run Times Histogram" + inputHeadline,
+    title: scenario.name + " Run Times Histogram" + inputHeadline,
     xaxis: { title: "Raw run time buckets in microseconds" },
     yaxis: { title: "Occurences in sample" }
   };
-  drawGraph(runTimeHistogramNode, runtimeHistogramData(runTimes), layout);
+  drawGraph(runTimeHistogramNode, runtimeHistogramData(scenario), layout);
 };
 
 window.toggleSystemDataInfo = function() {
