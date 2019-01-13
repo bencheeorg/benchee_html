@@ -27,7 +27,6 @@ defmodule Benchee.Formatters.HTML do
     Conversion,
     Formatters.HTML.Render,
     Formatters.JSON,
-    Statistics,
     Suite,
     Utility.FileCreation
   }

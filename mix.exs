@@ -48,7 +48,7 @@ defmodule BencheeHTML.Mixfile do
   defp deps do
     [
       {:benchee, github: "PragTob/benchee", branch: "sort-scenarios", override: true},
-      {:benchee_json, path: "../benchee_json"},
+      {:benchee_json, github: "PragTob/benchee_json"},
       {:excoveralls, "~> 0.8.1", only: :test},
       {:mix_test_watch, "~> 0.2", only: :dev},
       {:credo, "~> 1.0", only: :dev},
