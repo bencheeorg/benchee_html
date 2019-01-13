@@ -7,47 +7,82 @@ var drawGraph = function(node, data, layout) {
   });
 };
 
-var ipsComparisonData = function(scenarios) {
+var comparisonData = function(scenarios, statistics_key, value_key, std_dev_key) {
   return [
     {
       type: "bar",
-      x: scenarios.map(function(scenario) { return scenario["name"]; }),
-      y: scenarios.map(function(scenario) { return scenario["run_time_statistics"]["ips"]; }),
+      x: scenarios.map(function(scenario) { return scenario.name; }),
+      y: scenarios.map(function(scenario) { return scenario[statistics_key][value_key]; }),
       error_y: {
         type: "data",
-        array: scenarios.map(function(scenario) { return scenario["run_time_statistics"]["std_dev_ips"]; }),
+        array: scenarios.map(function(scenario) { return scenario[statistics_key][std_dev_key]; }),
         visible: true
       }
     }
   ];
 };
 
-var boxPlotData = function(runTimes, sortOrder) {
+window.drawIpsComparisonChart = function(scenarios, inputHeadline) {
+  var layout = {
+    title: "Average Iterations per Second" + inputHeadline,
+    yaxis: { title: "Iterations per Second" }
+  };
+
+  drawGraph(
+    document.getElementById("ips-comparison"),
+    comparisonData(scenarios, "run_time_statistics", "ips", "std_dev_ips"),
+    layout
+  );
+};
+
+window.drawMemoryComparisonChart = function(scenarios, inputHeadline) {
+  var layout = {
+    title: "Average Memory Usages (lower is better)" + inputHeadline,
+    yaxis: { title: "Memory Usages in Bytes" }
+  };
+
+  drawGraph(
+    document.getElementById("memory-comparison"),
+    comparisonData(scenarios, "memory_usage_statistics", "average", "std_dev"),
+    layout
+  );
+};
+
+
+var boxPlotData = function(scenarios, data_key) {
   return scenarios.map(function(scenario) {
     return {
-      name: scenario["name"],
-      y: scenario["run_times"],
+      name: scenario.name,
+      y: scenario[data_key],
       type: "box"
     };
   });
 };
 
-window.drawIpsComparisonChart = function(scenarios, inputHeadline) {
-  var ipsNode = document.getElementById("ips-comparison");
-  var layout = {
-    title: "Average Iterations per Second" + inputHeadline,
-    yaxis: { title: "Iterations per Second" }
-  };
-  drawGraph(ipsNode, ipsComparisonData(scenarios), layout);
-};
-
-window.drawComparisonBoxPlot = function(scenarios, inputHeadline) {
-  var boxNode = document.getElementById("box-plot");
+window.drawRunTimeComparisonBoxPlot = function(scenarios, inputHeadline) {
   var layout = {
     title: "Run Time Boxplot" + inputHeadline,
     yaxis: { title: RUN_TIME_AXIS_TITLE }
   };
-  drawGraph(boxNode, boxPlotData(scenarios), layout);
+
+  drawGraph(
+    document.getElementById("run-time-box-plot"),
+    boxPlotData(scenarios, "run_times"),
+    layout
+  );
+};
+
+window.drawMemoryComparisonBoxPlot = function(scenarios, inputHeadline) {
+  var layout = {
+    title: "Memory Consumption Boxplot" + inputHeadline,
+    yaxis: { title: "Memory Consumption in Bytes" }
+  };
+
+  drawGraph(
+    document.getElementById("memory-box-plot"),
+    boxPlotData(scenarios, "memory_usages"),
+    layout
+  );
 };
 
 const rawChartLayout = function(title, y_axis_title, statistics) {

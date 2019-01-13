@@ -219,7 +219,7 @@ defmodule Benchee.Formatters.HTMLTest do
        ) do
     assert %{
              ["Some Input", "comparison"] => comparison_html,
-             ["Some Input", "My Job"] => scenario_html,
+             ["Some Input", "My Job"] => scenario_html
            } = HTML.format(suite, options)
 
     [comparison_html, scenario_html]
