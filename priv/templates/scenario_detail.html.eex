@@ -9,8 +9,7 @@
 
     <article>
       <h2>
-        <a name="<%= scenario.name %>_run_time"></a>
-        <%= scenario.name %>
+        <a name="run_time" href="#run_time"><%= scenario.name %> Run Time</a>
         <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
           <i
             class="benchee-help-icon icon-question-circle-o"
@@ -36,8 +35,7 @@ Raw Run Times shows all individual recorded run times in the order they were rec
     <%= if scenario.memory_usage_statistics.sample_size > 0 do %>
       <article>
         <h2>
-          <a name="<%= scenario.name %>_memory"></a>
-          <%= scenario.name %>
+          <a name="memory" href="#memory"><%= scenario.name %> Memory</a>
           <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
             <i
               class="benchee-help-icon icon-question-circle-o"

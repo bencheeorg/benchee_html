@@ -144,7 +144,8 @@ defmodule Benchee.Formatters.HTML do
     scenarios_json = JSON.encode!(scenarios)
 
     run_time_statistics = prepare_table_data(scenarios, :run_time_statistics)
-    memory_statistics = 
+
+    memory_statistics =
       if all_memory_staistics_present?(scenarios) do
         prepare_table_data(scenarios, :memory_usage_statistics)
       else

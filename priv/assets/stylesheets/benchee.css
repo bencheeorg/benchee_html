@@ -119,13 +119,13 @@ table tr:hover td {
 
 a {
   color: #05676E;
-  text-decoration: underline;
+  text-decoration: none;
   font-weight: 600;
 }
 
 a:hover {
   color: #05676E;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .benchee-systeminfo {
