@@ -5,7 +5,7 @@ defmodule Benchee.Formatters.HTML.Render do
 
   require EEx
 
-  alias Benchee.Conversion.{Count, DeviationPercent, Duration}
+  alias Benchee.Conversion.{DeviationPercent, Format, Scale}
   alias Benchee.Utility.FileCreation
 
   # Major pages
@@ -13,19 +13,22 @@ defmodule Benchee.Formatters.HTML.Render do
     :input_name,
     :suite,
     :units,
-    :suite_json,
+    :scenarios_json,
     :inline_assets
   ])
 
-  EEx.function_from_file(:def, :job_detail, "priv/templates/job_detail.html.eex", [
-    :input_name,
-    :job_name,
-    :job_statistics,
-    :system,
-    :units,
-    :job_json,
-    :inline_assets
-  ])
+  EEx.function_from_file(
+    :def,
+    :scenario_detail,
+    "priv/templates/scenario_detail.html.eex",
+    [
+      :scenario,
+      :scenario_json,
+      :system,
+      :units,
+      :inline_assets
+    ]
+  )
 
   EEx.function_from_file(:def, :index, "priv/templates/index.html.eex", [
     :names_to_paths,
@@ -74,7 +77,7 @@ defmodule Benchee.Formatters.HTML.Render do
   end
 
   # Small wrappers to have default arguments
-  defp render_data_table(statistics, units, options \\ []) do
+  defp render_data_table(statistics, units, options) do
     data_table(statistics, units, options)
   end
 
@@ -89,12 +92,8 @@ defmodule Benchee.Formatters.HTML.Render do
     })
   end
 
-  defp format_duration(duration, unit) do
-    Duration.format({Duration.scale(duration, unit), unit})
-  end
-
-  defp format_count(count, unit) do
-    Count.format({Count.scale(count, unit), unit})
+  defp format_property(value, unit) do
+    Format.format({Scale.scale(value, unit), unit})
   end
 
   defp format_percent(deviation_percent) do

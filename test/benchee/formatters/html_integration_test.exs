@@ -15,6 +15,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
   test "works just fine" do
     benchee_options = [
       time: 0.01,
+      memory_time: 0.01,
       warmup: 0.02,
       formatters: [{Benchee.Formatters.HTML, file: @file_path, auto_open: false}]
     ]
@@ -32,6 +33,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
   test "works fine with filename not provided" do
     benchee_options = [
       time: 0.01,
+      memory_time: 0.01,
       warmup: 0.02,
       formatters: [{Benchee.Formatters.HTML, auto_open: false}]
     ]
@@ -51,7 +53,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       Benchee.run(
         %{
           "Sleep" => fn -> :timer.sleep(10) end,
-          "Sleep longer" => fn -> :timer.sleep(20) end
+          "List" => fn -> [:rand.uniform()] end
         },
         benchee_options
       )
@@ -63,7 +65,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
              )
 
       assert File.exists?(
-               "#{assertion_data.test_directory}/#{assertion_data.base_name}_sleep_longer.html"
+               "#{assertion_data.test_directory}/#{assertion_data.base_name}_list.html"
              )
 
       assert File.exists?(assertion_data.file_path)
@@ -71,7 +73,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
 
       assert html =~ "<body>"
       assert html =~ "Sleep"
-      assert html =~ "Sleep longer"
+      assert html =~ "List"
       assert html =~ "ips-comparison"
       assert html =~ "System info</a>"
       assert html =~ "benchee version"

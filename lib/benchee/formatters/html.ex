@@ -27,7 +27,6 @@ defmodule Benchee.Formatters.HTML do
     Conversion,
     Formatters.HTML.Render,
     Formatters.JSON,
-    Statistics,
     Suite,
     Utility.FileCreation
   }
@@ -119,29 +118,22 @@ defmodule Benchee.Formatters.HTML do
 
   defp reports_for_input({input_name, scenarios}, system, filename, unit_scaling, inline_assets) do
     units = Conversion.units(scenarios, unit_scaling)
-    job_reports = job_reports(input_name, scenarios, system, units, inline_assets)
+    scenario_reports = scenario_reports(input_name, scenarios, system, units, inline_assets)
     comparison = comparison_report(input_name, scenarios, system, filename, units, inline_assets)
-    [comparison | job_reports]
+    [comparison | scenario_reports]
   end
 
-  defp job_reports(input_name, scenarios, system, units, inline_assets) do
-    # extract some of me to benchee_json pretty please?
+  defp scenario_reports(input_name, scenarios, system, units, inline_assets) do
     Enum.map(scenarios, fn scenario ->
-      job_json =
-        JSON.encode!(%{
-          statistics: scenario.run_time_statistics,
-          run_times: scenario.run_times
-        })
+      scenario_json = JSON.encode!(scenario)
 
       {
         [input_name, scenario.name],
-        Render.job_detail(
-          input_name,
-          scenario.name,
-          scenario.run_time_statistics,
+        Render.scenario_detail(
+          scenario,
+          scenario_json,
           system,
           units,
-          job_json,
           inline_assets
         )
       }
@@ -149,31 +141,39 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp comparison_report(input_name, scenarios, system, filename, units, inline_assets) do
-    input_json = JSON.format_scenarios_for_input(scenarios)
+    scenarios_json = JSON.encode!(scenarios)
 
-    sorted_statistics =
-      scenarios
-      |> Statistics.sort()
-      |> Enum.map(fn scenario ->
-        {scenario.name, %{run_time_statistics: scenario.run_time_statistics}}
-      end)
-      |> Map.new()
+    run_time_statistics = prepare_table_data(scenarios, :run_time_statistics)
 
-    input_run_times =
-      scenarios
-      |> Enum.map(fn scenario -> {scenario.name, scenario.run_times} end)
-      |> Map.new()
+    memory_statistics =
+      if all_memory_staistics_present?(scenarios) do
+        prepare_table_data(scenarios, :memory_usage_statistics)
+      else
+        nil
+      end
 
     input_suite = %{
-      statistics: sorted_statistics,
-      run_times: input_run_times,
+      run_time_statistics: run_time_statistics,
+      memory_usage_statistics: memory_statistics,
       system: system,
       job_count: length(scenarios),
       filename: filename
     }
 
     {[input_name, "comparison"],
-     Render.comparison(input_name, input_suite, units, input_json, inline_assets)}
+     Render.comparison(input_name, input_suite, units, scenarios_json, inline_assets)}
+  end
+
+  defp prepare_table_data(scenarios, statistics_key) do
+    scenarios
+    |> Enum.map(fn scenario ->
+      {scenario.name, %{statistics: Map.fetch!(scenario, statistics_key)}}
+    end)
+    |> Map.new()
+  end
+
+  defp all_memory_staistics_present?(scenarios) do
+    Enum.all?(scenarios, fn scenario -> scenario.memory_usage_statistics.sample_size > 0 end)
   end
 
   defp add_index(grouped_main_contents, filename, system, inline_assets) do

@@ -9,18 +9,16 @@
 
     <article>
       <h2>
-        Comparison
+        Run Time Comparison
         <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#comparison">
           <i
           class="benchee-help-icon icon-question-circle-o"
-          title="Comparisons of the different benchmarking jobs.
-For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better.
-The Box Plot shows a distribution of run times with the median and outliers."
+          title="Comparisons of the different benchmarking jobs. For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better. The Box Plot shows a distribution of run times with the median and outliers."
           ></i>
         </a>
       </h2>
       <section>
-        <%= render_data_table(suite.statistics, units, path_information: {suite.filename, input_name}) %>
+        <%= render_data_table(suite.run_time_statistics, units, path_information: {suite.filename, input_name}, run_time: true) %>
       </section>
 
       <section class="benchee-plot-container">
@@ -28,9 +26,34 @@ The Box Plot shows a distribution of run times with the median and outliers."
       </section>
 
       <section class="benchee-plot-container">
-        <div id="box-plot" class="<%= max_width_class(suite.job_count) %> plot"></div>
+        <div id="run-time-box-plot" class="<%= max_width_class(suite.job_count) %> plot"></div>
       </section>
     </article>
+
+    <%= if suite.memory_usage_statistics do %>
+      <article>
+        <h2>
+          Memory Usage Comparison
+          <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#comparison">
+            <i
+            class="benchee-help-icon icon-question-circle-o"
+            title="This is a memory usage comparison"
+            ></i>
+          </a>
+        </h2>
+        <section>
+          <%= render_data_table(suite.memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
+        </section>
+
+        <section class="benchee-plot-container">
+          <div id="memory-comparison" class="<%= max_width_class(suite.job_count) %> plot"></div>
+        </section>
+
+        <section class="benchee-plot-container">
+          <div id="memory-box-plot" class="<%= max_width_class(suite.job_count) %> plot"></div>
+        </section>
+      </article>
+    <% end %>
 
     <footer>
       <%= render_footer() %>
@@ -39,15 +62,16 @@ The Box Plot shows a distribution of run times with the median and outliers."
     <%= js_includes(inline_assets) %>
 
     <script>
-      var suite      = <%= suite_json %>;
-      var runTimes   = suite.run_times;
-      var statistics = suite.statistics;
-      var sortOrder  = suite.sort_order;
+      var scenarios     = <%= scenarios_json %>;
+      var inputHeadline = "<%= input_headline(input_name) %>";
 
-      var inputHeadline = "<%= input_headline(input_name) %>"
+      drawIpsComparisonChart(scenarios, inputHeadline);
+      drawRunTimeComparisonBoxPlot(scenarios, inputHeadline);
 
-      drawIpsComparisonChart(statistics, sortOrder, inputHeadline);
-      drawComparisonBoxPlot(runTimes, sortOrder, inputHeadline);
+      <%= if suite.memory_usage_statistics do %>
+        drawMemoryComparisonChart(scenarios, inputHeadline);
+        drawMemoryComparisonBoxPlot(scenarios, inputHeadline);
+      <% end %>
     </script>
   </body>
 </html>
