@@ -34,12 +34,12 @@ Benchee.run(%{
     Benchee.Formatters.HTML,
     Benchee.Formatters.Console
   ]
-  # override defaults
-  #, formatter_options: [html: [file: "output/my.html", auto_open: false]]
+  # override defaults:
+  # formatters: [{Benchee.Formatters.HTML, file: "output/my.html", auto_open: false}]
 )
 ```
 
-The report index page will be written to `"benchmarks/output/results.html"` and opened in your standard browser automatically. Of course you can also pass in `formatter_options` to specify a different destination for the reports: `html: [file: "your_file.html"]`. Auto open behaviour can be overridden in the same manner: `html: [auto_open: false]`
+The report index page will be written to `"benchmarks/output/results.html"` and opened in your standard browser automatically. Of course you can also optionally specify a tuple of `{Module, options}` to specify a different destination for the reports: `[{Benchee.Formatters.HTML, file: "your_file.html"}]`. Auto open behaviour can be overridden in the same manner: `html: [{Benchee.Formatters.HTML, auto_open: false}]`
 
 Of course it also works with multiple inputs, in that case one file per input is generated:
 
@@ -51,10 +51,9 @@ Benchee.run(%{
   "map.flatten" => fn(list) -> list |> Enum.map(map_fun) |> List.flatten end
 },
   formatters: [
-    Benchee.Formatters.HTML,
+    {Benchee.Formatters.HTML, file: "samples_output/my.html"},
     Benchee.Formatters.Console
   ],
-  formatter_options: [html: [file: "samples_output/my.html"]],
   time: 7,
   warmup: 3,
   inputs: %{
