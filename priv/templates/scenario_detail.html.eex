@@ -7,30 +7,32 @@
 
     <%= render_system_info(system) %>
 
-    <article>
-      <h2>
-        <a name="run_time" href="#run_time"><%= scenario.name %> Run Time</a>
-        <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
-          <i
-            class="benchee-help-icon icon-question-circle-o"
-            title="Graphs showing the individual run time distribution for <%= scenario.name %>.
-Run Times Histogram shows the distribution of occurrences of specific run times in buckets.
-Raw Run Times shows all individual recorded run times in the order they were recorded in."
-          ></i>
-        </a>
-      </h2>
+    <%= if Scenario.data_processed?(scenario, :run_time) do %>
+      <article>
+        <h2>
+          <a name="run_time" href="#run_time"><%= scenario.name %> Run Time</a>
+          <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#individual">
+            <i
+              class="benchee-help-icon icon-question-circle-o"
+              title="Graphs showing the individual run time distribution for <%= scenario.name %>.
+  Run Times Histogram shows the distribution of occurrences of specific run times in buckets.
+  Raw Run Times shows all individual recorded run times in the order they were recorded in."
+            ></i>
+          </a>
+        </h2>
 
-      <section>
-        <%= render_data_table(%{scenario.name => %{statistics: scenario.run_time_statistics}}, units, run_time: true) %>
-      </section>
+        <section>
+          <%= render_data_table(scenario, :run_time_statistics, units, run_time: true) %>
+        </section>
 
-      <section class="benchee-plot-container">
-        <div id="run-times-histogram" class="plot"></div>
-      </section>
-      <section class="benchee-plot-container">
-        <div id="raw-run-times" class="plot"></div>
-      </section>
-    </article>
+        <section class="benchee-plot-container">
+          <div id="run-times-histogram" class="plot"></div>
+        </section>
+        <section class="benchee-plot-container">
+          <div id="raw-run-times" class="plot"></div>
+        </section>
+      </article>
+    <% end %>
 
     <%= if Scenario.data_processed?(scenario, :memory) do %>
       <article>
@@ -47,7 +49,7 @@ Raw Run Times shows all individual recorded run times in the order they were rec
         </h2>
 
         <section>
-          <%= render_data_table(%{scenario.name => %{statistics: scenario.memory_usage_statistics}}, units, run_time: false) %>
+          <%= render_data_table(scenario, :memory_usage_statistics, units, run_time: false) %>
         </section>
 
         <%= if scenario.memory_usage_statistics.std_dev != 0 do %>
@@ -72,13 +74,17 @@ Raw Run Times shows all individual recorded run times in the order they were rec
 
       var inputHeadline = "<%= input_headline(scenario.input_name) %>"
 
-      drawRunTimeHistogram(scenario, inputHeadline);
-      drawRawRunTimeChart(scenario, inputHeadline);
+      <%= if Scenario.data_processed?(scenario, :run_time) do %>
+        drawRunTimeHistogram(scenario, inputHeadline);
+        drawRawRunTimeChart(scenario, inputHeadline);
+      <% end %>
 
-      if (scenario.memory_usage_statistics.std_dev !== 0) {
-        drawMemoryHistogram(scenario, inputHeadline);
-        drawRawMemoryChart(scenario, inputHeadline);
-      };
+      <%= if Scenario.data_processed?(scenario, :memory) do %>
+        if (scenario.memory_usage_statistics.std_dev !== 0) {
+          drawMemoryHistogram(scenario, inputHeadline);
+          drawRawMemoryChart(scenario, inputHeadline);
+        };
+      <% end %>
     </script>
   </body>
 </html>

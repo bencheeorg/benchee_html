@@ -27,7 +27,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       base_name: @base_name
     }
 
-    basic_test(benchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data, run_time: true)
   end
 
   test "works fine with filename not provided" do
@@ -45,7 +45,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       base_name: @default_base_name
     }
 
-    basic_test(benchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data, run_time: true)
   end
 
   test "works fine running only run time" do
@@ -63,7 +63,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       base_name: @base_name
     }
 
-    basic_test(benchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data, run_time: true)
   end
 
   test "works fine running only memory" do
@@ -81,7 +81,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       base_name: @base_name
     }
 
-    basic_test(benchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data, run_time: false)
   end
 
   test "doesn't crash if we're essentially measuring nothing" do
@@ -98,7 +98,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
     end)
   end
 
-  defp basic_test(benchee_options, assertion_data) do
+  defp basic_test(benchee_options, assertion_data, options) do
     capture_io(fn ->
       Benchee.run(
         %{
@@ -124,7 +124,9 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       assert html =~ "<body>"
       assert html =~ "Sleep"
       assert html =~ "List"
-      assert html =~ "ips-comparison"
+      if Keyword.get(options, :run_time, false) do
+        assert html =~ "ips-comparison"
+      end
       assert html =~ "System info</a>"
       assert html =~ "benchee version"
       assert html =~ "benchee_html version"

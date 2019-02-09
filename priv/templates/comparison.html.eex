@@ -7,30 +7,32 @@
 
     <%= render_system_info(suite.system) %>
 
-    <article>
-      <h2>
-        Run Time Comparison
-        <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#comparison">
-          <i
-          class="benchee-help-icon icon-question-circle-o"
-          title="Comparisons of the different benchmarking jobs. For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better. The Box Plot shows a distribution of run times with the median and outliers."
-          ></i>
-        </a>
-      </h2>
-      <section>
-        <%= render_data_table(suite.run_time_statistics, units, path_information: {suite.filename, input_name}, run_time: true) %>
-      </section>
+    <%= if all_scenarios_processed?(suite.scenarios, :run_time) do %>
+      <article>
+        <h2>
+          Run Time Comparison
+          <a href="https://github.com/PragTob/benchee_html/wiki/Chart-Types#comparison">
+            <i
+            class="benchee-help-icon icon-question-circle-o"
+            title="Comparisons of the different benchmarking jobs. For Iterations per Second higher is better, the black whiskers denote standard deviation. otherwise it is runtime so lower is better. The Box Plot shows a distribution of run times with the median and outliers."
+            ></i>
+          </a>
+        </h2>
+        <section>
+          <%= render_data_table(suite.scenarios, :run_time_statistics, units, path_information: {suite.filename, input_name}, run_time: true) %>
+        </section>
 
-      <section class="benchee-plot-container">
-        <div id="ips-comparison" class="<%= max_width_class(suite.job_count) %> plot"></div>
-      </section>
+        <section class="benchee-plot-container">
+          <div id="ips-comparison" class="<%= max_width_class(suite.job_count) %> plot"></div>
+        </section>
 
-      <section class="benchee-plot-container">
-        <div id="run-time-box-plot" class="<%= max_width_class(suite.job_count) %> plot"></div>
-      </section>
-    </article>
+        <section class="benchee-plot-container">
+          <div id="run-time-box-plot" class="<%= max_width_class(suite.job_count) %> plot"></div>
+        </section>
+      </article>
+    <% end %>
 
-    <%= if suite.memory_usage_statistics do %>
+    <%= if all_scenarios_processed?(suite.scenarios, :memory) do %>
       <article>
         <h2>
           Memory Usage Comparison
@@ -42,7 +44,7 @@
           </a>
         </h2>
         <section>
-          <%= render_data_table(suite.memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
+          <%= render_data_table(suite.scenarios, :memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
         </section>
 
         <section class="benchee-plot-container">
@@ -65,10 +67,12 @@
       var scenarios     = <%= scenarios_json %>;
       var inputHeadline = "<%= input_headline(input_name) %>";
 
-      drawIpsComparisonChart(scenarios, inputHeadline);
-      drawRunTimeComparisonBoxPlot(scenarios, inputHeadline);
+      <%= if all_scenarios_processed?(suite.scenarios, :run_time) do %>
+        drawIpsComparisonChart(scenarios, inputHeadline);
+        drawRunTimeComparisonBoxPlot(scenarios, inputHeadline);
+      <% end %>
 
-      <%= if suite.memory_usage_statistics do %>
+      <%= if all_scenarios_processed?(suite.scenarios, :memory) do %>
         drawMemoryComparisonChart(scenarios, inputHeadline);
         drawMemoryComparisonBoxPlot(scenarios, inputHeadline);
       <% end %>

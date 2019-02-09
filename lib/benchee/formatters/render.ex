@@ -57,7 +57,8 @@ defmodule Benchee.Formatters.HTML.Render do
   ])
 
   EEx.function_from_file(:defp, :data_table, "priv/templates/partials/data_table.html.eex", [
-    :statistics,
+    :scenarios,
+    :statistics_key,
     :units,
     :options
   ])
@@ -77,9 +78,15 @@ defmodule Benchee.Formatters.HTML.Render do
     |> FileCreation.interleave(tags)
   end
 
-  # Small wrappers to have default arguments
-  defp render_data_table(statistics, units, options) do
-    data_table(statistics, units, options)
+  defp render_data_table(scenarios = [_ | _], statistics_key, units, options) do
+    data_table(scenarios, statistics_key, units, options)
+  end
+  defp render_data_table(scenario, statistics_key, units, options) do
+    render_data_table([scenario], statistics_key, units, options)
+  end
+
+  defp all_scenarios_processed?(scenarios, type) do
+    Enum.all?(scenarios, fn scenario -> Scenario.data_processed?(scenario, type) end)
   end
 
   defp render_system_info(system, options \\ [visible: false]) do
