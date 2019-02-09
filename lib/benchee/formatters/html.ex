@@ -30,7 +30,6 @@ defmodule Benchee.Formatters.HTML do
     Suite,
     Utility.FileCreation
   }
-  alias Benchee.Benchmark.Scenario
 
   @doc """
   Transforms the statistical results from benchmarking to html reports.
@@ -153,10 +152,6 @@ defmodule Benchee.Formatters.HTML do
 
     {[input_name, "comparison"],
      Render.comparison(input_name, input_suite, units, scenarios_json, inline_assets)}
-  end
-
-  defp all_memory_statistics_present?(scenarios) do
-    Enum.all?(scenarios, fn scenario -> Scenario.data_processed?(scenario, :memory) end)
   end
 
   defp add_index(grouped_main_contents, filename, system, inline_assets) do
