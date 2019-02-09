@@ -32,7 +32,7 @@ Raw Run Times shows all individual recorded run times in the order they were rec
       </section>
     </article>
 
-    <%= if scenario.memory_usage_statistics.sample_size > 0 do %>
+    <%= if Scenario.data_processed?(scenario, :memory) do %>
       <article>
         <h2>
           <a name="memory" href="#memory"><%= scenario.name %> Memory</a>

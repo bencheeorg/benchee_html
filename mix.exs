@@ -47,7 +47,7 @@ defmodule BencheeHTML.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:benchee, github: "PragTob/benchee", branch: "sort-scenarios", override: true},
+      {:benchee, github: "PragTob/benchee", branch: "scenario-data-processed", override: true},
       {:benchee_json, github: "PragTob/benchee_json"},
       {:excoveralls, "~> 0.8.1", only: :test},
       {:mix_test_watch, "~> 0.2", only: :dev},
