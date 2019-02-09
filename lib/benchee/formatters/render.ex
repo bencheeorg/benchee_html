@@ -5,8 +5,8 @@ defmodule Benchee.Formatters.HTML.Render do
 
   require EEx
 
-  alias Benchee.Conversion.{DeviationPercent, Format, Scale}
   alias Benchee.Benchmark.Scenario
+  alias Benchee.Conversion.{DeviationPercent, Format, Scale}
   alias Benchee.Utility.FileCreation
 
   # Major pages
@@ -79,9 +79,11 @@ defmodule Benchee.Formatters.HTML.Render do
   end
 
   defp render_data_table(scenarios, statistics_key, units, options \\ [])
+
   defp render_data_table(scenarios = [_ | _], statistics_key, units, options) do
     data_table(scenarios, statistics_key, units, options)
   end
+
   defp render_data_table(scenario, statistics_key, units, options) do
     render_data_table([scenario], statistics_key, units, options)
   end

@@ -124,9 +124,11 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       assert html =~ "<body>"
       assert html =~ "Sleep"
       assert html =~ "List"
+
       if Keyword.get(options, :run_time, false) do
         assert html =~ "ips-comparison"
       end
+
       assert html =~ "System info</a>"
       assert html =~ "benchee version"
       assert html =~ "benchee_html version"
