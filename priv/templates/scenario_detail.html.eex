@@ -22,7 +22,7 @@
         </h2>
 
         <section>
-          <%= render_data_table(scenario, :run_time_statistics, units, run_time: true) %>
+          <%= render_data_table(scenario, :run_time_statistics, units) %>
         </section>
 
         <section class="benchee-plot-container">
@@ -49,7 +49,7 @@
         </h2>
 
         <section>
-          <%= render_data_table(scenario, :memory_usage_statistics, units, run_time: false) %>
+          <%= render_data_table(scenario, :memory_usage_statistics, units) %>
         </section>
 
         <%= if scenario.memory_usage_statistics.std_dev != 0 do %>

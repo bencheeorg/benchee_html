@@ -78,6 +78,7 @@ defmodule Benchee.Formatters.HTML.Render do
     |> FileCreation.interleave(tags)
   end
 
+  defp render_data_table(scenarios, statistics_key, units, options \\ [])
   defp render_data_table(scenarios = [_ | _], statistics_key, units, options) do
     data_table(scenarios, statistics_key, units, options)
   end

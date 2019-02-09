@@ -19,7 +19,7 @@
           </a>
         </h2>
         <section>
-          <%= render_data_table(suite.scenarios, :run_time_statistics, units, path_information: {suite.filename, input_name}, run_time: true) %>
+          <%= render_data_table(suite.scenarios, :run_time_statistics, units, path_information: {suite.filename, input_name}) %>
         </section>
 
         <section class="benchee-plot-container">
@@ -44,7 +44,7 @@
           </a>
         </h2>
         <section>
-          <%= render_data_table(suite.scenarios, :memory_usage_statistics, units, path_information: {suite.filename, input_name}, run_time: false) %>
+          <%= render_data_table(suite.scenarios, :memory_usage_statistics, units, path_information: {suite.filename, input_name}) %>
         </section>
 
         <section class="benchee-plot-container">
