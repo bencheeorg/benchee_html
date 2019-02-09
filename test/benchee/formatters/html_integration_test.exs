@@ -48,6 +48,56 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
     basic_test(benchee_options, assertion_data)
   end
 
+  test "works fine running only run time" do
+    benchee_options = [
+      time: 0.01,
+      memory_time: 0,
+      warmup: 0.02,
+      formatters: [{Benchee.Formatters.HTML, file: @file_path, auto_open: false}]
+    ]
+
+    assertion_data = %{
+      comparison_path: @comparison_path,
+      test_directory: @test_directory,
+      file_path: @file_path,
+      base_name: @base_name
+    }
+
+    basic_test(benchee_options, assertion_data)
+  end
+
+  test "works fine running only memory" do
+    benchee_options = [
+      time: 0,
+      memory_time: 0.01,
+      warmup: 0.02,
+      formatters: [{Benchee.Formatters.HTML, file: @file_path, auto_open: false}]
+    ]
+
+    assertion_data = %{
+      comparison_path: @comparison_path,
+      test_directory: @test_directory,
+      file_path: @file_path,
+      base_name: @base_name
+    }
+
+    basic_test(benchee_options, assertion_data)
+  end
+
+  test "doesn't crash if we're essentially measuring nothing" do
+    capture_io(fn ->
+      assert %Benchee.Suite{} =
+               Benchee.run(
+                 %{
+                   "Sleep" => fn -> :timer.sleep(10) end
+                 },
+                 time: 0,
+                 warmup: 0,
+                 formatters: [{Benchee.Formatters.HTML, auto_open: false}]
+               )
+    end)
+  end
+
   defp basic_test(benchee_options, assertion_data) do
     capture_io(fn ->
       Benchee.run(
