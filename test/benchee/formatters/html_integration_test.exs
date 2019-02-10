@@ -27,7 +27,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       base_name: @base_name
     }
 
-    basic_test(benchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data, run_time: true)
   end
 
   test "works fine with filename not provided" do
@@ -45,10 +45,60 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       base_name: @default_base_name
     }
 
-    basic_test(benchee_options, assertion_data)
+    basic_test(benchee_options, assertion_data, run_time: true)
   end
 
-  defp basic_test(benchee_options, assertion_data) do
+  test "works fine running only run time" do
+    benchee_options = [
+      time: 0.01,
+      memory_time: 0,
+      warmup: 0.02,
+      formatters: [{Benchee.Formatters.HTML, file: @file_path, auto_open: false}]
+    ]
+
+    assertion_data = %{
+      comparison_path: @comparison_path,
+      test_directory: @test_directory,
+      file_path: @file_path,
+      base_name: @base_name
+    }
+
+    basic_test(benchee_options, assertion_data, run_time: true)
+  end
+
+  test "works fine running only memory" do
+    benchee_options = [
+      time: 0,
+      memory_time: 0.01,
+      warmup: 0.02,
+      formatters: [{Benchee.Formatters.HTML, file: @file_path, auto_open: false}]
+    ]
+
+    assertion_data = %{
+      comparison_path: @comparison_path,
+      test_directory: @test_directory,
+      file_path: @file_path,
+      base_name: @base_name
+    }
+
+    basic_test(benchee_options, assertion_data, run_time: false)
+  end
+
+  test "doesn't crash if we're essentially measuring nothing" do
+    capture_io(fn ->
+      assert %Benchee.Suite{} =
+               Benchee.run(
+                 %{
+                   "Sleep" => fn -> :timer.sleep(10) end
+                 },
+                 time: 0,
+                 warmup: 0,
+                 formatters: [{Benchee.Formatters.HTML, auto_open: false}]
+               )
+    end)
+  end
+
+  defp basic_test(benchee_options, assertion_data, options) do
     capture_io(fn ->
       Benchee.run(
         %{
@@ -74,7 +124,11 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       assert html =~ "<body>"
       assert html =~ "Sleep"
       assert html =~ "List"
-      assert html =~ "ips-comparison"
+
+      if Keyword.get(options, :run_time, false) do
+        assert html =~ "ips-comparison"
+      end
+
       assert html =~ "System info</a>"
       assert html =~ "benchee version"
       assert html =~ "benchee_html version"

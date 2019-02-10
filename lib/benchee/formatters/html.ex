@@ -143,37 +143,15 @@ defmodule Benchee.Formatters.HTML do
   defp comparison_report(input_name, scenarios, system, filename, units, inline_assets) do
     scenarios_json = JSON.encode!(scenarios)
 
-    run_time_statistics = prepare_table_data(scenarios, :run_time_statistics)
-
-    memory_statistics =
-      if all_memory_staistics_present?(scenarios) do
-        prepare_table_data(scenarios, :memory_usage_statistics)
-      else
-        nil
-      end
-
     input_suite = %{
-      run_time_statistics: run_time_statistics,
-      memory_usage_statistics: memory_statistics,
       system: system,
       job_count: length(scenarios),
-      filename: filename
+      filename: filename,
+      scenarios: scenarios
     }
 
     {[input_name, "comparison"],
      Render.comparison(input_name, input_suite, units, scenarios_json, inline_assets)}
-  end
-
-  defp prepare_table_data(scenarios, statistics_key) do
-    scenarios
-    |> Enum.map(fn scenario ->
-      {scenario.name, %{statistics: Map.fetch!(scenario, statistics_key)}}
-    end)
-    |> Map.new()
-  end
-
-  defp all_memory_staistics_present?(scenarios) do
-    Enum.all?(scenarios, fn scenario -> scenario.memory_usage_statistics.sample_size > 0 end)
   end
 
   defp add_index(grouped_main_contents, filename, system, inline_assets) do
