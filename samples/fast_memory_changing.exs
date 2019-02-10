@@ -5,14 +5,10 @@ Benchee.run(%{
   "Enum.into" => fn range -> Enum.into(range, []) end
 },
   formatters: [
-    Benchee.Formatters.HTML,
-    Benchee.Formatters.Console
+    {Benchee.Formatters.HTML, file: "samples_output/memory_changing.html"},
+    {Benchee.Formatters.Console, extended_statistics: true}
   ],
   before_each: fn _ -> (0..:rand.uniform(1_000) + 1000) end,
-  formatter_options: [
-    html: [file: "samples_output/my.html"],
-    console: [extended_statistics: true]
-  ],
   warmup: 0,
   time: 0.1,
   memory_time: 0.1

@@ -6,10 +6,9 @@ Benchee.run(%{
   "map.flatten" => fn -> list |> Enum.map(map_fun) |> List.flatten end
 },
   formatters: [
-    Benchee.Formatters.HTML,
+    {Benchee.Formatters.HTML, file: "samples_output/fast.html"},
     Benchee.Formatters.Console
   ],
-  formatter_options: [html: [file: "samples_output/my.html"]],
-  time: 2,
+  time: 0.2,
   warmup: 0
 )
