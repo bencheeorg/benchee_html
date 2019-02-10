@@ -1,3 +1,10 @@
+## 0.6.0 (2019-02-10)
+
+### Features
+
+* benchee 0.14.0 support
+* added memory measurements with graphs and data tables
+
 ## 0.5.0 (2018-02-11)
 
 ### Features
