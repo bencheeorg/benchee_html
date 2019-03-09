@@ -8,6 +8,7 @@
       <th>Average</th>
       <th>Deviation</th>
       <th>Median</th>
+      <th>Mode</th>
       <th>Minimum</th>
       <th>Maximum</th>
       <th>Sample size</th>
@@ -28,12 +29,14 @@
           <td><%= format_property statistics.average, units.run_time %></td>
           <td><%= format_percent statistics.std_dev_ratio %></td>
           <td><%= format_property statistics.median, units.run_time %></td>
+          <td><%= format_mode statistics.mode, units.run_time %></td>
           <td><%= format_property statistics.minimum, units.run_time %></td>
           <td><%= format_property statistics.maximum, units.run_time %></td>
         <% else %>
           <td><%= format_property statistics.average, units.memory %></td>
           <td><%= format_percent statistics.std_dev_ratio %></td>
           <td><%= format_property statistics.median, units.memory %></td>
+          <td><%= format_mode statistics.mode, units.memory %></td>
           <td><%= format_property statistics.minimum, units.memory %></td>
           <td><%= format_property statistics.maximum, units.memory %></td>
         <% end %>

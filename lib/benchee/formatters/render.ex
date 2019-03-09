@@ -103,6 +103,20 @@ defmodule Benchee.Formatters.HTML.Render do
     })
   end
 
+  defp format_mode(nil, _unit) do
+    "none"
+  end
+
+  defp format_mode(modes = [_ | _], unit) do
+    modes
+    |> Enum.map(fn mode -> format_property(mode, unit) end)
+    |> Enum.join(", ")
+  end
+
+  defp format_mode(value, unit) do
+    format_property(value, unit)
+  end
+
   defp format_property(value, unit) do
     Format.format({Scale.scale(value, unit), unit})
   end
