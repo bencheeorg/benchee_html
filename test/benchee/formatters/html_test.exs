@@ -16,6 +16,18 @@ defmodule Benchee.Formatters.HTMLTest do
     cpu_speed: "2.80GHz",
     num_cores: 2
   }
+  @run_time_statistics %Benchee.Statistics{
+    average: 200.0,
+    ips: 5000.0,
+    std_dev: 20,
+    std_dev_ratio: 0.1,
+    std_dev_ips: 500,
+    median: 190.0,
+    mode: 205,
+    sample_size: 3,
+    minimum: 190,
+    maximum: 210
+  }
   @scenario %Benchee.Benchmark.Scenario{
     job_name: "My Job",
     name: "My Job",
@@ -23,17 +35,7 @@ defmodule Benchee.Formatters.HTMLTest do
     memory_usages: [190, 200, 210],
     input_name: "Some Input",
     input: "Some Input",
-    run_time_statistics: %Benchee.Statistics{
-      average: 200.0,
-      ips: 5000.0,
-      std_dev: 20,
-      std_dev_ratio: 0.1,
-      std_dev_ips: 500,
-      median: 190.0,
-      sample_size: 3,
-      minimum: 190,
-      maximum: 210
-    },
+    run_time_statistics: @run_time_statistics,
     memory_usage_statistics: %Benchee.Statistics{
       average: 200.0,
       ips: nil,
@@ -41,6 +43,7 @@ defmodule Benchee.Formatters.HTMLTest do
       std_dev_ratio: 0.1,
       std_dev_ips: nil,
       median: 190.0,
+      mode: 205,
       sample_size: 3,
       minimum: 190,
       maximum: 210
@@ -76,10 +79,12 @@ defmodule Benchee.Formatters.HTMLTest do
             ">190 ns<",
             ">210 ns<",
             ">200 ns<",
+            ">205 ns<",
             "5 K",
             ">190 B<",
             ">210 B<",
-            ">200 B<"
+            ">200 B<",
+            ">205 B<"
           ]
         )
       end)
@@ -186,6 +191,48 @@ defmodule Benchee.Formatters.HTMLTest do
         refute html =~ "input-label"
       end)
     end
+  end
+
+  test "deals with no mode being present" do
+    suite = %Benchee.Suite{
+      scenarios: [
+        %Benchee.Benchmark.Scenario{
+          @scenario
+          | run_time_statistics: %Benchee.Statistics{
+              @run_time_statistics
+              | mode: nil
+            }
+        }
+      ],
+      system: @system_info
+    }
+
+    [comparison_html, scenario_html] = comparison_and_job_htmls(suite)
+
+    Enum.each([comparison_html, scenario_html], fn html ->
+      assert html =~ ">none<"
+    end)
+  end
+
+  test "deals with multiple modes being present" do
+    suite = %Benchee.Suite{
+      scenarios: [
+        %Benchee.Benchmark.Scenario{
+          @scenario
+          | run_time_statistics: %Benchee.Statistics{
+              @run_time_statistics
+              | mode: [190, 200, 210]
+            }
+        }
+      ],
+      system: @system_info
+    }
+
+    [comparison_html, scenario_html] = comparison_and_job_htmls(suite)
+
+    Enum.each([comparison_html, scenario_html], fn html ->
+      assert html =~ ">190 ns, 200 ns, 210 ns<"
+    end)
   end
 
   describe "write/2" do
