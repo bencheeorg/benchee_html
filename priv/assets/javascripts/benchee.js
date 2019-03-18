@@ -12,10 +12,10 @@ var comparisonData = function(scenarios, statistics_key, value_key, std_dev_key)
     {
       type: "bar",
       x: scenarios.map(function(scenario) { return scenario.name; }),
-      y: scenarios.map(function(scenario) { return scenario[statistics_key][value_key]; }),
+      y: scenarios.map(function(scenario) { return scenario[statistics_key].statistics[value_key]; }),
       error_y: {
         type: "data",
-        array: scenarios.map(function(scenario) { return scenario[statistics_key][std_dev_key]; }),
+        array: scenarios.map(function(scenario) { return scenario[statistics_key].statistics[std_dev_key]; }),
         visible: true
       }
     }
@@ -30,7 +30,7 @@ window.drawIpsComparisonChart = function(scenarios, inputHeadline) {
 
   drawGraph(
     document.getElementById("ips-comparison"),
-    comparisonData(scenarios, "run_time_statistics", "ips", "std_dev_ips"),
+    comparisonData(scenarios, "run_time_data", "ips", "std_dev_ips"),
     layout
   );
 };
@@ -43,7 +43,7 @@ window.drawMemoryComparisonChart = function(scenarios, inputHeadline) {
 
   drawGraph(
     document.getElementById("memory-comparison"),
-    comparisonData(scenarios, "memory_usage_statistics", "average", "std_dev"),
+    comparisonData(scenarios, "memory_usage_data", "average", "std_dev"),
     layout
   );
 };
@@ -53,7 +53,7 @@ var boxPlotData = function(scenarios, data_key) {
   return scenarios.map(function(scenario) {
     return {
       name: scenario.name,
-      y: scenario[data_key],
+      y: scenario[data_key].samples,
       type: "box"
     };
   });
@@ -67,7 +67,7 @@ window.drawRunTimeComparisonBoxPlot = function(scenarios, inputHeadline) {
 
   drawGraph(
     document.getElementById("run-time-box-plot"),
-    boxPlotData(scenarios, "run_times"),
+    boxPlotData(scenarios, "run_time_data"),
     layout
   );
 };
@@ -80,7 +80,7 @@ window.drawMemoryComparisonBoxPlot = function(scenarios, inputHeadline) {
 
   drawGraph(
     document.getElementById("memory-box-plot"),
-    boxPlotData(scenarios, "memory_usages"),
+    boxPlotData(scenarios, "memory_usage_data"),
     layout
   );
 };
@@ -110,12 +110,12 @@ window.drawRawRunTimeChart = function(scenario, inputHeadline) {
   var layout = rawChartLayout(
     scenario.name + " Raw Run Times" + inputHeadline,
     RUN_TIME_AXIS_TITLE,
-    scenario.run_time_statistics
+    scenario.run_time_data.statistics
   )
-  
+
   drawGraph(
     document.getElementById("raw-run-times"),
-    barChart(scenario.run_times),
+    barChart(scenario.run_time_data.samples),
     layout
   );
 };
@@ -124,12 +124,12 @@ window.drawRawMemoryChart = function(scenario, inputHeadline) {
   var layout = rawChartLayout(
     scenario.name + " Raw Memory Usages" + inputHeadline,
     "Raw Memory Usages in Bytes",
-    scenario.memory_usage_statistics
+    scenario.memory_usage_data.statistics
   )
-  
+
   drawGraph(
     document.getElementById("raw-memory"),
-    barChart(scenario.memory_usages),
+    barChart(scenario.memory_usage_data.samples),
     layout
   );
 };
@@ -152,7 +152,7 @@ window.drawRunTimeHistogram = function(scenario, inputHeadline) {
 
   drawGraph(
     document.getElementById("run-times-histogram"),
-    histogramData(scenario.run_times),
+    histogramData(scenario.run_time_data.samples),
     layout
   );
 };
@@ -166,7 +166,7 @@ window.drawMemoryHistogram = function(scenario, inputHeadline) {
 
   drawGraph(
     document.getElementById("memory-histogram"),
-    histogramData(scenario.memory_usages),
+    histogramData(scenario.memory_usage_data.samples),
     layout
   );
 };
@@ -174,6 +174,6 @@ window.drawMemoryHistogram = function(scenario, inputHeadline) {
 window.toggleSystemDataInfo = function() {
   var systemDataNode = document.getElementById("system-info");
   var newState = (systemDataNode.style.display === 'block') ? 'none' : 'block';
-  
+
   systemDataNode.style.display = newState;
 };

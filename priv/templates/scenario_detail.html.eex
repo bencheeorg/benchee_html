@@ -22,7 +22,7 @@
         </h2>
 
         <section>
-          <%= render_data_table(scenario, :run_time_statistics, units) %>
+          <%= render_data_table(scenario, :run_time_data, units) %>
         </section>
 
         <section class="benchee-plot-container">
@@ -49,10 +49,10 @@
         </h2>
 
         <section>
-          <%= render_data_table(scenario, :memory_usage_statistics, units) %>
+          <%= render_data_table(scenario, :memory_usage_data, units) %>
         </section>
 
-        <%= if scenario.memory_usage_statistics.std_dev != 0 do %>
+        <%= if scenario.memory_usage_data.statistics.std_dev != 0 do %>
           <section class="benchee-plot-container">
             <div id="memory-histogram" class="plot"></div>
           </section>
@@ -80,7 +80,7 @@
       <% end %>
 
       <%= if Scenario.data_processed?(scenario, :memory) do %>
-        if (scenario.memory_usage_statistics.std_dev !== 0) {
+        if (scenario.memory_usage_data.statistics.std_dev !== 0) {
           drawMemoryHistogram(scenario, inputHeadline);
           drawRawMemoryChart(scenario, inputHeadline);
         };
