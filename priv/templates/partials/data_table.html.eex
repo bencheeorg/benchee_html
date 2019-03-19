@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <th class="text-left">Name</th>
-      <%= if statistics_key == :run_time_statistics do %>
+      <%= if measurement_key == :run_time_data do %>
         <th>Iterations per Second</th>
       <% end %>
       <th>Average</th>
@@ -16,7 +16,7 @@
   </thead>
   <tbody>
     <%= for scenario <- scenarios do %>
-      <% statistics = Map.fetch!(scenario, statistics_key)%>
+      <% statistics = Map.fetch!(scenario, measurement_key).statistics%>
       <tr>
         <%= case Keyword.get(options, :path_information) do %>
         <% {base_name, input_name} -> %>
@@ -24,7 +24,7 @@
         <% nil -> %>
           <td class="text-left"><%= scenario.name %></td>
         <% end %>
-        <%= if statistics_key == :run_time_statistics do %>
+        <%= if measurement_key == :run_time_data do %>
           <td><%= format_property statistics.ips, units.ips %></td>
           <td><%= format_property statistics.average, units.run_time %></td>
           <td><%= format_percent statistics.std_dev_ratio %></td>

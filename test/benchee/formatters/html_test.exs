@@ -28,25 +28,29 @@ defmodule Benchee.Formatters.HTMLTest do
     minimum: 190,
     maximum: 210
   }
-  @scenario %Benchee.Benchmark.Scenario{
+  @scenario %Benchee.Scenario{
     job_name: "My Job",
     name: "My Job",
-    run_times: [190, 200, 210],
-    memory_usages: [190, 200, 210],
     input_name: "Some Input",
     input: "Some Input",
-    run_time_statistics: @run_time_statistics,
-    memory_usage_statistics: %Benchee.Statistics{
-      average: 200.0,
-      ips: nil,
-      std_dev: 20,
-      std_dev_ratio: 0.1,
-      std_dev_ips: nil,
-      median: 190.0,
-      mode: 205,
-      sample_size: 3,
-      minimum: 190,
-      maximum: 210
+    run_time_data: %Benchee.CollectionData{
+      samples: [190, 200, 210],
+      statistics: @run_time_statistics
+    },
+    memory_usage_data: %Benchee.CollectionData{
+      samples: [190, 200, 210],
+      statistics: %Benchee.Statistics{
+        average: 200.0,
+        ips: nil,
+        std_dev: 20,
+        std_dev_ratio: 0.1,
+        std_dev_ips: nil,
+        median: 190.0,
+        mode: 205,
+        sample_size: 3,
+        minimum: 190,
+        maximum: 210
+      }
     }
   }
   @sample_suite %Benchee.Suite{
@@ -119,10 +123,7 @@ defmodule Benchee.Formatters.HTMLTest do
         maximum: 1700
       }
 
-      scenario = %Benchee.Benchmark.Scenario{
-        @scenario
-        | run_time_statistics: statistics
-      }
+      scenario = put_in(@scenario.run_time_data.statistics, statistics)
 
       suite = %Benchee.Suite{@sample_suite | scenarios: [scenario]}
 
@@ -139,7 +140,8 @@ defmodule Benchee.Formatters.HTMLTest do
     test "produces the right JSON for the comparison of a single input" do
       %{["Some Input", "comparison"] => html} = HTML.format(@sample_suite, @default_options)
       assert html =~ "[{\"name\":\"My Job\","
-      assert html =~ "\"run_time_statistics\":{\"average\":200.0,"
+      assert html =~ "\"statistics\":{\"average\":200.0,"
+      assert html =~ "\"run_time_data\""
     end
 
     test "shows the units alright" do
@@ -162,30 +164,18 @@ defmodule Benchee.Formatters.HTMLTest do
     test "does not render the label if no input was given" do
       marker = Benchee.Benchmark.no_input()
 
-      %Benchee.Suite{
-        scenarios: [
-          %Benchee.Benchmark.Scenario{
-            job_name: "My Job",
-            name: "My Job",
-            run_times: [190, 200, 210],
-            input_name: marker,
-            input: marker,
-            run_time_statistics: %Benchee.Statistics{
-              average: 200.0,
-              ips: 5000.0,
-              std_dev: 20,
-              std_dev_ratio: 0.1,
-              std_dev_ips: 500,
-              median: 190.0,
-              sample_size: 3,
-              minimum: 190,
-              maximum: 210
-            },
-            memory_usage_statistics: %Benchee.Statistics{sample_size: 0}
-          }
-        ],
-        system: @system_info
+      scenario = %Benchee.Scenario{
+        @scenario
+        | input_name: marker,
+          input: marker
       }
+
+      suite = %Benchee.Suite{
+        @sample_suite
+        | scenarios: [scenario]
+      }
+
+      suite
       |> HTML.format(@default_options)
       |> Enum.each(fn {_, html} ->
         refute html =~ "input-label"
@@ -194,18 +184,8 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test "deals with no mode being present" do
-    suite = %Benchee.Suite{
-      scenarios: [
-        %Benchee.Benchmark.Scenario{
-          @scenario
-          | run_time_statistics: %Benchee.Statistics{
-              @run_time_statistics
-              | mode: nil
-            }
-        }
-      ],
-      system: @system_info
-    }
+    scenario = put_in(@scenario.run_time_data.statistics.mode, nil)
+    suite = %Benchee.Suite{@sample_suite | scenarios: [scenario]}
 
     [comparison_html, scenario_html] = comparison_and_job_htmls(suite)
 
@@ -215,18 +195,8 @@ defmodule Benchee.Formatters.HTMLTest do
   end
 
   test "deals with multiple modes being present" do
-    suite = %Benchee.Suite{
-      scenarios: [
-        %Benchee.Benchmark.Scenario{
-          @scenario
-          | run_time_statistics: %Benchee.Statistics{
-              @run_time_statistics
-              | mode: [190, 200, 210]
-            }
-        }
-      ],
-      system: @system_info
-    }
+    scenario = put_in(@scenario.run_time_data.statistics.mode, [190, 200, 210])
+    suite = %Benchee.Suite{@sample_suite | scenarios: [scenario]}
 
     [comparison_html, scenario_html] = comparison_and_job_htmls(suite)
 

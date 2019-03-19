@@ -5,7 +5,7 @@ defmodule Benchee.Formatters.HTML.Render do
 
   require EEx
 
-  alias Benchee.Benchmark.Scenario
+  alias Benchee.Scenario
   alias Benchee.Conversion.{DeviationPercent, Format, Scale}
   alias Benchee.Utility.FileCreation
 
@@ -58,7 +58,7 @@ defmodule Benchee.Formatters.HTML.Render do
 
   EEx.function_from_file(:defp, :data_table, "priv/templates/partials/data_table.html.eex", [
     :scenarios,
-    :statistics_key,
+    :measurement_key,
     :units,
     :options
   ])
