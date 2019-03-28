@@ -1,7 +1,7 @@
 defmodule BencheeHTML.Mixfile do
   use Mix.Project
 
-  @version "0.6.0"
+  @version "1.0.0"
   def project do
     [
       app: :benchee_html,
@@ -47,8 +47,8 @@ defmodule BencheeHTML.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:benchee, "~> 0.14", github: "PragTob/benchee"},
-      {:benchee_json, "~> 0.6", github: "PragTob/benchee_json"},
+      {:benchee, ">= 0.99.0 and < 2.0.0"},
+      {:benchee_json, "~> 1.0"},
       {:excoveralls, "~> 0.10.0", only: :test},
       {:mix_test_watch, "~> 0.2", only: :dev},
       {:credo, "~> 1.0", only: :dev},
