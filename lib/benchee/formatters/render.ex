@@ -1,8 +1,6 @@
 defmodule Benchee.Formatters.HTML.Render do
-  @moduledoc """
-  Functions to render HTML templates.
-  """
-
+  @moduledoc false
+  # Functions to render HTML templates.
   require EEx
 
   alias Benchee.Scenario
