@@ -9,7 +9,5 @@ Benchee.run(
     "map.flatten" => fn -> list |> Enum.map(map_fun) |> List.flatten() end
   },
   formatters: [{Benchee.Formatters.HTML, auto_open: false}],
-  time: 0.05,
-  memory_time: 0.05,
-  warmup: 0.01
+  memory_time: 2.0
 )
