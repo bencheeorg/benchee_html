@@ -106,9 +106,7 @@ defmodule Benchee.Formatters.HTML.Render do
   end
 
   defp format_mode(modes = [_ | _], unit) do
-    modes
-    |> Enum.map(fn mode -> format_property(mode, unit) end)
-    |> Enum.join(", ")
+    Enum.map_join(modes, ", ", fn mode -> format_property(mode, unit) end)
   end
 
   defp format_mode(value, unit) do
