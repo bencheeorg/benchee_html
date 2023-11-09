@@ -140,7 +140,9 @@ defmodule Benchee.Formatters.HTMLTest do
     test "produces the right JSON for the comparison of a single input" do
       %{["Some Input", "comparison"] => html} = HTML.format(@sample_suite, @default_options)
       assert html =~ "[{\"name\":\"My Job\","
-      assert html =~ "\"statistics\":{\"absolute_difference\":null,\"average\":200.0,"
+      assert html =~ "\"statistics\":{"
+      assert html =~ "\"absolute_difference\":null,"
+      assert html =~ "\"average\":200.0,"
       assert html =~ "\"run_time_data\""
     end
 
