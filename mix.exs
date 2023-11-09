@@ -20,6 +20,10 @@ defmodule BencheeHTML.Mixfile do
         "coveralls.html": :test,
         "coveralls.travis": :test
       ],
+      dialyzer: [
+        flags: [:unmatched_returns, :error_handling, :underspecs],
+        plt_file: {:no_warn, "tools/plts/benchee.plt"}
+      ],
       name: "benchee_html",
       source_url: "https://github.com/PragTob/benchee_html",
       description: """
