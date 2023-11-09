@@ -21,7 +21,7 @@ defmodule BencheeHTML.Mixfile do
         "coveralls.travis": :test
       ],
       dialyzer: [
-        flags: [:unmatched_returns, :error_handling, :underspecs],
+        flags: [:error_handling, :underspecs],
         plt_file: {:no_warn, "tools/plts/benchee.plt"}
       ],
       name: "benchee_html",
