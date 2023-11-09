@@ -49,12 +49,12 @@ defmodule BencheeHTML.Mixfile do
     [
       {:benchee, ">= 0.99.0 and < 2.0.0"},
       {:benchee_json, "~> 1.0"},
-      {:excoveralls, "~> 0.10.0", only: :test},
+      {:excoveralls, "~> 0.18", only: :test},
       {:mix_test_watch, "~> 0.2", only: :dev},
       {:credo, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:earmark, "~> 1.2", only: :dev},
-      {:dialyxir, "~> 1.0.0-rc.4", only: :dev, runtime: false}
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false}
     ]
   end
 
