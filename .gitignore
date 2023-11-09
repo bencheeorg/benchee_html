@@ -19,3 +19,6 @@ my.html
 /samples_output
 /output
 /benchmarks/output
+
+# dialyzer caching
+/tools
