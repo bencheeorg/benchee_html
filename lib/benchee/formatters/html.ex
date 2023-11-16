@@ -46,7 +46,7 @@ defmodule Benchee.Formatters.HTML do
         opts
       ) do
     ensure_applications_loaded()
-    %{file: filename, inline_assets: inline_assets} = default_configuration(opts)
+    %{file: filename, inline_assets: inline_assets} = merge_default_configuration(opts)
 
     scenarios
     |> Enum.group_by(fn scenario -> scenario.input_name end)
@@ -74,7 +74,7 @@ defmodule Benchee.Formatters.HTML do
       file: filename,
       auto_open: auto_open?,
       inline_assets: inline_assets?
-    } = default_configuration(opts)
+    } = merge_default_configuration(opts)
 
     prepare_folder_structure(filename, inline_assets?)
     FileCreation.each(data, filename)
@@ -87,14 +87,13 @@ defmodule Benchee.Formatters.HTML do
     _ = Application.load(:benchee_html)
   end
 
-  @default_filename "benchmarks/output/results.html"
-  @default_auto_open true
-  @default_inline_assets false
-  defp default_configuration(opts) do
-    opts
-    |> Map.put_new(:file, @default_filename)
-    |> Map.put_new(:auto_open, @default_auto_open)
-    |> Map.put_new(:inline_assets, @default_inline_assets)
+  @default_configuration %{
+    file: "benchmarks/output/results.html",
+    auto_open: true,
+    inline_assets: false
+  }
+  defp merge_default_configuration(opts) do
+    Map.merge(@default_configuration, opts)
   end
 
   defp prepare_folder_structure(filename, inline_assets?) do
