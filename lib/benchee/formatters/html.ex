@@ -34,9 +34,13 @@ defmodule Benchee.Formatters.HTML do
   @doc """
   Transforms the statistical results from benchmarking to html reports.
 
-  Returns a map from file name/path to file content.
+  Returns a map from file name/path to file content. This list is ready to be put into
+  `Benchee.Utility.FileCreation.each/3`. It's a list of names to be "interleaved" with
+  a main file name that points to the contents of the file. For example:application
+
+      %{["big list", "flat_map"] => "...file content..."}
   """
-  @spec format(Suite.t(), map) :: %{Suite.key() => String.t()}
+  @spec format(Suite.t(), map) :: %{list(String.t()) => String.t()}
   def format(
         %Suite{
           scenarios: scenarios,
@@ -48,14 +52,30 @@ defmodule Benchee.Formatters.HTML do
     ensure_applications_loaded()
     %{file: filename, inline_assets: inline_assets} = merge_default_configuration(opts)
 
-    scenarios
-    |> Enum.group_by(fn scenario -> scenario.input_name end)
-    |> Enum.map(fn tagged_scenarios ->
-      reports_for_input(tagged_scenarios, system, filename, unit_scaling, inline_assets)
-    end)
-    |> add_index(filename, system, inline_assets)
-    |> List.flatten()
-    |> Map.new()
+    scenario_data =
+      scenarios
+      # at best we'd keep the input order here, so no grouping
+      |> Enum.group_by(fn scenario -> scenario.input_name end)
+      |> Enum.map(fn input_to_scenarios = {input_name, _scenarios} ->
+        # build index data
+        {input_name,
+         reports_for_input(input_to_scenarios, system, filename, unit_scaling, inline_assets)}
+      end)
+
+    index_data =
+      Enum.map(scenario_data, fn {input_name, {input_index_data, _input_scenarios}} ->
+        {input_name, input_index_data}
+      end)
+
+    scenario_pages =
+      Enum.flat_map(scenario_data, fn {_input_name, {_input_index_data, input_scenarios}} ->
+        input_scenarios
+      end)
+
+    index_page = build_index(index_data, filename, system, inline_assets)
+
+    # prolly don't need map here
+    Map.new([index_page | scenario_pages])
   end
 
   @doc """
@@ -78,6 +98,54 @@ defmodule Benchee.Formatters.HTML do
 
     prepare_folder_structure(filename, inline_assets?)
     FileCreation.each(data, filename)
+    if auto_open?, do: open_report(filename)
+    :ok
+  end
+
+  @doc """
+  Formats and prints out files sequentially fo consume less memory.
+
+  Benchee loves to do things in parallel, which is usually great, less so if you have a gigantic benchmark though.
+  By default, benchee's formatters first format everything in parallel (see `format/2`) - which means all that data
+  needs to be kept in memory. Only a second step benchee writes the results out (see `write/2`).
+
+  This (optional) function is supposed to format something and write it out immediately. For a formatter like HTML
+  that might write out 30 files or so, this should signficantly reduce memory consumption.
+  """
+  def sequential_output(
+        %Suite{
+          scenarios: scenarios,
+          system: system,
+          configuration: %Configuration{unit_scaling: unit_scaling}
+        },
+        opts
+      ) do
+    ensure_applications_loaded()
+
+    %{file: filename, auto_open: auto_open?, inline_assets: inline_assets?} =
+      merge_default_configuration(opts)
+
+    prepare_folder_structure(filename, inline_assets?)
+
+    # names is a variant for the modifiers applied to the file on creation
+    input_to_names =
+      scenarios
+      |> Enum.group_by(fn scenario -> scenario.input_name end)
+      |> Enum.map(fn input_to_scenarios = {input_name, _scenarios} ->
+        file_names =
+          write_reports_for_input(
+            input_to_scenarios,
+            system,
+            filename,
+            unit_scaling,
+            inline_assets?
+          )
+
+        {input_name, file_names}
+      end)
+
+    write_index(input_to_names, filename, system, inline_assets?)
+
     if auto_open?, do: open_report(filename)
     :ok
   end
@@ -117,26 +185,36 @@ defmodule Benchee.Formatters.HTML do
 
   defp reports_for_input({input_name, scenarios}, system, filename, unit_scaling, inline_assets) do
     units = Conversion.units(scenarios, unit_scaling)
-    scenario_reports = scenario_reports(input_name, scenarios, system, units, inline_assets)
+
+    scenario_reports =
+      Enum.map(scenarios, fn scenario ->
+        scenario_report(scenario, system, units, inline_assets)
+      end)
+
     comparison = comparison_report(input_name, scenarios, system, filename, units, inline_assets)
-    [comparison | scenario_reports]
+    data = [comparison | scenario_reports]
+
+    # getting a slight variation of the data out may seem weird but since `sequential_output/1` doesn't keep
+    # the same data around it's done for _some_ consistency and not to delegate knowledge of getting index
+    # data outside.
+    index_data = Enum.map(data, fn {names, _content} -> names end)
+
+    {index_data, data}
   end
 
-  defp scenario_reports(input_name, scenarios, system, units, inline_assets) do
-    Enum.map(scenarios, fn scenario ->
-      scenario_json = JSON.encode!(scenario)
+  defp scenario_report(scenario, system, units, inline_assets) do
+    scenario_json = JSON.encode!(scenario)
 
-      {
-        [input_name, scenario.name],
-        Render.scenario_detail(
-          scenario,
-          scenario_json,
-          system,
-          units,
-          inline_assets
-        )
-      }
-    end)
+    {
+      [scenario.input_name, scenario.name],
+      Render.scenario_detail(
+        scenario,
+        scenario_json,
+        system,
+        units,
+        inline_assets
+      )
+    }
   end
 
   defp comparison_report(input_name, scenarios, system, filename, units, inline_assets) do
@@ -153,27 +231,57 @@ defmodule Benchee.Formatters.HTML do
      Render.comparison(input_name, input_suite, units, scenarios_json, inline_assets)}
   end
 
-  defp add_index(grouped_main_contents, filename, system, inline_assets) do
-    index_structure = inputs_to_paths(grouped_main_contents, filename)
-    index_entry = {[], Render.index(index_structure, system, inline_assets)}
-    [index_entry | grouped_main_contents]
-  end
+  defp write_reports_for_input(
+         {input_name, scenarios},
+         system,
+         filename,
+         unit_scaling,
+         inline_assets
+       ) do
+    units = Conversion.units(scenarios, unit_scaling)
 
-  defp inputs_to_paths(grouped_main_contents, filename) do
-    grouped_main_contents
-    |> Enum.map(fn reports -> input_to_paths(reports, filename) end)
-    |> Map.new()
-  end
+    scenario_names =
+      Enum.map(scenarios, fn scenario ->
+        report = {names, _content} = scenario_report(scenario, system, units, inline_assets)
+        create_single_file(report, filename)
 
-  defp input_to_paths(input_reports, filename) do
-    [{[input_name | _], _} | _] = input_reports
-
-    paths =
-      Enum.map(input_reports, fn {tags, _content} ->
-        Render.relative_file_path(filename, tags)
+        names
       end)
 
-    {input_name, paths}
+    comparison_report =
+      {names, _content} =
+      comparison_report(input_name, scenarios, system, filename, units, inline_assets)
+
+    create_single_file(comparison_report, filename)
+
+    [names | scenario_names]
+  end
+
+  defp create_single_file(report, filename) do
+    # yes wrapping this may feel overdone but provides an easy switch if we introduce a nicer utility to Benchee
+    FileCreation.each([report], filename)
+  end
+
+  defp build_index(input_to_names, filename, system, inline_assets?) do
+    full_index_data = build_index_data(input_to_names, filename)
+
+    {[], Render.index(full_index_data, system, inline_assets?)}
+  end
+
+  defp build_index_data(input_to_names, filename) do
+    Enum.map(input_to_names, fn {input_name, names_list} ->
+      {input_name,
+       Enum.map(names_list, fn names -> Render.relative_file_path(filename, names) end)}
+    end)
+  end
+
+  defp write_index(input_to_names, filename, system, inline_assets?) do
+    full_index_data = build_index_data(input_to_names, filename)
+    index_entry = {[], Render.index(full_index_data, system, inline_assets?)}
+
+    create_single_file(index_entry, filename)
+
+    :ok
   end
 
   defp open_report(filename) do
