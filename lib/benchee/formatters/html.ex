@@ -54,27 +54,23 @@ defmodule Benchee.Formatters.HTML do
 
     scenario_data =
       scenarios
-      # at best we'd keep the input order here, so no grouping
+      # at best we'd keep the input order here, so no grouping but its easiest for now
       |> Enum.group_by(fn scenario -> scenario.input_name end)
-      |> Enum.map(fn input_to_scenarios = {input_name, _scenarios} ->
-        # build index data
+      |> Map.new(fn input_to_scenarios = {input_name, _scenarios} ->
         {input_name,
          reports_for_input(input_to_scenarios, system, filename, unit_scaling, inline_assets)}
       end)
 
     index_data =
-      Enum.map(scenario_data, fn {input_name, {input_index_data, _input_scenarios}} ->
-        {input_name, input_index_data}
+      Enum.map(scenario_data, fn {input_name, scenarios} ->
+        {input_name, Enum.map(scenarios, fn {names, _content} -> names end)}
       end)
 
-    scenario_pages =
-      Enum.flat_map(scenario_data, fn {_input_name, {_input_index_data, input_scenarios}} ->
-        input_scenarios
-      end)
+    scenario_pages = scenario_data |> Map.values() |> List.flatten()
 
     index_page = build_index(index_data, filename, system, inline_assets)
 
-    # prolly don't need map here
+    # prolly don't need map here, but tests explode
     Map.new([index_page | scenario_pages])
   end
 
@@ -192,14 +188,7 @@ defmodule Benchee.Formatters.HTML do
       end)
 
     comparison = comparison_report(input_name, scenarios, system, filename, units, inline_assets)
-    data = [comparison | scenario_reports]
-
-    # getting a slight variation of the data out may seem weird but since `sequential_output/1` doesn't keep
-    # the same data around it's done for _some_ consistency and not to delegate knowledge of getting index
-    # data outside.
-    index_data = Enum.map(data, fn {names, _content} -> names end)
-
-    {index_data, data}
+    [comparison | scenario_reports]
   end
 
   defp scenario_report(scenario, system, units, inline_assets) do
@@ -249,16 +238,18 @@ defmodule Benchee.Formatters.HTML do
       end)
 
     comparison_report =
-      {names, _content} =
       comparison_report(input_name, scenarios, system, filename, units, inline_assets)
 
     create_single_file(comparison_report, filename)
 
-    [names | scenario_names]
+    {comparison_names, _content} = comparison_report
+
+    [comparison_names | scenario_names]
   end
 
   defp create_single_file(report, filename) do
-    # yes wrapping this may feel overdone but provides an easy switch if we introduce a nicer utility to Benchee
+    # yes wrapping this may feel overdone but provides an easy switch
+    # if we introduce a nicer utility to Benchee
     FileCreation.each([report], filename)
   end
 
@@ -276,9 +267,7 @@ defmodule Benchee.Formatters.HTML do
   end
 
   defp write_index(input_to_names, filename, system, inline_assets?) do
-    full_index_data = build_index_data(input_to_names, filename)
-    index_entry = {[], Render.index(full_index_data, system, inline_assets?)}
-
+    index_entry = build_index(input_to_names, filename, system, inline_assets?)
     create_single_file(index_entry, filename)
 
     :ok
