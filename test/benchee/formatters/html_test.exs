@@ -138,7 +138,9 @@ defmodule Benchee.Formatters.HTMLTest do
     end
 
     test "produces the right JSON for the comparison of a single input" do
-      %{["Some Input", "comparison"] => html} = HTML.format(@sample_suite, @default_options)
+      html_data = HTML.format(@sample_suite, @default_options)
+      html = find_page_html(html_data, ["Some Input", "comparison"])
+
       assert html =~ "[{\"name\":\"My Job\","
       assert html =~ "\"statistics\":{"
       assert html =~ "\"absolute_difference\":null,"
@@ -236,12 +238,19 @@ defmodule Benchee.Formatters.HTMLTest do
          suite \\ @sample_suite,
          options \\ %{html: %{file: @filename, auto_open: false}}
        ) do
-    assert %{
-             ["Some Input", "comparison"] => comparison_html,
-             ["Some Input", "My Job"] => scenario_html
-           } = HTML.format(suite, options)
+    html_data = HTML.format(suite, options)
+
+    comparison_html = find_page_html(html_data, ["Some Input", "comparison"])
+    scenario_html = find_page_html(html_data, ["Some Input", "My Job"])
 
     [comparison_html, scenario_html]
+  end
+
+  defp find_page_html(html_data, find_descriptors) do
+    {_descriptors, html} =
+      Enum.find(html_data, fn {descriptors, _} -> descriptors == find_descriptors end)
+
+    html
   end
 
   defp assert_includes(html, expected_contents) do
