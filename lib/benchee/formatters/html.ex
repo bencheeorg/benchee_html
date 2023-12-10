@@ -256,7 +256,7 @@ defmodule Benchee.Formatters.HTML do
   defp build_index(input_to_names, filename, system, inline_assets?) do
     full_index_data = build_index_data(input_to_names, filename)
 
-    {[], Render.index(full_index_data, system, inline_assets?)}
+    {"", Render.index(full_index_data, system, inline_assets?)}
   end
 
   defp build_index_data(input_to_names, filename) do
