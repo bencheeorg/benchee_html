@@ -108,6 +108,7 @@ defmodule Benchee.Formatters.HTML do
   This (optional) function is supposed to format something and write it out immediately. For a formatter like HTML
   that might write out 30 files or so, this should signficantly reduce memory consumption.
   """
+  @spec sequential_output(Suite.t(), map() | keyword()) :: :ok
   def sequential_output(
         %Suite{
           scenarios: scenarios,
@@ -117,6 +118,7 @@ defmodule Benchee.Formatters.HTML do
         opts
       ) do
     ensure_applications_loaded()
+    opts = Benchee.Utility.DeepConvert.to_map(opts)
 
     %{file: filename, auto_open: auto_open?, inline_assets: inline_assets?} =
       merge_default_configuration(opts)

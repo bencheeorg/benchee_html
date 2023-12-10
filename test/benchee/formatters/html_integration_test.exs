@@ -91,7 +91,7 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
       warmup: 0.02,
       formatters: [
         fn suite ->
-          Benchee.Formatters.HTML.sequential_output(suite, %{file: @index_path, auto_open: false})
+          Benchee.Formatters.HTML.sequential_output(suite, file: @index_path, auto_open: false)
         end
       ]
     ]

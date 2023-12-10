@@ -10,7 +10,7 @@ Benchee.run(
   },
   # kwargs to map conversions
   formatters: [
-    fn suite -> Benchee.Formatters.HTML.sequential_output(suite, %{auto_open: false}) end
+    fn suite -> Benchee.Formatters.HTML.sequential_output(suite, auto_open: false) end
   ],
   time: 0.05,
   memory_time: 0.05,
