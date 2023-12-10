@@ -70,8 +70,7 @@ defmodule Benchee.Formatters.HTML do
 
     index_page = build_index(index_data, filename, system, inline_assets)
 
-    # prolly don't need map here, but tests explode
-    Map.new([index_page | scenario_pages])
+    [index_page | scenario_pages]
   end
 
   @doc """
