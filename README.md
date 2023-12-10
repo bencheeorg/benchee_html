@@ -1,4 +1,4 @@
-# benchee_html [![Hex Version](https://img.shields.io/hexpm/v/benchee_html.svg)](https://hex.pm/packages/benchee_html) [![CI](https://github.com/bencheeorg/benchee_html/actions/workflows/main.yml/badge.svg)](https://github.com/bencheeorg/benchee_html/actions/workflows/main.yml) [![Coverage Status](https://coveralls.io/repos/github/bencheeorg/benchee_html/badge.svg?branch=master)](https://coveralls.io/github/bencheeorg/benchee_html?branch=master)
+# benchee_html [![Hex Version](https://img.shields.io/hexpm/v/benchee_html.svg)](https://hex.pm/packages/benchee_html) [![CI](https://github.com/bencheeorg/benchee_html/actions/workflows/main.yml/badge.svg)](https://github.com/bencheeorg/benchee_html/actions/workflows/main.yml) [![Coverage Status](https://coveralls.io/repos/github/bencheeorg/benchee_html/badge.svg?branch=master)](https://coveralls.io/github/bencheeorg/benchee_html?branch=master) [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/benchee_html/) [![Total Download](https://img.shields.io/hexpm/dt/benchee_html.svg)](https://hex.pm/packages/benchee_html) [![License](https://img.shields.io/hexpm/l/benchee_html.svg)](https://github.com/bencheeorg/benchee_html/blob/master/LICENSE)
 
 Formatter for [benchee](//github.com/PragTob/benchee) to produce some standalone HTML with nice graphs, a data table etc. from your benchee benchmarking results :) Also allows you to export PNG images, the graphs are also somewhat explorable thanks to [plotly.js](https://plot.ly/javascript/)!
 
@@ -10,17 +10,19 @@ It not only generates HTML but also assets and into the same folder. You can jus
 
 ## Installation
 
-Add `benchee_html` to your list of dependencies in `mix.exs`:
+Add `:benchee_html` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:benchee_html, "~> 1.0", only: :dev}]
+  [
+    {:benchee_html, "~> 1.0", only: :dev}
+  ]
 end
 ```
 
 ## Usage
 
-Just use it as a formatter for [benchee](github.com/PragTob/benchee):
+Just use it as a formatter for [benchee](https://github.com/PragTob/benchee):
 
 ```elixir
 list = Enum.to_list(1..10_000)
@@ -140,3 +142,10 @@ A couple of (hopefully) helpful points:
 * `mix deps.get` to install dependencies
 * `mix test` to run tests
 * `mix credo` or `mix credo --strict` to find code style problems (not too strict with the 80 width limit for sample output in the docs)
+
+## Copyright and License
+
+Copyright (c) 2016 Tobias Pfeiffer
+
+This library is released under the MIT License. See the [LICENSE.md](./LICENSE.md) file
+for further details.
