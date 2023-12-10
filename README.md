@@ -68,6 +68,28 @@ When you hover the graphs in the HTML report, quite some plotly.js controls and 
 
 Be aware, that currently when too many samples are recorded (> 100_000 usually) rendering might break as plotly can't handle all that data. See [this issue](https://github.com/PragTob/benchee_html/issues/3) on how to quick fix it and what could be done in the future.
 
+### Too much memory consumption?
+
+Due to the way that formatters are designed to first `format/2` everything, which can be done in parallel across formatters, and then `output/2` it the formatter can be quite memory hungry. This is due to the fact, that it means all files need to be held in memory before writing them out. Most times, this should not be an issue - however if you run a benchmark with a lot of scenarios and samples it _can_ be. Hence, there is `sequential_output/2` which produces the same output but formats a file and immediately writes it out.
+
+You can use it as a function:
+
+```elixir
+list = Enum.to_list(1..10_000)
+map_fun = fn i -> [i, i * i] end
+
+Benchee.run(
+  %{
+    "flat_map" => fn -> Enum.flat_map(list, map_fun) end,
+    "map.flatten" => fn -> list |> Enum.map(map_fun) |> List.flatten() end
+  },
+  formatters: [
+    # this is the important bit
+    fn suite -> Benchee.Formatters.HTML.sequential_output(suite, auto_open: false) end
+  ]
+)
+```
+
 ## PNG image export/download
 
 When you hover the graph the controls appear and the left most of those is a camera and says "Download plot as png" - and it does what you'd expect. Refer to the image below if you need more guidance :)

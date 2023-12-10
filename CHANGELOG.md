@@ -1,3 +1,10 @@
+## 1.1.0 (unreleased)
+
+Memory blowing up on formatting? Try `sequential_output/2`!
+
+### Features
+* Introduce `sequential_output/2` which you can can call as a function in formatters. Instead of formatting _everything_ first and then writing it out it will format one HTML file and immediately write it out freeing it up for Garabage Collection. This can lead to huge max memory used savings (12 GB --> 7 GB in a bigger benchmark I ran).
+
 ## 1.0.0 (2019-03-28)
 
 Compatibility with benchee 0.99.0 and 1.0.0 as well as benchee_json 1.0.0.
