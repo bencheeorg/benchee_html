@@ -36,7 +36,7 @@ defmodule Benchee.Formatters.HTML do
 
   Returns a map from file name/path to file content. This list is ready to be put into
   `Benchee.Utility.FileCreation.each/3`. It's a list of names to be "interleaved" with
-  a main file name that points to the contents of the file. For example:application
+  a main file name that points to the contents of the file. For example:
 
       %{["big list", "flat_map"] => "...file content..."}
   """
