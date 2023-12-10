@@ -1,4 +1,4 @@
-# benchee_html [![Hex Version](https://img.shields.io/hexpm/v/benchee_html.svg)](https://hex.pm/packages/benchee_html) [![Build Status](https://travis-ci.org/bencheeorg/benchee_html.svg?branch=master)](https://travis-ci.org/bencheeorg/benchee_html) [![Coverage Status](https://coveralls.io/repos/github/bencheeorg/benchee_html/badge.svg?branch=master)](https://coveralls.io/github/bencheeorg/benchee_html?branch=master)
+# benchee_html [![Hex Version](https://img.shields.io/hexpm/v/benchee_html.svg)](https://hex.pm/packages/benchee_html) [![CI](https://github.com/bencheeorg/benchee_html/actions/workflows/main.yml/badge.svg)](https://github.com/bencheeorg/benchee_html/actions/workflows/main.yml) [![Coverage Status](https://coveralls.io/repos/github/bencheeorg/benchee_html/badge.svg?branch=master)](https://coveralls.io/github/bencheeorg/benchee_html?branch=master)
 
 Formatter for [benchee](//github.com/PragTob/benchee) to produce some standalone HTML with nice graphs, a data table etc. from your benchee benchmarking results :) Also allows you to export PNG images, the graphs are also somewhat explorable thanks to [plotly.js](https://plot.ly/javascript/)!
 
