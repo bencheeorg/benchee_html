@@ -228,7 +228,7 @@ defmodule Benchee.Formatters.HTMLTest do
       refute File.exists?("#{@test_directory}/assets/fontello/css/fontello.css")
 
       refute File.exists?("#{@test_directory}/assets/javascripts/benchee.js")
-      refute File.exists?("#{@test_directory}/assets/javascripts/plotly-1.30.1.min.js")
+      refute File.exists?("#{@test_directory}/assets/javascripts/plotly-2.27.0.min.js")
     after
       if File.exists?(@test_directory), do: File.rm_rf!(@test_directory)
     end
