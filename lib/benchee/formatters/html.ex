@@ -40,7 +40,7 @@ defmodule Benchee.Formatters.HTML do
 
       %{["big list", "flat_map"] => "...file content..."}
   """
-  @spec format(Suite.t(), map) :: %{list(String.t()) => String.t()}
+  @spec format(Suite.t(), map) :: [{list(String.t()), String.t()}]
   def format(
         %Suite{
           scenarios: scenarios,
