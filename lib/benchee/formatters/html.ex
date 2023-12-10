@@ -63,7 +63,7 @@ defmodule Benchee.Formatters.HTML do
 
     index_data =
       Enum.map(scenario_data, fn {input_name, scenarios} ->
-        {input_name, Enum.map(scenarios, fn {names, _content} -> names end)}
+        {input_name, Enum.map(scenarios, fn {descriptors, _content} -> descriptors end)}
       end)
 
     scenario_pages = scenario_data |> Map.values() |> List.flatten()
@@ -123,12 +123,12 @@ defmodule Benchee.Formatters.HTML do
 
     prepare_folder_structure(filename, inline_assets?)
 
-    # names is a variant for the modifiers applied to the file on creation
-    input_to_names =
+    # descriptors is a variant for the modifiers applied to the file on creation
+    input_to_descriptors =
       scenarios
       |> Enum.group_by(fn scenario -> scenario.input_name end)
       |> Enum.map(fn input_to_scenarios = {input_name, _scenarios} ->
-        file_names =
+        file_descriptors =
           write_reports_for_input(
             input_to_scenarios,
             system,
@@ -137,10 +137,10 @@ defmodule Benchee.Formatters.HTML do
             inline_assets?
           )
 
-        {input_name, file_names}
+        {input_name, file_descriptors}
       end)
 
-    write_index(input_to_names, filename, system, inline_assets?)
+    write_index(input_to_descriptors, filename, system, inline_assets?)
 
     if auto_open?, do: open_report(filename)
     :ok
@@ -229,12 +229,12 @@ defmodule Benchee.Formatters.HTML do
        ) do
     units = Conversion.units(scenarios, unit_scaling)
 
-    scenario_names =
+    scenario_descriptors =
       Enum.map(scenarios, fn scenario ->
-        report = {names, _content} = scenario_report(scenario, system, units, inline_assets)
+        report = {descriptors, _content} = scenario_report(scenario, system, units, inline_assets)
         create_single_file(report, filename)
 
-        names
+        descriptors
       end)
 
     comparison_report =
@@ -242,9 +242,9 @@ defmodule Benchee.Formatters.HTML do
 
     create_single_file(comparison_report, filename)
 
-    {comparison_names, _content} = comparison_report
+    {comparison_descriptors, _content} = comparison_report
 
-    [comparison_names | scenario_names]
+    [comparison_descriptors | scenario_descriptors]
   end
 
   defp create_single_file(report, filename) do
@@ -253,21 +253,23 @@ defmodule Benchee.Formatters.HTML do
     FileCreation.each([report], filename)
   end
 
-  defp build_index(input_to_names, filename, system, inline_assets?) do
-    full_index_data = build_index_data(input_to_names, filename)
+  defp build_index(input_to_descriptors, filename, system, inline_assets?) do
+    full_index_data = build_index_data(input_to_descriptors, filename)
 
     {"", Render.index(full_index_data, system, inline_assets?)}
   end
 
-  defp build_index_data(input_to_names, filename) do
-    Enum.map(input_to_names, fn {input_name, names_list} ->
+  defp build_index_data(input_to_descriptors, filename) do
+    Enum.map(input_to_descriptors, fn {input_name, descriptors_list} ->
       {input_name,
-       Enum.map(names_list, fn names -> Render.relative_file_path(filename, names) end)}
+       Enum.map(descriptors_list, fn descriptors ->
+         Render.relative_file_path(filename, descriptors)
+       end)}
     end)
   end
 
-  defp write_index(input_to_names, filename, system, inline_assets?) do
-    index_entry = build_index(input_to_names, filename, system, inline_assets?)
+  defp write_index(input_to_descriptors, filename, system, inline_assets?) do
+    index_entry = build_index(input_to_descriptors, filename, system, inline_assets?)
     create_single_file(index_entry, filename)
 
     :ok
