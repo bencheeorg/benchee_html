@@ -84,28 +84,6 @@ defmodule Benchee.Formatters.HTMLIntegrationTest do
     basic_test(benchee_options, assertion_data, run_time: false)
   end
 
-  test "works just fine using sequential_output" do
-    benchee_options = [
-      time: 0.01,
-      memory_time: 0.01,
-      warmup: 0.02,
-      formatters: [
-        fn suite ->
-          Benchee.Formatters.HTML.sequential_output(suite, file: @index_path, auto_open: false)
-        end
-      ]
-    ]
-
-    assertion_data = %{
-      comparison_path: @comparison_path,
-      test_directory: @test_directory,
-      index_path: @index_path,
-      base_name: @base_name
-    }
-
-    basic_test(benchee_options, assertion_data, run_time: true)
-  end
-
   test "doesn't crash if we're essentially measuring nothing" do
     capture_io(fn ->
       assert %Benchee.Suite{} =

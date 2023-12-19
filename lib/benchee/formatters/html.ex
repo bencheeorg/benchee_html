@@ -97,56 +97,6 @@ defmodule Benchee.Formatters.HTML do
     :ok
   end
 
-  @doc """
-  Formats and prints out files sequentially fo consume less memory.
-
-  Benchee loves to do things in parallel, which is usually great, less so if you have a gigantic benchmark though.
-  By default, benchee's formatters first format everything in parallel (see `format/2`) - which means all that data
-  needs to be kept in memory. Only a second step benchee writes the results out (see `write/2`).
-
-  This (optional) function is supposed to format something and write it out immediately. For a formatter like HTML
-  that might write out 30 files or so, this should signficantly reduce memory consumption.
-  """
-  @spec sequential_output(Suite.t(), map() | keyword()) :: :ok
-  def sequential_output(
-        %Suite{
-          scenarios: scenarios,
-          system: system,
-          configuration: %Configuration{unit_scaling: unit_scaling}
-        },
-        opts
-      ) do
-    ensure_applications_loaded()
-    opts = Benchee.Utility.DeepConvert.to_map(opts)
-
-    %{file: filename, auto_open: auto_open?, inline_assets: inline_assets?} =
-      merge_default_configuration(opts)
-
-    prepare_folder_structure(filename, inline_assets?)
-
-    # descriptors is a variant for the modifiers applied to the file on creation
-    input_to_descriptors =
-      scenarios
-      |> Enum.group_by(fn scenario -> scenario.input_name end)
-      |> Enum.map(fn input_to_scenarios = {input_name, _scenarios} ->
-        file_descriptors =
-          write_reports_for_input(
-            input_to_scenarios,
-            system,
-            filename,
-            unit_scaling,
-            inline_assets?
-          )
-
-        {input_name, file_descriptors}
-      end)
-
-    write_index(input_to_descriptors, filename, system, inline_assets?)
-
-    if auto_open?, do: open_report(filename)
-    :ok
-  end
-
   defp ensure_applications_loaded do
     _ = Application.load(:benchee)
     _ = Application.load(:benchee_html)
@@ -221,39 +171,6 @@ defmodule Benchee.Formatters.HTML do
      Render.comparison(input_name, input_suite, units, scenarios_json, inline_assets)}
   end
 
-  defp write_reports_for_input(
-         {input_name, scenarios},
-         system,
-         filename,
-         unit_scaling,
-         inline_assets
-       ) do
-    units = Conversion.units(scenarios, unit_scaling)
-
-    scenario_descriptors =
-      Enum.map(scenarios, fn scenario ->
-        report = {descriptors, _content} = scenario_report(scenario, system, units, inline_assets)
-        create_single_file(report, filename)
-
-        descriptors
-      end)
-
-    comparison_report =
-      comparison_report(input_name, scenarios, system, filename, units, inline_assets)
-
-    create_single_file(comparison_report, filename)
-
-    {comparison_descriptors, _content} = comparison_report
-
-    [comparison_descriptors | scenario_descriptors]
-  end
-
-  defp create_single_file(report, filename) do
-    # yes wrapping this may feel overdone but provides an easy switch
-    # if we introduce a nicer utility to Benchee
-    FileCreation.each([report], filename)
-  end
-
   defp build_index(input_to_descriptors, filename, system, inline_assets?) do
     full_index_data = build_index_data(input_to_descriptors, filename)
 
@@ -267,13 +184,6 @@ defmodule Benchee.Formatters.HTML do
          Render.relative_file_path(filename, descriptors)
        end)}
     end)
-  end
-
-  defp write_index(input_to_descriptors, filename, system, inline_assets?) do
-    index_entry = build_index(input_to_descriptors, filename, system, inline_assets?)
-    create_single_file(index_entry, filename)
-
-    :ok
   end
 
   defp open_report(filename) do
