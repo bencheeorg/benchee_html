@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 1.0.1 (2023-12-27)
+Just a small library updated I didn't want folks to miss.
 
-
-### Features
-* Graphing library (plotly.js) updated, seems to work graphs may look slightly different.
+### Mini-Feature/Maitenance
+* Graphing library (plotly.js) updated, graphs may look slightly different.
 
 ## 1.0.0 (2019-03-28)
 
